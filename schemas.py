@@ -16,6 +16,14 @@ class UserData:
     id: str
     uri: str
 
+
+@dataclass
+class ArtistData:
+    name: str
+    id: str
+    uri: str
+
+
 @dataclass
 class TrackFeaturesData:
     acousticness: confloat(gt=0, le=1)
@@ -23,7 +31,7 @@ class TrackFeaturesData:
     energy: confloat(gt=0, le=1)
     instrumentalness: confloat(gt=0, le=1)
     liveness: confloat(gt=0, le=1)
-    loudness: confloat(gt=0, le=1)
+    loudness: float
     speechiness: confloat(gt=0, le=1)
     valence: confloat(gt=0, le=1)
     popularity: int
@@ -31,3 +39,13 @@ class TrackFeaturesData:
     mode: int
     key: int
     analysis_url: str
+
+
+@dataclass
+class TrackData:
+    name: str
+    uri: str
+    popularity: int
+    id: str
+    artist: List[ArtistData]
+    features: Optional[TrackFeaturesData]

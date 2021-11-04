@@ -2,9 +2,8 @@ import coloredlogs
 import emoji
 import os
 import logging
-import re
 
-from typing import Union
+from typing import List, Iterator, Union
 
 
 def get_log_level(level: Union[int, str] = None) -> int:
@@ -91,3 +90,8 @@ def simplify_string(text: str) -> str:
     text = text.rstrip(" ")
     text = text.replace("'", "")
     return text
+
+
+def list_chunks(lst: List, size: int) -> Iterator:
+    for i in range(0, len(lst), size):
+        yield lst[i:i+size]

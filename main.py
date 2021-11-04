@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+
 from ruamel.yaml import safe_load
 
 from models.client import SpotifyClient

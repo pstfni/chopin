@@ -1,0 +1,7 @@
+python-dotenv == 0.19.1
+spotipy==2.16.1
+pydantic==1.8.1
+emoji==1.4.1
+coloredlogs==15.0.1
+ruamel.yaml==0.16.12
+jupyterlab
