@@ -1,15 +1,17 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-from models import config
+from models.config import CONFIG
 
 
-class SpotifyClient():
+class SpotifyClient:
     def __init__(self):
-        auth_manager = SpotifyOAuth(client_id=config.client_id,
-                                    client_secret=config.client_secret,
-                                    redirect_uri="http://example.com",
-                                    scope=config.scope)
+        auth_manager = SpotifyOAuth(
+            client_id=CONFIG["client_id"],
+            client_secret=CONFIG["client_secret"],
+            redirect_uri="http://example.com",
+            scope=CONFIG["scope"],
+        )
         self.client = spotipy.Spotify(auth_manager=auth_manager)
 
     def get_client(self) -> spotipy.Spotify:
