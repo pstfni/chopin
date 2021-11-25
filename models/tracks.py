@@ -1,9 +1,9 @@
-from typing import Any, Dict, List
+from typing import Dict, List
 
 import spotipy
 
-from utils import get_logger
-from schemas import TrackFeaturesData
+from schemas import PlaylistData, UserData
+from utils import get_logger, simplify_string
 
 logger = get_logger(__name__)
 
@@ -12,10 +12,8 @@ class Tracks:
     def __init__(self, spotify_client: spotipy.Spotify):
         self.client = spotify_client
 
-    def get_tracks(self, ):
-
     def get_user_playlists(self) -> List[PlaylistData]:
-        playlists = self.client.current_user_playlists()['items']
+        playlists = self.client.current_user_playlists()["items"]
         return [PlaylistData(name=simplify_string(p["name"]), uri=p["uri"]) for p in playlists]
 
     def get_current_user(self) -> UserData:
