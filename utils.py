@@ -1,10 +1,9 @@
+import logging
+import os
+from typing import Union
+
 import coloredlogs
 import emoji
-import os
-import logging
-import re
-
-from typing import Union
 
 
 def get_log_level(level: Union[int, str] = None) -> int:
@@ -86,7 +85,7 @@ def get_logger(name: str, root_stdout_level=None, module_stdout_level=None) -> l
 
 def simplify_string(text: str) -> str:
     """Simplify a string: lowercase, and no emojis"""
-    text = emoji.get_emoji_regexp().sub(u'', text)
+    text = emoji.get_emoji_regexp().sub(u"", text)
     text = text.lower()
     text = text.rstrip(" ")
     text = text.replace("'", "")

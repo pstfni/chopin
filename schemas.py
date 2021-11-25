@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Optional
+
 from pydantic import confloat
 
 
@@ -15,6 +16,7 @@ class UserData:
     name: str
     id: str
     uri: str
+
 
 @dataclass
 class TrackFeaturesData:
