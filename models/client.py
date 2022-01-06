@@ -1,7 +1,7 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-from models.config import CONFIG
+from models import CONFIG
 
 
 class SpotifyClient:
@@ -15,4 +15,5 @@ class SpotifyClient:
         self.client = spotipy.Spotify(auth_manager=auth_manager)
 
     def get_client(self) -> spotipy.Spotify:
+        print(self.client.auth_manager._redirect_uri)
         return self.client

@@ -2,7 +2,6 @@ from typing import Dict, List
 
 import spotipy
 
-from models.playlist import Playlist
 from schemas import PlaylistData, UserData
 from utils import get_logger, simplify_string
 
@@ -18,9 +17,7 @@ class User:
 
     def create_playlist(self, name: str, description: str = "Randomly generated playlist"):
         playlist = self.client.user_playlist_create(user=self.user.id, name=name, description=description)
-        return Playlist(
-            spotify_client=self.client, playlist_data=PlaylistData(name=playlist["name"], uri=playlist["uri"])
-        )
+        return PlaylistData(name=playlist["name"], uri=playlist["uri"])
 
     def get_user_playlists(self) -> List[PlaylistData]:
         playlists = self.client.current_user_playlists()["items"]

@@ -1,0 +1,8 @@
+setuptools~=57.0.0
+ruamel.yaml==0.17.17
+spotipy==2.19.0
+python-dotenv==0.19.2
+pydantic==1.8.2
+emoji==1.6.1
+coloredlogs==15.0.1
+jupyterlab
