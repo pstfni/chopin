@@ -1,19 +1,24 @@
-from typing import Any, Dict, Optional, List
+import random
+from typing import Any, Dict, List, Optional
 
 import spotipy
-import random
 
-from schemas import PlaylistData
+from schemas import PlaylistData, TrackData
 from utils import get_logger
 
 logger = get_logger(__name__)
+TRACK_FIELDS = (
+    "total, items.track.id, items.track.name, items.track.uri, items.track.duration_ms, items.track.popularity,"
+    "items.track.album.uri, items.track.album.name, items.track.album.release_date, "
+    "items.track.artists.uri, items.track.artists.name"
+)
 
 
 class PlaylistManager:
     def __init__(self, client: spotipy.Spotify):
         self.client = client
 
-    def get_tracks(self, uri: str) -> List[str]:
+    def get_tracks(self, uri: str) -> List[TrackData]:
         """
         Get tracks of a given playlist
         Args:
@@ -22,39 +27,43 @@ class PlaylistManager:
         Returns:
         A list of track uuids.
         """
-        # todo: return TrackData
         offset: int = 0
-        tracks: List[str] = []
+        tracks: List[TrackData] = []
         response: Dict[str, Any] = {"response": []}
 
         while response:
             response = self.client.playlist_items(
-                uri, offset=offset, fields="items.track.id,total", additional_types=["track"]
+                uri,
+                offset=offset,
+                fields=TRACK_FIELDS,
+                additional_types=["track"],
             )
             offset += len(response["items"])
-            response_tracks = [r["track"]["id"] for r in response["items"]]
+            response_tracks = [TrackData.parse_obj(r["track"]) for r in response["items"]]
             tracks.extend(response_tracks)
 
             if len(response["items"]) == 0:
                 break
         return tracks
 
-    def fill(self, uri: str, tracks: List[str]):
+    def fill(self, uri: str, tracks: List[TrackData]):
         """
         Fill a playlist
         Args:
             uri: uri of the playlist to fill
-            tracks: List of track uuids to add to the playlisy
+            tracks: List of track uuids to add to the playlist
 
         Returns:
 
         """
-        paginated_tracks = [tracks[i: i + 99] for i in range(0, len(tracks), 99)]
+        track_ids = [track.id for track in tracks]
+        paginated_tracks = [track_ids[i : i + 99] for i in range(0, len(track_ids), 99)]
         for page_tracks in paginated_tracks:
             self.client.playlist_add_items(uri, page_tracks)
 
-    def compose(self, playlists: List[PlaylistData], nb_songs: int = 300, mapping_value: Optional[Dict[str, int]] = None
-    ) -> List[str]:
+    def compose(
+        self, playlists: List[PlaylistData], nb_songs: int = 300, mapping_value: Optional[Dict[str, int]] = None
+    ) -> List[TrackData]:
         """
         Compose a playlist from a list of playlists
         Args:
@@ -76,8 +85,6 @@ class PlaylistManager:
             target_tracks.extend(random.sample(playlist_tracks, nb_tracks_to_add))
         return list(set(target_tracks))
 
-
-#### Utilities functions
 
 def get_playlist_value(name: str, value_mapping: Dict[str, int]) -> int:
     if value_mapping is None:

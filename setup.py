@@ -5,6 +5,7 @@ setuptools.setup(
     entry_points={
         "console_scripts": [
             "composer=entrypoints.composer:main",
+            "describer=entrypoints.describer:main",
         ]
     },
 )

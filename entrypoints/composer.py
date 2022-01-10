@@ -1,24 +1,14 @@
 import argparse
 from pathlib import Path
-from typing import List
 
 from ruamel.yaml import safe_load
 
 from models.client import SpotifyClient
 from models.playlist import PlaylistManager
 from models.user import User
-from schemas import PlaylistData
 from utils import get_logger
 
 logger = get_logger(__name__)
-
-
-def retrieve_playlists(user: User) -> List[PlaylistData]:
-    playlists = user.get_user_playlists()
-    return playlists
-
-
-
 
 
 def main():
@@ -40,11 +30,11 @@ def main():
     client = SpotifyClient().get_client()
     playlist_manager = PlaylistManager(client)
     user = User(client)
-    user_playlists = retrieve_playlists(user)
+    user_playlists = user.get_user_playlists()
     playlist = user.create_playlist(name=ARGS["name"])
-    playlist_tracks = playlist_manager.compose(user_playlists,
-                                               nb_songs=ARGS["nb_songs"],
-                                               mapping_value=playlist_values_dict)
+    playlist_tracks = playlist_manager.compose(
+        user_playlists, nb_songs=ARGS["nb_songs"], mapping_value=playlist_values_dict
+    )
 
     playlist_manager.fill(uri=playlist.uri, tracks=playlist_tracks)
 
