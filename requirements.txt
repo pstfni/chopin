@@ -6,3 +6,8 @@ pydantic==1.8.2
 emoji==1.6.1
 coloredlogs==15.0.1
 jupyterlab
+
+
+# Notebooks
+pandas==1.3.5
+scikit-learn==1.0.2
