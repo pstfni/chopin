@@ -5,7 +5,7 @@ from ruamel.yaml import safe_load
 
 from models.client import SpotifyClient
 from models.playlist import PlaylistManager
-from models.user import User
+from models.user import UserManager
 from utils import get_logger
 
 logger = get_logger(__name__)
@@ -29,7 +29,7 @@ def main():
 
     client = SpotifyClient().get_client()
     playlist_manager = PlaylistManager(client)
-    user = User(client)
+    user = UserManager(client)
     user_playlists = user.get_user_playlists()
     playlist = user.create_playlist(name=ARGS["name"])
     playlist_tracks = playlist_manager.compose(

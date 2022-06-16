@@ -4,7 +4,7 @@ from pathlib import Path
 from models.client import SpotifyClient
 from models.playlist import PlaylistManager
 from models.track import TrackManager
-from models.user import User
+from models.user import UserManager
 from utils import get_logger
 
 logger = get_logger(__name__)
@@ -26,7 +26,7 @@ def main():
     client = SpotifyClient().get_client()
     playlist_manager = PlaylistManager(client)
     track_manager = TrackManager(client)
-    user = User(client)
+    user = UserManager(client)
 
     user_playlists = user.get_user_playlists()
     if playlist_name:

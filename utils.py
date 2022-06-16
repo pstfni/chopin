@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Union
+from typing import Any, Dict, List, Union
 
 import coloredlogs
 import emoji
@@ -85,8 +85,42 @@ def get_logger(name: str, root_stdout_level=None, module_stdout_level=None) -> l
 
 def simplify_string(text: str) -> str:
     """Simplify a string: lowercase, and no emojis"""
-    text = emoji.get_emoji_regexp().sub(u"", text)
+    text = emoji.get_emoji_regexp().sub("", text)
     text = text.lower()
     text = text.rstrip(" ")
+    text = text.lstrip(" ")
     text = text.replace("'", "")
     return text
+
+
+def flatten_list(iterable: List[List[Any]]) -> List[Any]:
+    """Flatten a list of lists, in a single list"""
+    return [item for sublist in iterable for item in sublist]
+
+
+def flatten_dict(dictionary: Dict) -> Dict:
+    """Flatten a dictionary with potential nested dictionaries, into a single dictionary. For example:
+
+    {'my_key': 'my_value',
+     'a_nested_dict':
+        {'my_key': 'my_value',
+         'version': '1'
+         }
+    }
+
+    will become:
+
+    {'my_key': 'my_value',
+     'a_nested_dict.my_key' : 'my_value',
+     'a_nested_dict.version': '1'
+    }
+
+    """
+    final_dict = {}
+    for key, value in dictionary.items():
+        if isinstance(value, dict):
+            for sub_key, sub_value in value.items():
+                final_dict[f"{key}.{sub_key}"] = sub_value
+        else:
+            final_dict[key] = value
+    return final_dict

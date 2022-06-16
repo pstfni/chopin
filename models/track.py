@@ -2,8 +2,12 @@ import json
 from pathlib import Path
 from typing import List
 
+import numpy as np
+import pandas as pd
 import spotipy
 from pydantic.json import pydantic_encoder
+from sklearn.manifold import TSNE
+from sklearn.preprocessing import StandardScaler
 
 from schemas import TrackData, TrackFeaturesData
 from utils import get_logger
@@ -31,6 +35,10 @@ class TrackManager:
                 page_tracks[i].features = TrackFeaturesData.parse_obj(audio_features[i])
         return tracks
 
+    def save_tracks(self, tracks: List[TrackData]):
+        track_uris = [track.uri for track in tracks]
+        self.client.current_user_saved_tracks_add(track_uris)
+
     def dump(self, tracks: List[TrackData], filepath: Path):
         """
         Dump a list of track in a JSON format
@@ -41,3 +49,20 @@ class TrackManager:
         json_str = json.dumps(tracks, default=pydantic_encoder)
         with open(filepath, "w") as f:
             f.write(json_str)
+
+    @staticmethod
+    def compute_tsne(tracks: List[TrackData]) -> np.ndarray:
+        """
+        Compute TSNE over the track data, using their features.
+
+        Args:
+            tracks: A list of tracks. Beware, features should have already been fetched (using `set_audio_features` for example)
+
+        Returns:
+            2D projection of the tracks
+        """
+        tracks_features = [track.features.dict() for track in tracks]
+        tracks_features = pd.DataFrame.from_records(tracks_features)
+        tracks_features = tracks_features.drop("analysis_url", axis=1)
+        scaled_features = StandardScaler().fit_transform(tracks_features)
+        return TSNE(n_components=2, learning_rate="auto", init="random").fit_transform(scaled_features)

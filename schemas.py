@@ -4,6 +4,8 @@ from typing import List, Optional
 
 from pydantic import BaseModel, validator
 
+from utils import flatten_dict
+
 
 @dataclass
 class PlaylistData:
@@ -39,10 +41,11 @@ class TrackFeaturesData(BaseModel):
 
 class AlbumData(BaseModel):
     name: str
+    id: str
     uri: str
     release_date: date
 
-    @validator("release_date", pre=True)
+    @validator("release_date", pre=True, allow_reuse=True)
     def parse_release_date(cls, v):
         if isinstance(v, str):
             if len(v) == 10:
@@ -60,7 +63,9 @@ class AlbumData(BaseModel):
 
 class ArtistData(BaseModel):
     name: str
+    id: str
     uri: str
+    genres: Optional[List[str]]
 
     class Config:
         extra = "ignore"
@@ -75,3 +80,8 @@ class TrackData(BaseModel):
     album: Optional[AlbumData] = None
     artists: Optional[List[ArtistData]] = None
     features: Optional[TrackFeaturesData] = None
+
+    def to_flatten_dict(self):
+        if isinstance(self.artists, list):
+            self.artists = self.artists[0]
+        return flatten_dict(self.dict())

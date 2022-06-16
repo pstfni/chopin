@@ -2,13 +2,13 @@ from typing import Dict, List
 
 import spotipy
 
-from schemas import PlaylistData, UserData
+from schemas import ArtistData, PlaylistData, TrackData, UserData
 from utils import get_logger, simplify_string
 
 logger = get_logger(__name__)
 
 
-class User:
+class UserManager:
     def __init__(self, spotify_client: spotipy.Spotify):
         self.client = spotify_client
         user = spotify_client.current_user()
@@ -25,6 +25,22 @@ class User:
 
     def get_current_user(self) -> UserData:
         return self.user
+
+    def get_hot_artists(self) -> List[ArtistData]:
+        response = self.client.current_user_top_artists(limit=50, time_range="short_term")["items"]
+        return [ArtistData(**artist) for artist in response]
+
+    def get_hot_tracks(self) -> List[TrackData]:
+        response = self.client.current_user_top_tracks(limit=50, time_range="short_term")["items"]
+        return [TrackData(**track) for track in response]
+
+    def get_top_artists(self) -> List[ArtistData]:
+        response = self.client.current_user_top_artists(limit=50, time_range="long_term")["items"]
+        return [ArtistData(**artist) for artist in response]
+
+    def get_top_tracks(self) -> List[TrackData]:
+        response = self.client.current_user_top_tracks(limit=50, time_range="long_term")["items"]
+        return [TrackData(**track) for track in response]
 
     def feed_mapping_values(self, mapping_value_dict: Dict[str, int]):
         self.value_mapping = mapping_value_dict
