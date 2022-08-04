@@ -1,9 +1,9 @@
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 import spotipy
 
-from schemas import ArtistData, PlaylistData, TrackData, UserData
-from utils import get_logger, simplify_string
+from schemas import TrackData
+from utils import get_logger
 
 logger = get_logger(__name__)
 

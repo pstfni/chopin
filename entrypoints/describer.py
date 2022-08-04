@@ -11,7 +11,7 @@ logger = get_logger(__name__)
 
 
 def main():
-    """Retrieve data from a playlist and describe it"""
+    """Retrieve data from a playlist and describe it."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--name", "-n", default=None, type=str, help="Name of the playlist to fetch")
     parser.add_argument("--output", "-o", type=Path, help="Output directory to describe the playlist")

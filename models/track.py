@@ -52,11 +52,13 @@ class TrackManager:
 
     @staticmethod
     def compute_tsne(tracks: List[TrackData]) -> np.ndarray:
-        """
-        Compute TSNE over the track data, using their features.
+        """Compute TSNE over the track data, using their features.
 
         Args:
-            tracks: A list of tracks. Beware, features should have already been fetched (using `set_audio_features` for example)
+            tracks: A list of tracks.
+
+        !!! warning ""
+            Features should have already been fetched (using `set_audio_features` for example)
 
         Returns:
             2D projection of the tracks

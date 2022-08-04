@@ -1,11 +1,11 @@
-""" Ideas
+"""Ideas.
 
 streamlit user dashboard
 """
 
 import random
 from collections import Counter
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import List, Tuple
 
 import pandas as pd
 import plotly.express as px
@@ -32,8 +32,7 @@ track_manager = TrackManager(client)
 
 @st.cache(allow_output_mutation=True)
 def load_hot_data() -> Tuple[UserData, List[TrackData], List[ArtistData]]:
-    """
-    Load the "hot" data (user, tracks, and artists) that will be used for the streamlit dashboard
+    """Load the "hot" data (user, tracks, and artists) that will be used for the streamlit dashboard.
 
     Returns:
         A tuple: user, track, and artist data
@@ -47,9 +46,7 @@ def load_hot_data() -> Tuple[UserData, List[TrackData], List[ArtistData]]:
 
 @st.cache(allow_output_mutation=True)
 def load_top_data() -> Tuple[UserData, List[TrackData], List[ArtistData]]:
-    """
-    Load the "top" data (user, tracks and artists.
-    """
+    """Load the "top" data (user, tracks and artists."""
     current_user = user_manager.get_current_user()
     tracks: List[TrackData] = user_manager.get_top_tracks()
     tracks = track_manager.set_audio_features(tracks)
@@ -59,14 +56,14 @@ def load_top_data() -> Tuple[UserData, List[TrackData], List[ArtistData]]:
 
 # 🎢 Streamlit page
 st.set_page_config(layout="wide", page_title="Dashboard", page_icon=":headphone:")
-st.title(f"Spotify User dashboard")
+st.title("Spotify User dashboard")
 hot_filter = st.sidebar.radio("View statistics and recommendation for hot or top artists", ("Hot", "Top"))
 if hot_filter == "Hot":
     username, tracks, artists = load_hot_data()
 else:
     username, tracks, artists = load_top_data()
 
-## 🧭 Recommendation
+# 🧭 Recommendation
 artists_recommendation_seed: List[str] = [artist.id for artist in artists]
 artists_recommendation_seed = random.sample(artists_recommendation_seed, 5)
 artists_based_recommendations = recommendation_manager.get_recommendations(10, seed_artists=artists_recommendation_seed)
@@ -80,10 +77,10 @@ genres_recommendation_seed = [tup[0] for tup in Counter(genres).most_common(5)]
 genre_based_recommendations = recommendation_manager.get_recommendations(10, seed_genres=genres_recommendation_seed)
 
 
-## 🎨 Feature visualization
+# 🎨 Feature visualization
 tsne_features = TrackManager.compute_tsne(tracks)
 
-## 📊 Displaying everything
+# 📊 Displaying everything
 st.header(f"{hot_filter} tracks")
 tracks_df = pd.DataFrame.from_records([track.to_flatten_dict() for track in tracks], columns=TRACKS_DISPLAY_COLUMNS)
 st.dataframe(tracks_df.style.bar(subset="popularity", color="#97D5AB"))

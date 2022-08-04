@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 
 
 def main():
-    """Compose a playlist from existing ones"""
+    """Compose a playlist from existing ones."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--nb_songs", "-nb", type=int, default=300, help="Number of songs for the new playlist")
     parser.add_argument("--name", "-n", type=str, default="Robot Mix 🤖", help="Name for your playlist")

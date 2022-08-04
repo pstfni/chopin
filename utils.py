@@ -7,8 +7,9 @@ import emoji
 
 
 def get_log_level(level: Union[int, str] = None) -> int:
-    """Return the logging level in the following order.
-    Log level can bet the following you can use them either as a string or as integer:
+    """Return the logging level in the following order. Log level can bet the following you can use them either as a
+    string or as integer:
+
     - CRITICAL = 50
     - FATAL = 50
     - ERROR = 40
@@ -48,6 +49,7 @@ def get_log_level(level: Union[int, str] = None) -> int:
 
 def get_logger(name: str, root_stdout_level=None, module_stdout_level=None) -> logging.Logger:
     """Setup the logger and returns the requested `name` logger.
+
     Setup root logger as a colored logger on stdout.
     This root logger is supposed to gather all logging propagated by specific
     loggers and show them in the console.
@@ -84,7 +86,7 @@ def get_logger(name: str, root_stdout_level=None, module_stdout_level=None) -> l
 
 
 def simplify_string(text: str) -> str:
-    """Simplify a string: lowercase, and no emojis"""
+    """Simplify a string: lowercase, and no emojis."""
     text = emoji.get_emoji_regexp().sub("", text)
     text = text.lower()
     text = text.rstrip(" ")
@@ -96,7 +98,7 @@ def simplify_string(text: str) -> str:
 
 
 def flatten_list(iterable: List[List[Any]]) -> List[Any]:
-    """Flatten a list of lists, in a single list"""
+    """Flatten a list of lists, in a single list."""
     return [item for sublist in iterable for item in sublist]
 
 
@@ -116,7 +118,6 @@ def flatten_dict(dictionary: Dict) -> Dict:
      'a_nested_dict.my_key' : 'my_value',
      'a_nested_dict.version': '1'
     }
-
     """
     final_dict = {}
     for key, value in dictionary.items():
