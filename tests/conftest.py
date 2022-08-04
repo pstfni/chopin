@@ -46,8 +46,10 @@ def playlist_2():
     return PlaylistData(name="q", id="id_q", uri="spotify:playlist:id_q")
 
 
+# Fixtures for values expected to be returned by the Spotify API.
+# Taken straight from their documentation https://developer.spotify.com/documentation/web-api/reference
 @pytest.fixture
-def audio_feature():
+def spotify_audio_feature():
     return {
         "acousticness": 0.00242,
         "analysis_url": "https://api.spotify.com/v1/audio-analysis/2takcwOaAZWiXQijPHIx7B\n",
@@ -67,4 +69,62 @@ def audio_feature():
         "type": "audio_features",
         "uri": "spotify:track:2takcwOaAZWiXQijPHIx7B",
         "valence": 0.428,
+    }
+
+
+@pytest.fixture
+def spotify_playlist():
+    return {
+        "collaborative": True,
+        "description": "string",
+        "external_urls": {"spotify": "string"},
+        "followers": {"href": "string", "total": 0},
+        "href": "string",
+        "id": "string",
+        "images": [
+            {"url": "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228\n", "height": 300, "width": 300}
+        ],
+        "name": "string",
+        "owner": {
+            "external_urls": {"spotify": "string"},
+            "followers": {"href": "string", "total": 0},
+            "href": "string",
+            "id": "string",
+            "type": "user",
+            "uri": "string",
+            "display_name": "string",
+        },
+        "public": True,
+        "snapshot_id": "string",
+        "tracks": {
+            "href": "https://api.spotify.com/v1/me/shows?offset=0&limit=20\n",
+            "items": [{}],
+            "limit": 20,
+            "next": "https://api.spotify.com/v1/me/shows?offset=1&limit=1",
+            "offset": 0,
+            "previous": "https://api.spotify.com/v1/me/shows?offset=1&limit=1",
+            "total": 4,
+        },
+        "type": "string",
+        "uri": "string",
+    }
+
+
+@pytest.fixture
+def spotify_user():
+    return {
+        "country": "string",
+        "display_name": "string",
+        "email": "string",
+        "explicit_content": {"filter_enabled": True, "filter_locked": True},
+        "external_urls": {"spotify": "string"},
+        "followers": {"href": "string", "total": 0},
+        "href": "string",
+        "id": "string",
+        "images": [
+            {"url": "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228\n", "height": 300, "width": 300}
+        ],
+        "product": "string",
+        "type": "string",
+        "uri": "string",
     }
