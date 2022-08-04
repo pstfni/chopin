@@ -9,7 +9,7 @@ from tests.conftest import spotify_audio_feature
 
 
 def side_effect_audio_features(tracks):
-    return [spotify_audio_feature for _ in range(len(tracks))]
+    return [spotify_audio_feature() for _ in range(len(tracks))]
 
 
 @pytest.mark.parametrize("nb_tracks", [0, 4, 120])
@@ -40,7 +40,7 @@ def test_dump(tmp_path, playlist_1_tracks):
     track_manager.dump(playlist_1_tracks, filepath=tmp_path / "tracks.json")
 
 
-def test_compute_tsne(spotify_audio_feature):
+def test_compute_tsne():
     track_manager = TrackManager(None)
     track = TrackData(
         name="test_track",
@@ -48,7 +48,7 @@ def test_compute_tsne(spotify_audio_feature):
         uri="spotify:track:id",
         duration_ms=1000,
         popularity=50,
-        features=TrackFeaturesData.parse_obj(spotify_audio_feature),
+        features=TrackFeaturesData.parse_obj(spotify_audio_feature()),
     )
     track_manager.compute_tsne([track, track])
 

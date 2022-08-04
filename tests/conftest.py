@@ -48,7 +48,6 @@ def playlist_2():
 
 # Fixtures for values expected to be returned by the Spotify API.
 # Taken straight from their documentation https://developer.spotify.com/documentation/web-api/reference
-@pytest.fixture
 def spotify_audio_feature():
     return {
         "acousticness": 0.00242,
@@ -72,7 +71,6 @@ def spotify_audio_feature():
     }
 
 
-@pytest.fixture
 def spotify_playlist():
     return {
         "collaborative": True,
@@ -110,7 +108,6 @@ def spotify_playlist():
     }
 
 
-@pytest.fixture
 def spotify_user():
     return {
         "country": "string",
@@ -127,4 +124,78 @@ def spotify_user():
         "product": "string",
         "type": "string",
         "uri": "string",
+    }
+
+
+def spotify_track():
+    return {
+        "album": {
+            "album_type": "compilation",
+            "total_tracks": 9,
+            "available_markets": ["CA", "BR", "IT"],
+            "external_urls": {"spotify": "string"},
+            "href": "string",
+            "id": "2up3OPMp9Tb4dAKM2erWXQ",
+            "images": [
+                {
+                    "url": "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228\n",
+                    "height": 300,
+                    "width": 300,
+                }
+            ],
+            "name": "string",
+            "release_date": "1981-12",
+            "release_date_precision": "year",
+            "restrictions": {"reason": "market"},
+            "type": "album",
+            "uri": "spotify:album:2up3OPMp9Tb4dAKM2erWXQ",
+            "album_group": "compilation",
+            "artists": [
+                {
+                    "external_urls": {"spotify": "string"},
+                    "href": "string",
+                    "id": "string",
+                    "name": "string",
+                    "type": "artist",
+                    "uri": "string",
+                }
+            ],
+        },
+        "artists": [
+            {
+                "external_urls": {"spotify": "string"},
+                "followers": {"href": "string", "total": 0},
+                "genres": ["Prog rock", "Grunge"],
+                "href": "string",
+                "id": "string",
+                "images": [
+                    {
+                        "url": "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228\n",
+                        "height": 300,
+                        "width": 300,
+                    }
+                ],
+                "name": "string",
+                "popularity": 0,
+                "type": "artist",
+                "uri": "string",
+            }
+        ],
+        "available_markets": ["string"],
+        "disc_number": 0,
+        "duration_ms": 0,
+        "explicit": True,
+        "external_ids": {"isrc": "string", "ean": "string", "upc": "string"},
+        "external_urls": {"spotify": "string"},
+        "href": "string",
+        "id": "string",
+        "is_playable": True,
+        "restrictions": {"reason": "string"},
+        "name": "string",
+        "popularity": 0,
+        "preview_url": "string",
+        "track_number": 0,
+        "type": "string",
+        "uri": "string",
+        "is_local": True,
     }
