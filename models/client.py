@@ -15,5 +15,4 @@ class SpotifyClient:
         self.client = spotipy.Spotify(auth_manager=auth_manager)
 
     def get_client(self) -> spotipy.Spotify:
-        print(self.client.auth_manager._redirect_uri)
         return self.client

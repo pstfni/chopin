@@ -62,7 +62,7 @@ class PlaylistManager:
             self.client.playlist_add_items(uri, page_tracks)
 
     def compose(
-        self, playlists: List[PlaylistData], nb_songs: int = 300, mapping_value: Optional[Dict[str, int]] = None
+        self, playlists: List[PlaylistData], nb_songs: int = 300, mapping_value: Optional[Dict[str, float]] = None
     ) -> List[TrackData]:
         """
         Compose a playlist from a list of playlists
@@ -75,7 +75,7 @@ class PlaylistManager:
         Returns:
             A list of track ids.
         """
-        default_nb_songs = int(nb_songs / len(playlists))
+        default_nb_songs = int(nb_songs / max(len(playlists), 1))
         target_tracks = []
         for playlist in playlists:
             playlist_tracks = self.get_tracks(playlist.uri)
@@ -86,7 +86,7 @@ class PlaylistManager:
         return target_tracks
 
 
-def get_playlist_value(name: str, value_mapping: Dict[str, int]) -> int:
+def get_playlist_value(name: str, value_mapping: Dict[str, float]) -> float:
     if value_mapping is None:
         return 1
     else:
