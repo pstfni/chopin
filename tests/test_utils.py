@@ -1,6 +1,6 @@
 import pytest
 
-from utils import flatten_dict, flatten_list
+from utils import flatten_dict, flatten_list, simplify_string
 
 
 @pytest.mark.parametrize(
@@ -34,3 +34,29 @@ def test_flatten_dict(in_dictionary, expected_dictionary):
 def test_flatten_list(in_list, expected_list):
     out_list = flatten_list(in_list)
     assert out_list == expected_list
+
+
+@pytest.mark.parametrize(
+    "input_string, expected_string",
+    [
+        # empty string
+        ("", ""),
+        # simple string
+        ("simple string", "simplestring"),
+        # String with emojis
+        ("string with 🐒", "stringwith"),
+        # Uppercase
+        ("String", "string"),
+        # Trailing characters
+        ("     string    ", "string"),
+        # & characters are replaced by _. ' characters are ignored.
+        ("string & ol'string", "string_olstring"),
+        # Real Life scenario
+        ("🎤Rock 60's", "rock60s"),
+        # Real Life scenario #2
+        ("🧢Hip-Hop & Rap", "hip-hop_rap"),
+    ],
+)
+def test_simplify_string(input_string, expected_string):
+    output_string = simplify_string(input_string)
+    assert output_string == expected_string
