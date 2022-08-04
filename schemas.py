@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from datetime import date, datetime
 from typing import List, Optional
 
@@ -7,15 +6,13 @@ from pydantic import BaseModel, validator
 from utils import flatten_dict
 
 
-@dataclass
-class PlaylistData:
+class PlaylistData(BaseModel):
     name: str
     uri: str
     value: Optional[float] = 1
 
 
-@dataclass
-class UserData:
+class UserData(BaseModel):
     name: str
     id: str
     uri: str
