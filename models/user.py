@@ -20,7 +20,7 @@ class UserManager:
         return PlaylistData(name=playlist["name"], uri=playlist["uri"])
 
     def get_user_playlists(self) -> List[PlaylistData]:
-        playlists = self.client.current_user_playlists()["items"]
+        playlists = self.client.current_user_playlists().get("items", [])
         return [PlaylistData(name=simplify_string(p["name"]), uri=p["uri"]) for p in playlists]
 
     def get_current_user(self) -> UserData:

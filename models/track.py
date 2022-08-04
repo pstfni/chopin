@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import List
+from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
@@ -19,7 +19,7 @@ class TrackManager:
     def __init__(self, spotify_client: spotipy.Spotify):
         self.client = spotify_client
 
-    def get_audio_features(self, uris: List[str]) -> List[TrackFeaturesData]:
+    def get_audio_features(self, uris: List[str]) -> List[Dict[str, Any]]:
         audio_features: List[TrackFeaturesData] = []
         paginated_uris = [uris[i : i + 99] for i in range(0, len(uris), 99)]
         for page_uris in paginated_uris:
@@ -62,8 +62,14 @@ class TrackManager:
 
         Returns:
             2D projection of the tracks
+
+        Raises:
+            ValueError: if there are not enough tracks for the TSNE computation. >=2 tracks are needed
         """
-        tracks_features = [track.features.dict() for track in tracks]
+        tracks_features = [track.features.dict() for track in tracks if track.features]
+        if len(tracks_features) < 2:
+            raise ValueError("Not enough track features available to compute the TSNE.")
+
         tracks_features = pd.DataFrame.from_records(tracks_features)
         tracks_features = tracks_features.drop("analysis_url", axis=1)
         scaled_features = StandardScaler().fit_transform(tracks_features)
