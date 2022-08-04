@@ -64,8 +64,11 @@ class PlaylistManager:
     def compose(
         self, playlists: List[PlaylistData], nb_songs: int = 300, mapping_value: Optional[Dict[str, float]] = None
     ) -> List[TrackData]:
-        """
-        Compose a playlist from a list of playlists
+        """Compose a playlist from a list of playlists.
+
+        TODO: Improve this function by using the default nb songs or a number of songs per playlists.
+            The latter could be computed with mapping value keys x user playlist names.
+
         Args:
             playlists: Playlists to pick from
             nb_songs: Target number of songs
