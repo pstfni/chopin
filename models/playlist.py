@@ -10,7 +10,7 @@ logger = get_logger(__name__)
 TRACK_FIELDS = (
     "total, items.track.id, items.track.name, items.track.uri, items.track.duration_ms, items.track.popularity,"
     "items.track.album.uri, items.track.album.name, items.track.album.release_date, items.track.album.id,"
-    "items.track.artists.uri, items.track.artists.name, items.track.artists.id"
+    "items.track.artists.uri, items.track.artists.name, items.track.artists.id, items.track.artists.genre"
 )
 
 
@@ -65,9 +65,6 @@ class PlaylistManager:
         self, playlists: List[PlaylistData], nb_songs: int = 300, mapping_value: Optional[Dict[str, float]] = None
     ) -> List[TrackData]:
         """Compose a playlist from a list of playlists.
-
-        TODO: Improve this function by using the default nb songs or a number of songs per playlists.
-            The latter could be computed with mapping value keys x user playlist names.
 
         Args:
             playlists: Playlists to pick from
