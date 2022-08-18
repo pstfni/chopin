@@ -1,7 +1,9 @@
 import random
 from typing import Any, Dict, List, Optional
 
+import numpy as np
 import spotipy
+from tqdm import tqdm
 
 from schemas import PlaylistData, TrackData
 from utils import get_logger
@@ -47,14 +49,11 @@ class PlaylistManager:
         return tracks
 
     def fill(self, uri: str, tracks: List[TrackData]):
-        """
-        Fill a playlist
+        """Fill a playlist.
+
         Args:
             uri: uri of the playlist to fill
             tracks: List of track uuids to add to the playlist
-
-        Returns:
-
         """
         track_ids = list(set([track.id for track in tracks]))
         paginated_tracks = [track_ids[i : i + 99] for i in range(0, len(track_ids), 99)]
@@ -75,23 +74,46 @@ class PlaylistManager:
         Returns:
             A list of track ids.
         """
+        if not playlists:
+            return []
+
+        if mapping_value:
+            playlist_weights = np.array([get_playlist_value(playlist.name, mapping_value) for playlist in playlists])
+        else:
+            playlist_weights = np.ones(len(playlists))
+
+        # normalize the values between [0.5, 1.5]
+        denominator = np.max(playlist_weights) - np.min(playlist_weights)
+        playlist_weights = (
+            0.5 + (playlist_weights - np.min(playlist_weights)) / denominator
+            if denominator != 0
+            else np.where(playlist_weights > 0, 1, 0)
+        )
+
         default_nb_songs = int(nb_songs / max(len(playlists), 1))
         target_tracks = []
-        for playlist in playlists:
+        for playlist, weight in tqdm(zip(playlists, playlist_weights), total=len(playlists)):
             playlist_tracks = self.get_tracks(playlist.uri)
-            playlist_value = get_playlist_value(playlist.name, mapping_value)
-
-            nb_tracks_to_add = min(int(default_nb_songs * playlist_value), len(playlist_tracks))
+            nb_tracks_to_add = min(int(default_nb_songs * weight), len(playlist_tracks))
             target_tracks.extend(random.sample(playlist_tracks, nb_tracks_to_add))
         return target_tracks
 
 
 def get_playlist_value(name: str, value_mapping: Dict[str, float]) -> float:
-    if value_mapping is None:
-        return 1
-    else:
-        try:
-            return value_mapping[name]
-        except KeyError:
-            logger.warning(f"Warning: {name} not found in the mapping given, will default to a value of 0")
-            return 0
+    """From a value_mapping dictionary, returns the value of a given playlist name.
+
+    Args:
+        name: The name of the playlist
+        value_mapping: A dictionary containing a float value for each playlist name.
+
+    !!! note ""
+        If the given name is not in the playlist, the value returned will be 0. A warning is also raised.
+
+    Returns:
+        The value of the playlist _name_.
+    """
+    try:
+        return value_mapping[name]
+    except KeyError:
+        logger.warning(f"Warning: {name} not found in the mapping given, will default to a value of 0")
+        return 0

@@ -1,6 +1,8 @@
 from unittest.mock import patch
 
-from models.playlist import PlaylistManager
+import pytest
+
+from models.playlist import PlaylistManager, get_playlist_value
 
 
 @patch("models.playlist.PlaylistManager.get_tracks")
@@ -35,3 +37,21 @@ def test_playlist_compose_with_empty_playlists(mock_get_tracks, playlist_1_track
 
     tracks = playlist_manager.compose(playlists=[], nb_songs=20)
     assert len(tracks) == 0
+
+
+@pytest.mark.parametrize(
+    "name, mapping, expected",
+    [
+        # standard case
+        ("playlist", {"playlist": 1}, 1),
+        # multiple playlists in the mapping
+        ("playlist", {"playlist": 1, "other": 2}, 1),
+        # name not in the mapping
+        ("playlist", {"other": 2}, 0),
+        # empty mapping
+        ("playlist", {}, 0),
+    ],
+)
+def test_get_playlist_value(name, mapping, expected):
+    output = get_playlist_value(name, mapping)
+    assert output == expected

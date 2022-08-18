@@ -48,29 +48,7 @@ def playlist_2():
 
 # Fixtures for values expected to be returned by the Spotify API.
 # Taken straight from their documentation https://developer.spotify.com/documentation/web-api/reference
-def spotify_audio_feature():
-    return {
-        "acousticness": 0.00242,
-        "analysis_url": "https://api.spotify.com/v1/audio-analysis/2takcwOaAZWiXQijPHIx7B\n",
-        "danceability": 0.585,
-        "duration_ms": 237040,
-        "energy": 0.842,
-        "id": "2takcwOaAZWiXQijPHIx7B",
-        "instrumentalness": 0.00686,
-        "key": 9,
-        "liveness": 0.0866,
-        "loudness": -5.883,
-        "mode": 0,
-        "speechiness": 0.0556,
-        "tempo": 118.211,
-        "time_signature": 4,
-        "track_href": "https://api.spotify.com/v1/tracks/2takcwOaAZWiXQijPHIx7B\n",
-        "type": "audio_features",
-        "uri": "spotify:track:2takcwOaAZWiXQijPHIx7B",
-        "valence": 0.428,
-    }
-
-
+@pytest.fixture
 def spotify_playlist():
     return {
         "collaborative": True,
@@ -108,6 +86,7 @@ def spotify_playlist():
     }
 
 
+@pytest.fixture
 def spotify_user():
     return {
         "country": "string",
@@ -124,6 +103,29 @@ def spotify_user():
         "product": "string",
         "type": "string",
         "uri": "string",
+    }
+
+
+def spotify_audio_feature():
+    return {
+        "acousticness": 0.00242,
+        "analysis_url": "https://api.spotify.com/v1/audio-analysis/2takcwOaAZWiXQijPHIx7B\n",
+        "danceability": 0.585,
+        "duration_ms": 237040,
+        "energy": 0.842,
+        "id": "2takcwOaAZWiXQijPHIx7B",
+        "instrumentalness": 0.00686,
+        "key": 9,
+        "liveness": 0.0866,
+        "loudness": -5.883,
+        "mode": 0,
+        "speechiness": 0.0556,
+        "tempo": 118.211,
+        "time_signature": 4,
+        "track_href": "https://api.spotify.com/v1/tracks/2takcwOaAZWiXQijPHIx7B\n",
+        "type": "audio_features",
+        "uri": "spotify:track:2takcwOaAZWiXQijPHIx7B",
+        "valence": 0.428,
     }
 
 
