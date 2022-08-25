@@ -6,6 +6,7 @@ setuptools.setup(
         "console_scripts": [
             "composer=entrypoints.composer:main",
             "describer=entrypoints.describer:main",
+            "classifier=entrypoints.classifier:main",
         ]
     },
 )

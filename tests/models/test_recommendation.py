@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from spotipy.client import Spotify
 
-from models.recommendation import RecommendationManager
+from managers.recommendation import RecommendationManager
 from schemas import TrackData
 from tests.conftest import spotify_track
 

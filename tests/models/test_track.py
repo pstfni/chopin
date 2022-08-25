@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from spotipy.client import Spotify
 
-from models.track import TrackManager
+from managers.track import TrackManager
 from schemas import TrackData, TrackFeaturesData
 from tests.conftest import spotify_audio_feature
 

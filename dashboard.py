@@ -11,10 +11,10 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-from models.client import SpotifyClient
-from models.recommendation import RecommendationManager
-from models.track import TrackManager
-from models.user import UserManager
+from managers.client import SpotifyClient
+from managers.recommendation import RecommendationManager
+from managers.track import TrackManager
+from managers.user import UserManager
 from schemas import ArtistData, TrackData, UserData
 from utils import flatten_list
 

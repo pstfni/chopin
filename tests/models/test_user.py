@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from spotipy.client import Spotify
 
-from models.user import UserManager
+from managers.user import UserManager
 from schemas import PlaylistData
 
 

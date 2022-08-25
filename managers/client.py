@@ -1,7 +1,7 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-from models import CONFIG
+from managers import CONFIG
 
 
 class SpotifyClient:
@@ -9,7 +9,7 @@ class SpotifyClient:
         auth_manager = SpotifyOAuth(
             client_id=CONFIG["client_id"],
             client_secret=CONFIG["client_secret"],
-            redirect_uri="http://example.com",
+            redirect_uri="http://localhost:8888/callback",
             scope=CONFIG["scope"],
         )
         self.client = spotipy.Spotify(auth_manager=auth_manager)

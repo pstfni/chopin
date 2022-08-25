@@ -78,7 +78,7 @@ class TrackData(BaseModel):
     artists: Optional[List[ArtistData]] = None
     features: Optional[TrackFeaturesData] = None
 
-    def to_flatten_dict(self):
+    def to_flatten_dict(self, **kwargs):
         if isinstance(self.artists, list):
             self.artists = self.artists[0]
-        return flatten_dict(self.dict())
+        return flatten_dict(self.dict(**kwargs))

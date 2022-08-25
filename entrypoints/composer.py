@@ -3,9 +3,9 @@ from pathlib import Path
 
 from ruamel.yaml import safe_load
 
-from models.client import SpotifyClient
-from models.playlist import PlaylistManager
-from models.user import UserManager
+from managers.client import SpotifyClient
+from managers.playlist import PlaylistManager
+from managers.user import UserManager
 from utils import get_logger
 
 logger = get_logger(__name__)
