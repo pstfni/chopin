@@ -42,5 +42,16 @@ class UserManager:
         response = self.client.current_user_top_tracks(limit=50, time_range="long_term")["items"]
         return [TrackData(**track) for track in response]
 
+    def get_likes(self) -> List[TrackData]:
+        offset = 0
+        tracks = []
+        while True:
+            response = self.client.current_user_saved_tracks(limit=20, offset=offset)
+            tracks.extend(response.get("items"))
+            offset += 20
+            if not response.get("next"):
+                break
+        return [TrackData(**track["track"]) for track in tracks]
+
     def feed_mapping_values(self, mapping_value_dict: Dict[str, int]):
         self.value_mapping = mapping_value_dict

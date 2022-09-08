@@ -4,7 +4,7 @@ Module for all things related to the data : parsing, normalization, formatting, 
 import json
 import random
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 
@@ -131,7 +131,13 @@ def create_train_records(playlist_filepaths: List[Path]) -> Tuple[pd.DataFrame, 
     return split_train_test_records(records)
 
 
-def create_inference_records(playlist_filepaths: List[Path]) -> pd.DataFrame:
+def _create_inference_records(tracks: List[Dict[str, Any]]):
+    records = pd.DataFrame().from_records(tracks)
+    records = records.drop(["playlist.name", "split"], axis=1)
+    return records
+
+
+def create_inference_records_from_paths(playlist_filepaths: List[Path]) -> pd.DataFrame:
     """Read a list of playlist, from their paths, and create dataframe records.
 
     Args:
@@ -145,7 +151,18 @@ def create_inference_records(playlist_filepaths: List[Path]) -> pd.DataFrame:
         name, tracks = read_playlist(playlist)
         tracks = [format_records(track, name) for track in tracks]
         all_tracks.extend(tracks)
-    records = pd.DataFrame().from_records(all_tracks)
-    records = normalize_features(records)
-    records = records.drop(["playlist.name", "split"], axis=1)
-    return records
+    return _create_inference_records(all_tracks)
+
+
+def create_inference_records_from_tracks(tracks: List[TrackData], name: Optional[str] = "") -> pd.DataFrame:
+    """Create dataframe records for inference, based on a list of track data.
+
+    Args:
+        tracks: A list of tracks
+        name: Optional name for the records you are classifying.
+
+    Returns:
+        A dataframe ready for inference
+    """
+    tracks = [format_records(track, name) for track in tracks]
+    return _create_inference_records(tracks)
