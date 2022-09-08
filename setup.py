@@ -7,6 +7,7 @@ setuptools.setup(
             "composer=entrypoints.composer:main",
             "describer=entrypoints.describer:main",
             "classifier=entrypoints.classifier:main",
+            "train=entrypoints.train:main",
         ]
     },
 )
