@@ -82,14 +82,6 @@ class PlaylistManager:
         else:
             playlist_weights = np.ones(len(playlists))
 
-        # normalize the values between [0.5, 1.5]
-        denominator = np.max(playlist_weights) - np.min(playlist_weights)
-        playlist_weights = (
-            0.5 + (playlist_weights - np.min(playlist_weights)) / denominator
-            if denominator != 0
-            else np.where(playlist_weights > 0, 1, 0)
-        )
-
         default_nb_songs = int(nb_songs / max(len(playlists), 1))
         target_tracks = []
         for playlist, weight in tqdm(zip(playlists, playlist_weights), total=len(playlists)):
