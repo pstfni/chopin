@@ -1,6 +1,7 @@
-import argparse
 import pickle as pkl
 from pathlib import Path
+
+import typer
 
 from ml import data
 from utils import get_logger
@@ -8,41 +9,35 @@ from utils import get_logger
 LOGGER = get_logger(__name__)
 
 
-def main():
-    """Classify playlist(s) songs into existing playlists."""
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--playlists",
-        "-p",
-        type=Path,
-        default=None,
-        help="Path to the .jsons describing the playlists to classify",
-    )
-    parser.add_argument(
-        "--model",
-        "-m",
-        type=Path,
-        default=None,
-        help="Path to a trained model",
-    )
-    parser.add_argument(
-        "--output",
-        "-o",
-        type=Path,
-        help="Output filepath for the model in trained mode, for the classified song information in inference mode",
-    )
-    ARGS = vars(parser.parse_args())
+def main(
+    local_file: Path = typer.Option(None, help="Valid path to a local file"),
+    liked_songs: bool = typer.Option(False, help="Flag, to classify the user liked songs"),
+    model: Path = typer.Argument(..., help="Valid path to a trained model"),
+    output: Path = typer.Argument(..., help="The file where the classification summary will be written to"),
+):
+    """Use a model to classify a local playlist, or the user liked songs.
 
-    LOGGER.info("🧭 Classifying")
-    playlist_paths = Path(ARGS["playlists"]).glob("*.json")
-    inference_records = data.create_inference_records(playlist_paths)
-    with open(ARGS["model"], "rb") as file:
+    A CSV will be written , with the song names and the predicted
+    labels.
+    """
+    if not (local_file or liked_songs):
+        raise typer.BadParameter("Neither local_file nor liked_songs were in the command. Please use one of them")
+    if local_file and liked_songs:
+        raise typer.BadParameter("Both local_file and liked_songs were in the command. Please use only one of them")
+
+    LOGGER.info("🧭 Classifying . . . ")
+    inference_records = data.create_inference_records([local_file])
+    with open(model, "rb") as file:
         classifier = pkl.load(file)
     inference_records["playlist.name"] = classifier.predict(inference_records.iloc[:, 1:])
-    with open(ARGS["output"], "w") as outfile:
+    with open(output, "w") as outfile:
         outfile.write("name;playlist\n")
         for i, record in inference_records.iterrows():
             outfile.write(record["name"])
             outfile.write(";")
             outfile.write(record["playlist.name"])
             outfile.write("\n")
+
+
+if __name__ == "__main__":
+    typer.run(main)

@@ -1,5 +1,7 @@
-import argparse
 from pathlib import Path
+from typing import Optional
+
+import typer
 
 from managers.client import SpotifyClient
 from managers.playlist import PlaylistManager
@@ -10,18 +12,17 @@ from utils import get_logger
 logger = get_logger(__name__)
 
 
-def main():
-    """Retrieve data from a playlist and describe it."""
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--name", "-n", default=None, type=str, help="Name of the playlist to fetch")
-    parser.add_argument("--output", "-o", type=Path, help="Output directory to describe the playlist")
-    parser.add_argument("--all", "-a", action="store_true", help="Option to retrieve metadata for all the playlists")
+def main(
+    output: Path = typer.Argument(..., help="Output directory"),
+    name: Optional[str] = typer.Argument(
+        None, help="Specific name of a playlist to fetch. If none, all playlists are fetched"
+    ),
+):
+    """Retrieve data from a playlist and describe it.
 
-    ARGS = vars(parser.parse_args())
-    playlist_name = ARGS["name"]
-    fetch_all_playlists = ARGS["all"]
-    if playlist_name and fetch_all_playlists or (not playlist_name and not fetch_all_playlists):
-        raise ValueError("Specify one of 'name' or 'all' options.")
+    The playlist(s) (summarized as JSONs) will be written into files in
+    the output directory
+    """
 
     client = SpotifyClient().get_client()
     playlist_manager = PlaylistManager(client)
@@ -29,13 +30,13 @@ def main():
     user = UserManager(client)
 
     user_playlists = user.get_user_playlists()
-    if playlist_name:
-        target_playlists = [playlist for playlist in user_playlists if ARGS["name"] == playlist.name]
+    if name:
+        target_playlists = [playlist for playlist in user_playlists if name == playlist.name]
     else:
         target_playlists = user_playlists
 
     for target_playlist in target_playlists:
-        out_file = ARGS["output"] / f"{target_playlist.name}.json"
+        out_file = output / f"{target_playlist.name}.json"
         logger.info(f"Describing playlist {target_playlist.name} in {out_file}")
         tracks = playlist_manager.get_tracks(target_playlist.uri)
         tracks = track_manager.set_audio_features(tracks)
@@ -43,4 +44,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    typer.run(main)
