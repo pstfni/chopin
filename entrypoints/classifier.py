@@ -3,6 +3,9 @@ from pathlib import Path
 
 import typer
 
+from managers.client import SpotifyClient
+from managers.track import TrackManager
+from managers.user import UserManager
 from ml import data
 from utils import get_logger
 
@@ -26,7 +29,17 @@ def main(
         raise typer.BadParameter("Both local_file and liked_songs were in the command. Please use only one of them")
 
     LOGGER.info("🧭 Classifying . . . ")
-    inference_records = data.create_inference_records([local_file])
+    if liked_songs:
+        client = SpotifyClient().get_client()
+        track_manager = TrackManager(client)
+        user = UserManager(client)
+
+        likes = user.get_likes()
+        likes = track_manager.set_audio_features(likes)
+        inference_records = data.create_inference_records_from_tracks(likes, "liked_songs")
+    else:
+        inference_records = data.create_inference_records_from_paths([local_file])
+
     with open(model, "rb") as file:
         classifier = pkl.load(file)
     inference_records["playlist.name"] = classifier.predict(inference_records.iloc[:, 1:])
