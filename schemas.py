@@ -19,18 +19,18 @@ class UserData(BaseModel):
 
 
 class TrackFeaturesData(BaseModel):
-    acousticness: float
-    danceability: float
-    energy: float
-    instrumentalness: float
-    liveness: float
-    loudness: float
-    speechiness: float
-    valence: float
-    tempo: float
-    mode: int
-    key: int
-    analysis_url: str
+    acousticness: Optional[float]
+    danceability: Optional[float]
+    energy: Optional[float]
+    instrumentalness: Optional[float]
+    liveness: Optional[float]
+    loudness: Optional[float]
+    speechiness: Optional[float]
+    valence: Optional[float]
+    tempo: Optional[float]
+    mode: Optional[int]
+    key: Optional[int]
+    analysis_url: Optional[str]
 
     class Config:
         extra = "ignore"

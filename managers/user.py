@@ -26,20 +26,20 @@ class UserManager:
     def get_current_user(self) -> UserData:
         return self.user
 
-    def get_hot_artists(self) -> List[ArtistData]:
-        response = self.client.current_user_top_artists(limit=50, time_range="short_term")["items"]
+    def get_hot_artists(self, limit=50) -> List[ArtistData]:
+        response = self.client.current_user_top_artists(limit=limit, time_range="short_term")["items"]
         return [ArtistData(**artist) for artist in response]
 
-    def get_hot_tracks(self) -> List[TrackData]:
-        response = self.client.current_user_top_tracks(limit=50, time_range="short_term")["items"]
+    def get_hot_tracks(self, limit=50) -> List[TrackData]:
+        response = self.client.current_user_top_tracks(limit=limit, time_range="short_term")["items"]
         return [TrackData(**track) for track in response]
 
-    def get_top_artists(self) -> List[ArtistData]:
-        response = self.client.current_user_top_artists(limit=50, time_range="long_term")["items"]
+    def get_top_artists(self, limit=50) -> List[ArtistData]:
+        response = self.client.current_user_top_artists(limit=limit, time_range="long_term")["items"]
         return [ArtistData(**artist) for artist in response]
 
-    def get_top_tracks(self) -> List[TrackData]:
-        response = self.client.current_user_top_tracks(limit=50, time_range="long_term")["items"]
+    def get_top_tracks(self, limit=50) -> List[TrackData]:
+        response = self.client.current_user_top_tracks(limit=limit, time_range="long_term")["items"]
         return [TrackData(**track) for track in response]
 
     def get_likes(self) -> List[TrackData]:

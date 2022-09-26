@@ -1,6 +1,6 @@
 import pytest
 
-from schemas import PlaylistData, TrackData
+from schemas import ArtistData, PlaylistData, TrackData, TrackFeaturesData
 
 
 def track_data(id_: str = "id") -> TrackData:
@@ -19,6 +19,18 @@ def track_data(id_: str = "id") -> TrackData:
         duration_ms=1000,
         popularity=50,
     )
+
+
+def artist_data(id_: str = "id") -> ArtistData:
+    """
+    Helper to create artists.
+    Args:
+        id_: Argument to generate the id. Useful to make sure unique artists can be created across a test.
+
+    Returns:
+        An artist, schematized as an ArtistData
+    """
+    return ArtistData(name=f"test_artist_{id_}", id=f"{id_}", uri=f"spotify:artist:{id_}", genres=[])
 
 
 @pytest.fixture
@@ -44,6 +56,24 @@ def playlist_1():
 @pytest.fixture
 def playlist_2():
     return PlaylistData(name="q", id="id_q", uri="spotify:playlist:id_q")
+
+
+@pytest.fixture
+def track_features_data():
+    return TrackFeaturesData(
+        acousticness=-1,
+        danceability=-0.8,
+        energy=-0.6,
+        instrumentalness=-0.4,
+        liveness=-0.2,
+        loudness=0.0,
+        speechiness=0.2,
+        valence=0.4,
+        tempo=0.6,
+        mode=1,
+        key=1,
+        analysis_url="url",
+    )
 
 
 # Fixtures for values expected to be returned by the Spotify API.
