@@ -1,16 +1,18 @@
+from collections import Counter
+from datetime import datetime
 from pathlib import Path
 from typing import Any, List, Literal
+import random
 import numpy as np
-from collections import Counter
 import pandas as pd
-from utils import get_logger
-from ml.data import read_playlist
-from datetime import datetime
-from pydantic import BaseModel
-from schemas import TrackData
-import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit as st
+from pydantic import BaseModel
+
+from ml.data import read_playlist
+from schemas import TrackData
+from utils import get_logger
 
 logger = get_logger(__name__)
 TRACK_FEATURES = [
@@ -30,8 +32,7 @@ class PlaylistWithTracks(BaseModel):
 
 
 def get_last_update(playlists_filepaths: List[Path]) -> str:
-    """
-    Get the creation time of the playlist JSON file. Used to check the time of the last update.
+    """Get the creation time of the playlist JSON file. Used to check the time of the last update.
 
     Args:
         playlists_filepaths: The paths to the JSON files describing the playlists
@@ -45,8 +46,7 @@ def get_last_update(playlists_filepaths: List[Path]) -> str:
 def get_feature_statistic(
     playlist: PlaylistWithTracks, feature: str, statistic: Literal["max", "min", "mean", "std"] = "mean"
 ) -> float:
-    """
-    Retrieve the _statistic_ (max, min, mean or standard dev) of a feature in a playlist
+    """Retrieve the _statistic_ (max, min, mean or standard dev) of a feature in a playlist.
 
     Args:
         playlist: A playlist with its tracks
@@ -60,15 +60,13 @@ def get_feature_statistic(
 
 
 def get_duplicates(playlist: PlaylistWithTracks) -> List[str]:
-    """
-    Get duplicate tracks in a playlist.
+    """Get duplicate tracks in a playlist.
 
     Args:
         playlist: A playlist with its tracks.
 
     Returns:
         Duplicate track names (if any)
-
     """
     items_count = Counter([track.id for track in playlist.tracks])
     duplicates_indexes = [ind for ind, tcount in enumerate(items_count.values()) if tcount > 1]
@@ -115,16 +113,22 @@ for display_rows in range(0, len(playlists), n_columns):
     for c, row_index in enumerate(range(display_rows, display_rows + n_columns)):
         columns[c].write(display_df.iloc[row_index, 0])
         fig = go.Figure()
+        color = random.choice(px.colors.qualitative.Pastel)
         fig.add_trace(
             go.Scatterpolar(
                 r=[display_df.iloc[row_index, i] for i in df_columns_features],
                 theta=TRACK_FEATURES,
                 fill="toself",
                 name=display_df.iloc[row_index, 0],
-            )
+                fillcolor=color,
+                line_color=color,
+            ),
         )
         fig.update_layout(polar=dict(radialaxis=dict(visible=False, range=[0, 1])), showlegend=False)
         columns[c].plotly_chart(fig, use_container_width=True)
+        print(c)
+        print(row_index)
+    print(display_rows)
 
 # single playlist page
 # print(get_duplicates(playlists[3]))
