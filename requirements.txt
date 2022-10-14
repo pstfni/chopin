@@ -16,3 +16,4 @@ scikit-learn==1.0.2
 
 # Visualisation
 streamlit
+plotly==5.10.0

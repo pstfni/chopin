@@ -66,11 +66,12 @@ class TrackManager:
         Raises:
             ValueError: if there are not enough tracks for the TSNE computation. >=2 tracks are needed
         """
-        tracks_features = [track.features.dict() for track in tracks if track.features]
+        tracks_features = [
+            list(track.features.dict(exclude={"analysis_url", "key", "mode", "tempo", "loudness"}).values())
+            for track in tracks
+            if track.features
+        ]
         if len(tracks_features) < 2:
             raise ValueError("Not enough track features available to compute the TSNE.")
-
-        tracks_features = pd.DataFrame.from_records(tracks_features)
-        tracks_features = tracks_features.drop("analysis_url", axis=1)
         scaled_features = StandardScaler().fit_transform(tracks_features)
         return TSNE(n_components=2, learning_rate="auto", init="random").fit_transform(scaled_features)
