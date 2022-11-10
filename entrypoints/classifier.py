@@ -3,9 +3,9 @@ from pathlib import Path
 
 import typer
 
-from managers.client import SpotifyClient
+from managers.client import ClientManager
+from managers.spotify_client import SpotifyClient
 from managers.track import TrackManager
-from managers.user import UserManager
 from ml import data
 from utils import get_logger
 
@@ -30,11 +30,10 @@ def main(
 
     LOGGER.info("🧭 Classifying . . . ")
     if liked_songs:
-        client = SpotifyClient().get_client()
+        client = ClientManager(SpotifyClient().get_client())
         track_manager = TrackManager(client)
-        user = UserManager(client)
 
-        likes = user.get_likes()
+        likes = client.get_likes()
         likes = track_manager.set_audio_features(likes)
         inference_records = data.create_inference_records_from_tracks(likes, "liked_songs")
     else:

@@ -1,7 +1,6 @@
 from unittest.mock import MagicMock
 
 import pytest
-from spotipy.client import Spotify
 
 from managers.track import TrackManager
 from schemas import TrackData, TrackFeaturesData
@@ -12,22 +11,21 @@ def side_effect_audio_features(tracks):
     return [spotify_audio_feature() for _ in range(len(tracks))]
 
 
-@pytest.mark.parametrize("nb_tracks", [0, 4, 120])
-def test_get_audio_features(nb_tracks):
-    mock_client = Spotify()
-    mock_client.audio_features = MagicMock(side_effect=side_effect_audio_features)
-    track_manager = TrackManager(mock_client)
+@pytest.mark.parametrize("track_list", ["playlist_1_tracks", "playlist_2_tracks", "empty_playlist"])
+def test_get_audio_features(track_list, request, mock_client_manager):
+    track_list = request.getfixturevalue(track_list)
+    track_manager = TrackManager(mock_client_manager)
+    mock_client_manager.get_tracks_audio_features = MagicMock(side_effect=side_effect_audio_features)
 
-    audio_features = track_manager.get_audio_features(uris=[str(i) for i in range(nb_tracks)])
-    assert len(audio_features) == nb_tracks
+    audio_features = track_manager.get_audio_features(track_list)
+    assert len(audio_features) == len(track_list)
 
 
 @pytest.mark.parametrize("track_list", ["playlist_1_tracks", "playlist_2_tracks", "empty_playlist"])
-def test_set_audio_features(track_list, request):
+def test_set_audio_features(track_list, request, mock_client_manager):
     track_list = request.getfixturevalue(track_list)
-    mock_client = Spotify()
-    mock_client.audio_features = MagicMock(side_effect=side_effect_audio_features)
-    track_manager = TrackManager(mock_client)
+    track_manager = TrackManager(mock_client_manager)
+    mock_client_manager.get_tracks_audio_features = MagicMock(side_effect=side_effect_audio_features)
 
     tracks_with_audio_features = track_manager.set_audio_features(track_list)
     assert len(tracks_with_audio_features) == len(track_list)

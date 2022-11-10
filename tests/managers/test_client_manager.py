@@ -3,15 +3,15 @@ from unittest.mock import MagicMock
 import pytest
 from spotipy.client import Spotify
 
-from managers.user import UserManager
+from managers.client import ClientManager
 from schemas import PlaylistData
 
 
-def test_create_playlist(spotify_playlist, spotify_user):
+def test_create_playlist(spotify_playlist, spotify_user, mock_client_manager):
     mock_client = Spotify()
     mock_client.current_user = MagicMock(return_value=spotify_user)
     mock_client.user_playlist_create = MagicMock(return_value=spotify_playlist)
-    user_manager = UserManager(mock_client)
+    user_manager = ClientManager(mock_client)
 
     playlist = user_manager.create_playlist(name="", description="")
     assert isinstance(playlist, PlaylistData)
@@ -38,7 +38,7 @@ def test_get_user_playlists(spotify_user, user_playlists, expected_playlist_data
     mock_client = Spotify()
     mock_client.current_user = MagicMock(return_value=spotify_user)
     mock_client.current_user_playlists = MagicMock(return_value=user_playlists)
-    user_manager = UserManager(mock_client)
+    user_manager = ClientManager(mock_client)
 
     playlists = user_manager.get_user_playlists()
     assert playlists == expected_playlist_data

@@ -14,7 +14,7 @@ import streamlit as st
 from managers.client import SpotifyClient
 from managers.recommendation import RecommendationManager
 from managers.track import TrackManager
-from managers.user import UserManager
+from managers.user import ClientManager
 from schemas import ArtistData, TrackData, UserData
 from utils import flatten_list
 
@@ -23,7 +23,7 @@ TRACKS_DISPLAY_COLUMNS = ["name", "artists.name", "album.name", "album.release_d
 
 # 🛂 Clients and managers initialization
 client = SpotifyClient().get_client()
-user_manager = UserManager(client)
+user_manager = ClientManager(client)
 recommendation_manager = RecommendationManager(client)
 track_manager = TrackManager(client)
 

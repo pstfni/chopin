@@ -4,9 +4,9 @@ from typing import Optional
 import typer
 from ruamel.yaml import safe_load
 
-from managers.client import SpotifyClient
+from managers.client import ClientManager
 from managers.playlist import PlaylistManager
-from managers.user import UserManager
+from managers.spotify_client import SpotifyClient
 from utils import get_logger, simplify_string
 
 LOGGER = get_logger(__name__)
@@ -28,13 +28,12 @@ def main(
             raise ValueError(f"Error: {playlist_weights} is not a valid file")
         playlist_weights_dict = safe_load(open(playlist_weights, "r"))
 
-    client = SpotifyClient().get_client()
+    client = ClientManager(SpotifyClient().get_client())
     playlist_manager = PlaylistManager(client)
-    user = UserManager(client)
 
     LOGGER.info("🤖 Composing . . .")
 
-    user_playlists = user.get_user_playlists()
+    user_playlists = client.get_user_playlists()
     playlist_tracks = playlist_manager.compose(user_playlists, nb_songs, mapping_value=playlist_weights_dict)
 
     target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(name)]
@@ -43,7 +42,7 @@ def main(
         playlist_manager.replace(uri=playlist.uri, tracks=playlist_tracks)
 
     else:
-        playlist = user.create_playlist(name)
+        playlist = client.create_playlist(name)
         playlist_manager.fill(uri=playlist.uri, tracks=playlist_tracks)
 
 

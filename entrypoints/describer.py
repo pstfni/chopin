@@ -3,10 +3,9 @@ from typing import Optional
 
 import typer
 
-from managers.client import SpotifyClient
-from managers.playlist import PlaylistManager
+from managers.client import ClientManager
+from managers.spotify_client import SpotifyClient
 from managers.track import TrackManager
-from managers.user import UserManager
 from utils import get_logger
 
 logger = get_logger(__name__)
@@ -24,12 +23,10 @@ def main(
     the output directory
     """
 
-    client = SpotifyClient().get_client()
-    playlist_manager = PlaylistManager(client)
+    client = ClientManager(SpotifyClient().get_client())
     track_manager = TrackManager(client)
-    user = UserManager(client)
 
-    user_playlists = user.get_user_playlists()
+    user_playlists = client.get_user_playlists()
     if name:
         target_playlists = [playlist for playlist in user_playlists if name == playlist.name]
     else:
@@ -38,7 +35,7 @@ def main(
     for target_playlist in target_playlists:
         out_file = output / f"{target_playlist.name}.json"
         logger.info(f"Describing playlist {target_playlist.name} in {out_file}")
-        tracks = playlist_manager.get_tracks(target_playlist.uri)
+        tracks = client.get_tracks(target_playlist.uri)
         tracks = track_manager.set_audio_features(tracks)
         track_manager.dump(tracks, out_file)
 

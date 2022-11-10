@@ -1,8 +1,8 @@
 from typing import Dict, List, Optional
 
 import numpy as np
-import spotipy
 
+from managers.client import ClientManager
 from schemas import ArtistData, TrackData, TrackFeaturesData
 from utils import get_logger
 
@@ -27,8 +27,10 @@ def _generate_target_features(target_features: TrackFeaturesData) -> Dict[str, f
 
 
 class RecommendationManager:
-    def __init__(self, spotify_client: spotipy.Spotify):
-        self.client = spotify_client
+    """Class to manage everything related to Spotify recommendations."""
+
+    def __init__(self, client: ClientManager):
+        self.client = client
 
     def get_recommendations_from_artists(
         self, max_recommendations: int, artists: List[ArtistData], target_features: Optional[TrackFeaturesData] = None
@@ -112,11 +114,11 @@ class RecommendationManager:
         )
         if len(seeds) > 5:
             raise ValueError(f"{len(seeds)} seeds were given for the recommendation, but Spotify only allow 5 or less.")
-        response = self.client.recommendations(
+        recommendations = self.client.get_recommendations(
             seed_artists=seed_artists,
             seed_genres=seed_genres,
             seed_tracks=seed_tracks,
             limit=max_recommendations,
             **kwargs,
         )["tracks"]
-        return [TrackData(**track) for track in response]
+        return [TrackData(**track) for track in recommendations]

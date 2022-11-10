@@ -5,9 +5,11 @@ import pytest
 from managers.playlist import PlaylistManager, get_playlist_value
 
 
-@patch("managers.playlist.PlaylistManager.get_tracks")
-def test_playlist_compose_standard_case(mock_get_tracks, playlist_1_tracks, playlist_2_tracks, playlist_1, playlist_2):
-    playlist_manager = PlaylistManager(None)
+@patch("managers.client.ClientManager.get_tracks")
+def test_playlist_compose_standard_case(
+    mock_get_tracks, playlist_1_tracks, playlist_2_tracks, playlist_1, playlist_2, mock_client_manager
+):
+    playlist_manager = PlaylistManager(mock_client_manager)
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
     tracks = playlist_manager.compose(playlists=[playlist_1, playlist_2], nb_songs=20)
@@ -15,11 +17,11 @@ def test_playlist_compose_standard_case(mock_get_tracks, playlist_1_tracks, play
     assert len([t for t in tracks if t.id.startswith("p")]) == len([t for t in tracks if t.id.startswith("q")]) == 10
 
 
-@patch("managers.playlist.PlaylistManager.get_tracks")
+@patch("managers.client.ClientManager.get_tracks")
 def test_playlist_compose_with_mapping_value(
-    mock_get_tracks, playlist_1_tracks, playlist_2_tracks, playlist_1, playlist_2
+    mock_get_tracks, playlist_1_tracks, playlist_2_tracks, playlist_1, playlist_2, mock_client_manager
 ):
-    playlist_manager = PlaylistManager(None)
+    playlist_manager = PlaylistManager(mock_client_manager)
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
     tracks = playlist_manager.compose(
@@ -30,11 +32,11 @@ def test_playlist_compose_with_mapping_value(
     assert len([t for t in tracks if t.id.startswith("q")]) == 5
 
 
-@patch("managers.playlist.PlaylistManager.get_tracks")
+@patch("managers.client.ClientManager.get_tracks")
 def test_playlist_compose_with_partial_mapping_value(
-    mock_get_tracks, playlist_1_tracks, playlist_2_tracks, playlist_1, playlist_2
+    mock_get_tracks, playlist_1_tracks, playlist_2_tracks, playlist_1, playlist_2, mock_client_manager
 ):
-    playlist_manager = PlaylistManager(None)
+    playlist_manager = PlaylistManager(mock_client_manager)
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
     tracks = playlist_manager.compose(playlists=[playlist_1, playlist_2], nb_songs=20, mapping_value={"p": 1.5})
@@ -42,9 +44,11 @@ def test_playlist_compose_with_partial_mapping_value(
     assert len([t for t in tracks if t.id.startswith("p")]) == 15
 
 
-@patch("managers.playlist.PlaylistManager.get_tracks")
-def test_playlist_compose_with_empty_playlists(mock_get_tracks, playlist_1_tracks, playlist_2_tracks):
-    playlist_manager = PlaylistManager(None)
+@patch("managers.client.ClientManager.get_tracks")
+def test_playlist_compose_with_empty_playlists(
+    mock_get_tracks, playlist_1_tracks, playlist_2_tracks, mock_client_manager
+):
+    playlist_manager = PlaylistManager(mock_client_manager)
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
     tracks = playlist_manager.compose(playlists=[], nb_songs=20)

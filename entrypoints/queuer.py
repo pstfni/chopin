@@ -2,9 +2,9 @@ from typing import Optional
 
 import typer
 
-from managers.client import SpotifyClient
+from managers.client import ClientManager
 from managers.playlist import PlaylistManager
-from managers.user import UserManager
+from managers.spotify_client import SpotifyClient
 from utils import get_logger, simplify_string
 
 LOGGER = get_logger(__name__)
@@ -21,20 +21,19 @@ def main(
     !!! warning
         Due to Spotify API limits, the maximum number of songs you can use is 20.
     """
-    client = SpotifyClient().get_client()
+    client = ClientManager(SpotifyClient().get_client())
     playlist_manager = PlaylistManager(client)
-    user = UserManager(client)
 
     LOGGER.info("🔮 Queuing . . .")
 
-    user_playlists = user.get_user_playlists()
+    user_playlists = client.get_user_playlists()
     target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(name)]
-    playlist_tracks = user.get_queue()
+    playlist_tracks = client.get_queue()
 
     if target_playlist:
         playlist = target_playlist[0]
     else:
-        playlist = user.create_playlist(name)
+        playlist = client.create_playlist(name)
 
     playlist_manager.fill(uri=playlist.uri, tracks=playlist_tracks)
 

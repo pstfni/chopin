@@ -1,7 +1,6 @@
 from unittest.mock import MagicMock
 
 import pytest
-from spotipy.client import Spotify
 
 from managers.recommendation import RecommendationManager, _generate_target_features
 from schemas import TrackData, TrackFeaturesData
@@ -25,10 +24,9 @@ def side_effect_recommendations(seed_tracks, seed_artists, seed_genres, limit, *
         pytest.param(["id:0", "id:1", "id:2"], ["id:0", "id:1"], ["id:1"], marks=pytest.mark.xfail(raises=ValueError)),
     ],
 )
-def test_get_recommendations(max_recommendations, seed_artists, seed_tracks, seed_genres):
-    mock_client = Spotify()
-    mock_client.recommendations = MagicMock(side_effect=side_effect_recommendations)
-    recommendation_manager = RecommendationManager(mock_client)
+def test_get_recommendations(max_recommendations, seed_artists, seed_tracks, seed_genres, mock_client_manager):
+    recommendation_manager = RecommendationManager(mock_client_manager)
+    mock_client_manager.get_recommendations = MagicMock(side_effect=side_effect_recommendations)
 
     recs = recommendation_manager.get_recommendations(max_recommendations)
     # Can't get more than 100 recommendations
@@ -40,10 +38,9 @@ def test_get_recommendations(max_recommendations, seed_artists, seed_tracks, see
 @pytest.mark.parametrize("nb_artists", [2, 10, 20])
 @pytest.mark.parametrize("max_recommendations", [0, 20])
 @pytest.mark.parametrize("target_features", [None, TrackFeaturesData(acousticness=0.2)])
-def test_get_recommendations_from_artists(nb_artists, max_recommendations, target_features):
-    mock_client = Spotify()
-    mock_client.recommendations = MagicMock(side_effect=side_effect_recommendations)
-    recommendation_manager = RecommendationManager(mock_client)
+def test_get_recommendations_from_artists(nb_artists, max_recommendations, target_features, mock_client_manager):
+    recommendation_manager = RecommendationManager(mock_client_manager)
+    mock_client_manager.get_recommendations = MagicMock(side_effect=side_effect_recommendations)
     artists = [artist_data(str(i)) for i in range(nb_artists)]
     recs = recommendation_manager.get_recommendations_from_artists(
         max_recommendations=max_recommendations, target_features=target_features, artists=artists
@@ -57,10 +54,9 @@ def test_get_recommendations_from_artists(nb_artists, max_recommendations, targe
 @pytest.mark.parametrize("nb_tracks", [2, 10, 20])
 @pytest.mark.parametrize("max_recommendations", [0, 20])
 @pytest.mark.parametrize("target_features", [None, TrackFeaturesData(valence=0.2)])
-def test_get_recommendations_from_tracks(nb_tracks, max_recommendations, target_features):
-    mock_client = Spotify()
-    mock_client.recommendations = MagicMock(side_effect=side_effect_recommendations)
-    recommendation_manager = RecommendationManager(mock_client)
+def test_get_recommendations_from_tracks(nb_tracks, max_recommendations, target_features, mock_client_manager):
+    recommendation_manager = RecommendationManager(mock_client_manager)
+    mock_client_manager.get_recommendations = MagicMock(side_effect=side_effect_recommendations)
     tracks = [track_data(str(i)) for i in range(nb_tracks)]
     recs = recommendation_manager.get_recommendations_from_tracks(
         max_recommendations=max_recommendations, tracks=tracks, target_features=target_features

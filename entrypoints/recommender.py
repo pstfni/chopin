@@ -5,10 +5,10 @@ import typer
 from pydantic import ValidationError
 from ruamel.yaml import safe_load
 
-from managers.client import SpotifyClient
+from managers.client import ClientManager
 from managers.playlist import PlaylistManager
 from managers.recommendation import RecommendationManager
-from managers.user import UserManager
+from managers.spotify_client import SpotifyClient
 from schemas import TrackFeaturesData
 from utils import get_logger
 
@@ -43,20 +43,19 @@ def main(
         except ValidationError as err:
             raise ValueError(f"Content of the file {target_features} did not meet the TrackFeaturesData schema.\n{err}")
 
-    client = SpotifyClient().get_client()
+    client = ClientManager(SpotifyClient().get_client())
     playlist_manager = PlaylistManager(client)
     recommendation_manager = RecommendationManager(client)
-    user = UserManager(client)
 
     LOGGER.info("💡 Creating recommendations . . .")
 
-    playlist = user.create_playlist(name, description="Homemade recommendations")
+    playlist = client.create_playlist(name, description="Homemade recommendations")
     if nb_songs > 100:
         LOGGER.warning("recommendations mode only allows 100 songs. Reducing the number of songs")
         nb_songs = 100
 
-    artists = user.get_top_artists(MAX_SEEDS) if mode == "top" else user.get_hot_artists(MAX_SEEDS)
-    tracks = user.get_top_tracks(MAX_SEEDS) if mode == "top" else user.get_top_tracks(MAX_SEEDS)
+    artists = client.get_top_artists(MAX_SEEDS) if mode == "top" else client.get_hot_artists(MAX_SEEDS)
+    tracks = client.get_top_tracks(MAX_SEEDS) if mode == "top" else client.get_top_tracks(MAX_SEEDS)
     playlist_tracks = recommendation_manager.get_recommendations_from_tracks(
         max_recommendations=nb_songs // 2, tracks=tracks, target_features=target_features
     )
