@@ -1,0 +1,55 @@
+site_name:  Spotify Toolbox
+repo_url: https://github.com/pierrestefani/spotify-builder
+repo_name: pierrestefani/spotify-builder
+
+nav:
+  - Intro: 'index.md'
+  - About:
+    - Help: 'help.md'
+
+theme:
+  name: "material"
+  icon:
+    logo: material/library
+    repo: fontawesome/brands/github
+  features:
+    - navigation.indexes
+    - navigation.tabs
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+  palette:
+    - scheme: default
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/lightbulb
+        name: Switch to dark mode
+    - scheme: slate
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+
+markdown_extensions:
+    - tables
+    - admonition
+    - abbr
+    - footnotes
+    - md_in_html
+    - pymdownx.tasklist:
+        custom_checkbox: true
+    - pymdownx.highlight
+    - pymdownx.arithmatex:
+        generic: true
+    - pymdownx.emoji:
+        emoji_index: !!python/name:materialx.emoji.twemoji
+        emoji_generator: !!python/name:materialx.emoji.to_svg
+
+plugins:
+  - search
