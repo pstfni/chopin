@@ -60,6 +60,18 @@ class PlaylistManager:
         for page_tracks in paginated_tracks:
             self.client.playlist_add_items(uri, page_tracks)
 
+    def replace(self, uri: str, tracks: List[TrackData]):
+        """Replace playlist items with new ones.
+
+        Args:
+           uri: uri of the playlist to replace
+           tracks: List of track uuids to add to the playlist
+        """
+        tracks_ids = list(set([track.id for track in tracks]))
+        paginated_tracks = [tracks_ids[i : i + 99] for i in range(0, len(tracks_ids), 99)]
+        for page_tracks in paginated_tracks:
+            self.client.playlist_replace_items(uri, page_tracks)
+
     def compose(
         self, playlists: List[PlaylistData], nb_songs: int = 300, mapping_value: Optional[Dict[str, float]] = None
     ) -> List[TrackData]:

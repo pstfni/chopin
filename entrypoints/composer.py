@@ -7,7 +7,7 @@ from ruamel.yaml import safe_load
 from managers.client import SpotifyClient
 from managers.playlist import PlaylistManager
 from managers.user import UserManager
-from utils import get_logger
+from utils import get_logger, simplify_string
 
 LOGGER = get_logger(__name__)
 
@@ -34,11 +34,17 @@ def main(
 
     LOGGER.info("🤖 Composing . . .")
 
-    playlist = user.create_playlist(name)
     user_playlists = user.get_user_playlists()
     playlist_tracks = playlist_manager.compose(user_playlists, nb_songs, mapping_value=playlist_weights_dict)
 
-    playlist_manager.fill(uri=playlist.uri, tracks=playlist_tracks)
+    target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(name)]
+    if target_playlist:
+        playlist = target_playlist[0]
+        playlist_manager.replace(uri=playlist.uri, tracks=playlist_tracks)
+
+    else:
+        playlist = user.create_playlist(name)
+        playlist_manager.fill(uri=playlist.uri, tracks=playlist_tracks)
 
 
 if __name__ == "__main__":
