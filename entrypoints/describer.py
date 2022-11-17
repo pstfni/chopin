@@ -19,8 +19,7 @@ def main(
 ):
     """Retrieve data from a playlist and describe it.
 
-    The playlist(s) (summarized as JSONs) will be written into files in
-    the output directory
+    The playlist(s) (summarized as JSONs) will be written into files.
     """
 
     client = ClientManager(SpotifyClient().get_client())

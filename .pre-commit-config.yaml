@@ -12,23 +12,13 @@ repos:
     hooks:
     -   id: blacken-docs
         additional_dependencies: [black==21.9b0]
-# Linting with Flake8
--   repo: https://github.com/pycqa/flake8
-    rev: 3.9.2
-    hooks:
-    -   id: flake8
-        args:
-          # HINT: ignore rules that conflicts with black formatting
-          #  - E203: whitespace before colon
-          #  - W503: line break before binary operator
-          - --ignore=E203,W503
-          - --max-line-length=120
-# Import sorting with Isort
--   repo: https://github.com/pycqa/isort
-    rev: 5.9.3
-    hooks:
-    -   id: isort
-        args: [--profile=black, --line-length=120]
+# Ruff: flake8, pydocstyle & isort
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: v0.0.116
+  hooks:
+    - id: ruff
+      args:
+        - --fix
 # Autoformat the doc
 - repo: https://github.com/myint/docformatter
   rev: v1.3.1
@@ -37,11 +27,3 @@ repos:
       args:
         - --in-place
         - --wrap-summaries=120
-# Docstring check
--   repo: https://github.com/pycqa/pydocstyle
-    rev: 6.1.1
-    hooks:
-    -   id: pydocstyle
-        args:
-          - --convention=google
-          - --match='(?!test_).*\.py'
