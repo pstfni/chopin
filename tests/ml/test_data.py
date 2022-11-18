@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 from ml.data import format_records, format_track, normalize_features, read_playlist
-from schemas import AlbumData, TrackData, TrackFeaturesData
+from schemas.base import AlbumData, TrackData, TrackFeaturesData
 
 
 @pytest.fixture

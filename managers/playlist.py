@@ -5,7 +5,7 @@ import numpy as np
 from tqdm import tqdm
 
 from managers.client import ClientManager
-from schemas import PlaylistData, TrackData
+from schemas.base import PlaylistData, TrackData
 from utils import get_logger
 
 logger = get_logger(__name__)

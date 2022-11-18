@@ -2,7 +2,7 @@ import pytest
 from spotipy.client import Spotify
 
 from managers.client import ClientManager
-from schemas import ArtistData, PlaylistData, TrackData, TrackFeaturesData
+from schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData
 
 
 @pytest.fixture

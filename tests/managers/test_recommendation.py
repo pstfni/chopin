@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from managers.recommendation import RecommendationManager, _generate_target_features
-from schemas import TrackData, TrackFeaturesData
+from schemas.base import TrackData, TrackFeaturesData
 from tests.conftest import artist_data, spotify_track, track_data
 
 

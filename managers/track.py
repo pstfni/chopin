@@ -9,7 +9,7 @@ from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 
 from managers.client import ClientManager
-from schemas import TrackData, TrackFeaturesData
+from schemas.base import TrackData, TrackFeaturesData
 from utils import get_logger
 
 logger = get_logger(__name__)
