@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from managers.client import ClientManager
 from schemas.base import PlaylistData, TrackData
-from utils import get_logger
+from utils import get_logger, simplify_string
 
 logger = get_logger(__name__)
 
@@ -20,6 +20,7 @@ class PlaylistManager:
             client: A ClientManager instance, for all the calls related to the Spotify API.
         """
         self.client = client
+        self.user_playlists = client.get_user_playlists()
 
     def fill(self, uri: str, tracks: List[TrackData]):
         """Fill a playlist with tracks.
@@ -43,6 +44,27 @@ class PlaylistManager:
         """
         track_ids = list(set([track.id for track in tracks]))
         self.client.replace_tracks_in_playlist(uri, track_ids)
+
+    def tracks_from_playlist_name(self, playlist_name: str, nb_tracks: int) -> List[TrackData]:
+        """Get a number of tracks from a playlist.
+
+        Args:
+            playlist_name: The name of your playlist
+            nb_tracks: Number of tracks to retrieve
+
+        Returns:
+            A list of track data from the playlists
+        """
+        playlist = [
+            playlist
+            for playlist in self.user_playlists
+            if simplify_string(playlist_name) == simplify_string(playlist.name)
+        ]
+        if not playlist:
+            logger.warning(f"Couldn't retrieve tracks for playlist {playlist_name}")
+            return []
+        tracks = self.client.get_tracks(playlist_uri=playlist[0].uri)
+        return np.random.choice(tracks, nb_tracks, replace=False)
 
     def tracks_from_artist_name(self, artist_name: str, nb_tracks: int) -> List[TrackData]:
         """Get a number of tracks from an artist or band.

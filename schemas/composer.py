@@ -4,7 +4,7 @@ import numpy as np
 from pydantic import BaseModel, confloat, conint, conlist, root_validator
 
 
-class _ComposerConfigItem(BaseModel):
+class ComposerConfigItem(BaseModel):
     """Base schema for input in the composer configuration.
 
     Attributes:
@@ -17,7 +17,7 @@ class _ComposerConfigItem(BaseModel):
     nb_songs: Optional[int] = 0
 
 
-class _ComposerConfigRecommendation(_ComposerConfigItem):
+class ComposerConfigRecommendation(ComposerConfigItem):
     """Base schema for recommendation inputs in the composer configuration.
 
     Attributes:
@@ -46,9 +46,9 @@ class ComposerConfig(BaseModel):
     name: str = "🤖 Robot Mix"
     description: str = "Randomly generated mix"
     nb_songs: conint(gt=0)
-    playlists: Optional[List[_ComposerConfigItem]] = []
-    artists: Optional[List[_ComposerConfigItem]] = []
-    features: Optional[conlist(_ComposerConfigRecommendation, max_items=5)] = []
+    playlists: Optional[List[ComposerConfigItem]] = []
+    artists: Optional[List[ComposerConfigItem]] = []
+    features: Optional[conlist(ComposerConfigRecommendation, max_items=5)] = []
 
     @root_validator
     def fill_nb_songs(cls, values):
