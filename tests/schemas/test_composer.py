@@ -1,7 +1,6 @@
 from schemas.composer import ComposerConfig
 
 
-# todo: fixture, parametrize and more test cases
 def test_fill_nb_songs():
     composer_config = {
         "name": "test_playlist",

@@ -19,6 +19,7 @@ repos:
     - id: ruff
       args:
         - --fix
+        - --per-file-ignores=tests/*:S101
 # Autoformat the doc
 - repo: https://github.com/myint/docformatter
   rev: v1.3.1
