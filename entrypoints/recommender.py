@@ -9,7 +9,7 @@ from managers.client import ClientManager
 from managers.playlist import PlaylistManager
 from managers.recommendation import RecommendationManager
 from managers.spotify_client import SpotifyClient
-from schemas import TrackFeaturesData
+from schemas.base import TrackFeaturesData
 from utils import get_logger
 
 LOGGER = get_logger(__name__)

@@ -1,35 +1,38 @@
-from pydantic import BaseModel, confloat, conint, conlist, root_validator
 from typing import List, Literal, Optional
+
+import numpy as np
+from pydantic import BaseModel, confloat, conint, conlist, root_validator
 
 
 class _ComposerConfigItem(BaseModel):
-    """
-    Base schema for input in the composer configuration.
+    """Base schema for input in the composer configuration.
 
     Attributes:
         name: Name of the item. It should respect the simplify_string nomenclature
         weight: Weight of the input in the final composition
     """
+
     name: str
     weight: confloat(ge=0)
     nb_songs: Optional[int] = 0
 
 
 class _ComposerConfigRecommendation(_ComposerConfigItem):
-    """
-    Base schema for recommendation inputs in the composer configuration.
+    """Base schema for recommendation inputs in the composer configuration.
 
     Attributes:
         name: Name of the feature to recommend.
         value: Target value to recommend
     """
-    name: Literal["acousticness", "danceability", "energy", "instrumentalness", "liveness", "loudness", "speechiness", "valence"]
+
+    name: Literal[
+        "acousticness", "danceability", "energy", "instrumentalness", "liveness", "loudness", "speechiness", "valence"
+    ]
     value: confloat(ge=0, lt=1)
 
 
 class ComposerConfig(BaseModel):
-    """
-    Schema for a composer configuration.
+    """Schema for a composer configuration.
 
     Attributes:
         name: Name of the playlist you wish to create
@@ -39,6 +42,7 @@ class ComposerConfig(BaseModel):
         artists: A list of artists from which to pick songs, and their weight in the final composition
         features: A list of features and their value, to add recommendations based on recent listening
     """
+
     name: str = "🤖 Robot Mix"
     description: str = "Randomly generated mix"
     nb_songs: conint(gt=0)
@@ -48,7 +52,16 @@ class ComposerConfig(BaseModel):
 
     @root_validator
     def fill_nb_songs(cls, values):
-        """
-        From the nb_songs and item weights, compute the nb_songs of each item.
-        """
+        """From the nb_songs and item weights, compute the nb_songs of each item.
 
+        Args:
+            values: Attributes of the composer configuration model.
+        """
+        item_weights: List[float] = [
+            item.weight for category in ["playlists", "artists", "features"] for item in values.get(category)
+        ]
+        sum_of_weights = np.array(list(item_weights)).sum()
+        for category in {"playlists", "artists", "features"}:
+            for item in values.get(category):
+                item.nb_songs = int((item.weight / sum_of_weights) * values["nb_songs"])
+        return values

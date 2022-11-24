@@ -15,7 +15,7 @@ from managers.client import SpotifyClient
 from managers.recommendation import RecommendationManager
 from managers.track import TrackManager
 from managers.user import ClientManager
-from schemas import ArtistData, TrackData, UserData
+from schemas.base import ArtistData, TrackData, UserData
 from utils import flatten_list
 
 ARTISTS_DISPLAY_COLUMNS = ["name", "genres"]

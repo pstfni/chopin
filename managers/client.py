@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 import requests
 import spotipy
 
-from schemas import ArtistData, PlaylistData, TrackData, TrackFeaturesData, UserData
+from schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData, UserData
 from utils import get_logger, simplify_string
 
 logger = get_logger(__name__)

@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 import numpy as np
 
 from managers.client import ClientManager
-from schemas import ArtistData, TrackData, TrackFeaturesData
+from schemas.base import ArtistData, TrackData, TrackFeaturesData
 from utils import get_logger
 
 logger = get_logger(__name__)
