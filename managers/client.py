@@ -13,6 +13,7 @@ TRACK_FIELDS = (
     "items.track.album.uri, items.track.album.name, items.track.album.release_date, items.track.album.id,"
     "items.track.artists.uri, items.track.artists.name, items.track.artists.id, items.track.artists.genre"
 )
+SPOTIFY_USER_URI = "spotify:user:spotify"
 
 
 class ClientManager:
@@ -146,6 +147,20 @@ class ClientManager:
             if not response.get("next"):
                 break
         return [TrackData(**track["track"]) for track in tracks]
+
+    def get_this_is_playlist(self, artist_name: str) -> PlaylistData | None:
+        response = self.client.search(q=artist_name, limit=10, type="playlist")["playlists"]
+        items = response.get("items")
+        if not items:
+            raise ValueError(f"Couldn't retrieve playlists for query {artist_name}")
+        playlist = [
+            playlist
+            for playlist in items
+            if items["owner"]["uri"] == SPOTIFY_USER_URI and playlist["name"].startswith("This Is")
+        ]
+        if playlist:
+            return PlaylistData(**playlist[0])
+        return
 
     def get_recommendations(
         self,

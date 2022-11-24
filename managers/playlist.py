@@ -44,6 +44,26 @@ class PlaylistManager:
         track_ids = list(set([track.id for track in tracks]))
         self.client.replace_tracks_in_playlist(uri, track_ids)
 
+    def tracks_from_artist_name(self, artist_name: str, nb_tracks: int) -> List[TrackData]:
+        """Get a number of tracks from an artist or band.
+
+        !!! note
+            A Spotify search will be queried to find 'This is [artist_name}' playlists and fetch tracks from it.
+
+        Args:
+            artist_name: Name of the artist or band to fetch tracks from
+            nb_tracks: Number of tracks to retrieve.
+
+        Returns:
+            A list of track data from the artists.
+        """
+        playlist = self.client.get_this_is_playlist(artist_name)
+        if not playlist:
+            logger.warning(f"Couldn't retrieve tracks for artist {artist_name}")
+            return []
+        tracks = self.client.get_tracks(playlist_uri=playlist.uri)
+        return np.random.choice(tracks, nb_tracks, replace=False)
+
     def compose(
         self, playlists: List[PlaylistData], nb_songs: int = 300, mapping_value: Optional[Dict[str, float]] = None
     ) -> List[TrackData]:

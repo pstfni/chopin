@@ -3,6 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from managers.playlist import PlaylistManager, get_playlist_value
+from schemas.base import PlaylistData
 
 
 @patch("managers.client.ClientManager.get_tracks")
@@ -53,6 +54,34 @@ def test_playlist_compose_with_empty_playlists(
 
     tracks = playlist_manager.compose(playlists=[], nb_songs=20)
     assert len(tracks) == 0
+
+
+# Patchs are read bottom-up by pytest 🤯
+@patch("managers.client.ClientManager.get_this_is_playlist")
+@patch("managers.client.ClientManager.get_tracks")
+@pytest.mark.parametrize(
+    "nb_tracks, this_is_side_effect, expected_nb_songs",
+    [
+        (10, PlaylistData(name="a", uri="uri"), 10),
+        (20, PlaylistData(name="a", uri="uri"), 20),
+        # No playlists found by the client: 0 tracks returned
+        (10, None, 0),
+    ],
+)
+def test_tracks_from_artist_name(
+    mock_get_tracks,
+    mock_get_this_is_playlist,
+    playlist_1_tracks,
+    nb_tracks,
+    this_is_side_effect,
+    expected_nb_songs,
+    mock_client_manager,
+):
+    playlist_manager = PlaylistManager(mock_client_manager)
+    mock_get_tracks.side_effect = [playlist_1_tracks]
+    mock_get_this_is_playlist.side_effect = [this_is_side_effect]
+    tracks = playlist_manager.tracks_from_artist_name(artist_name="Artist", nb_tracks=nb_tracks)
+    assert len(tracks) == expected_nb_songs
 
 
 @pytest.mark.parametrize(
