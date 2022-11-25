@@ -25,7 +25,6 @@ class ClientManager:
     def __init__(self, spotify_client: spotipy.Spotify):
         self.client = spotify_client
         self.user = None
-        self.value_mapping = None
         self._session = requests.Session()
 
     def create_playlist(self, name: str, description: str = "Randomly generated playlist"):
@@ -149,6 +148,7 @@ class ClientManager:
         return [TrackData(**track["track"]) for track in tracks]
 
     def get_this_is_playlist(self, artist_name: str) -> PlaylistData | None:
+        # NOTE : Strict match for 'This Is artist_name' !
         response = self.client.search(q=artist_name, limit=10, type="playlist")["playlists"]
         items = response.get("items")
         if not items:
@@ -171,6 +171,3 @@ class ClientManager:
         **kwargs,
     ):
         return self.client.recommendations(seed_artists, seed_genres, seed_tracks, limit, **kwargs)
-
-    def feed_mapping_values(self, mapping_value_dict: Dict[str, int]):
-        self.value_mapping = mapping_value_dict

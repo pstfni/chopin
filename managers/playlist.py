@@ -1,11 +1,11 @@
-import random
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 import numpy as np
 from tqdm import tqdm
 
 from managers.client import ClientManager
 from schemas.base import PlaylistData, TrackData
+from schemas.composer import ComposerConfig
 from utils import get_logger, simplify_string
 
 logger = get_logger(__name__)
@@ -20,7 +20,6 @@ class PlaylistManager:
             client: A ClientManager instance, for all the calls related to the Spotify API.
         """
         self.client = client
-        self.user_playlists = client.get_user_playlists()
 
     def fill(self, uri: str, tracks: List[TrackData]):
         """Fill a playlist with tracks.
@@ -45,20 +44,21 @@ class PlaylistManager:
         track_ids = list(set([track.id for track in tracks]))
         self.client.replace_tracks_in_playlist(uri, track_ids)
 
-    def tracks_from_playlist_name(self, playlist_name: str, nb_tracks: int) -> List[TrackData]:
+    def tracks_from_playlist_name(
+        self, playlist_name: str, nb_tracks: int, user_playlists: List[PlaylistData]
+    ) -> List[TrackData]:
         """Get a number of tracks from a playlist.
 
         Args:
             playlist_name: The name of your playlist
             nb_tracks: Number of tracks to retrieve
+            user_playlists: List of existing user playlists. Used to map the name with the URI.
 
         Returns:
             A list of track data from the playlists
         """
         playlist = [
-            playlist
-            for playlist in self.user_playlists
-            if simplify_string(playlist_name) == simplify_string(playlist.name)
+            playlist for playlist in user_playlists if simplify_string(playlist_name) == simplify_string(playlist.name)
         ]
         if not playlist:
             logger.warning(f"Couldn't retrieve tracks for playlist {playlist_name}")
@@ -87,51 +87,38 @@ class PlaylistManager:
         return np.random.choice(tracks, nb_tracks, replace=False)
 
     def compose(
-        self, playlists: List[PlaylistData], nb_songs: int = 300, mapping_value: Optional[Dict[str, float]] = None
+        self, composition_config: ComposerConfig, user_playlists: Optional[List[PlaylistData]] = None
     ) -> List[TrackData]:
-        """Compose a playlist from a list of playlists.
+        """From a composition configuration, compose a playlist.
 
         Args:
-            playlists: Playlists to pick from
-            nb_songs: Target number of songs
-            mapping_value: A dictionary with a value assigned to each playlist. Will impact the number of song we pick
-            from each playlist.
+            composition_config: A configuration, with playlists, artists, and/or features
+                that should be used to create the playlist.
+            user_playlists: Existing playlists for the user. Used to map the name of the playlist in
+                the configuration with the Spotify URI.
 
         Returns:
-            A list of track ids.
+            A list of track data, the tracks to be added to your playlist.
+
+        Raises:
+            AttributeError: if 'playlists' are in the configuration but user_playlists is not passed.
         """
-        if not playlists:
-            return []
-
-        if mapping_value:
-            playlist_weights = np.array([get_playlist_value(playlist.name, mapping_value) for playlist in playlists])
-        else:
-            playlist_weights = np.ones(len(playlists))
-
-        default_nb_songs = int(nb_songs / max(len(playlists), 1))
-        target_tracks = []
-        for playlist, weight in tqdm(zip(playlists, playlist_weights), total=len(playlists)):
-            playlist_tracks = self.client.get_tracks(playlist.uri)
-            nb_tracks_to_add = min(int(default_nb_songs * weight), len(playlist_tracks))
-            target_tracks.extend(random.sample(playlist_tracks, nb_tracks_to_add))
-        return target_tracks
-
-
-def get_playlist_value(name: str, value_mapping: Dict[str, float]) -> float:
-    """From a value_mapping dictionary, returns the value of a given playlist name.
-
-    Args:
-        name: The name of the playlist
-        value_mapping: A dictionary containing a float value for each playlist name.
-
-    !!! note ""
-        If the given name is not in the playlist, the value returned will be 0. A warning is also raised.
-
-    Returns:
-        The value of the playlist _name_.
-    """
-    try:
-        return value_mapping[name]
-    except KeyError:
-        logger.warning(f"Warning: {name} not found in the mapping given, will default to a value of 0")
-        return 0
+        tracks: List[TrackData] = []
+        if composition_config.playlists and not user_playlists:
+            # We must have the existing user playlists in order to retrieve the name from the uri.
+            raise AttributeError(
+                "Missing the user_playlists parameter. It should be passed"
+                "to the compose function if user playlists are in the config."
+            )
+        for playlist in tqdm(composition_config.playlists):
+            tracks.extend(
+                self.tracks_from_playlist_name(
+                    playlist_name=playlist.name, nb_tracks=playlist.nb_songs, user_playlists=user_playlists
+                )
+            )
+        for artist in tqdm(composition_config.artists):
+            tracks.extend(self.tracks_from_artist_name(artist_name=artist.name, nb_tracks=artist.nb_songs))
+        for feature in composition_config.features:
+            # todo implement this
+            pass
+        return tracks

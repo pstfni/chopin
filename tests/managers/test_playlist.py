@@ -2,57 +2,91 @@ from unittest.mock import patch
 
 import pytest
 
-from managers.playlist import PlaylistManager, get_playlist_value
+from managers.playlist import PlaylistManager
 from schemas.base import PlaylistData
+from schemas.composer import ComposerConfig, ComposerConfigItem
+
+
+@patch("managers.client.ClientManager.get_this_is_playlist")
+@patch("managers.client.ClientManager.get_tracks")
+def test_playlist_compose_from_artists(
+    mock_get_tracks, mock_get_this_is_playlist, playlist_1_tracks, playlist_2_tracks, mock_client_manager
+):
+    playlist_manager = PlaylistManager(mock_client_manager)
+    configuration = ComposerConfig(
+        nb_songs=20,
+        artists=[ComposerConfigItem(name="Artist", weight=1), ComposerConfigItem(name="Artist_2", weight=1)],
+    )
+    mock_get_this_is_playlist.side_effect = [
+        PlaylistData(name="Artist", uri="uri"),
+        PlaylistData(name="Artist_2", uri="uri_2"),
+    ]
+    mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
+
+    tracks = playlist_manager.compose(composition_config=configuration)
+    assert len(tracks) == 20
+    assert len([t for t in tracks if t.id.startswith("p")]) == len([t for t in tracks if t.id.startswith("q")]) == 10
+
+
+@patch("managers.client.ClientManager.get_this_is_playlist")
+@patch("managers.client.ClientManager.get_tracks")
+def test_playlist_compose_from_artists_with_different_weights(
+    mock_get_tracks, mock_get_this_is_playlist, playlist_1_tracks, playlist_2_tracks, mock_client_manager
+):
+    playlist_manager = PlaylistManager(mock_client_manager)
+    configuration = ComposerConfig(
+        nb_songs=20,
+        artists=[ComposerConfigItem(name="Artist", weight=1), ComposerConfigItem(name="Artist_2", weight=0.5)],
+    )
+    mock_get_this_is_playlist.side_effect = [
+        PlaylistData(name="Artist", uri="uri"),
+        PlaylistData(name="Artist_2", uri="uri_2"),
+    ]
+    mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
+
+    tracks = playlist_manager.compose(composition_config=configuration)
+    # 21 because of the ceil() when computing actual nb songs
+    assert len(tracks) == 21
+    assert len([t for t in tracks if t.id.startswith("p")]) == 14
+    assert len([t for t in tracks if t.id.startswith("q")]) == 7
 
 
 @patch("managers.client.ClientManager.get_tracks")
-def test_playlist_compose_standard_case(
-    mock_get_tracks, playlist_1_tracks, playlist_2_tracks, playlist_1, playlist_2, mock_client_manager
+def test_playlist_compose_from_playlists(
+    mock_get_tracks, playlist_1, playlist_2, playlist_1_tracks, playlist_2_tracks, mock_client_manager
 ):
     playlist_manager = PlaylistManager(mock_client_manager)
+    configuration = ComposerConfig(
+        nb_songs=20, playlists=[ComposerConfigItem(name="p", weight=1), ComposerConfigItem(name="q", weight=1)]
+    )
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
-    tracks = playlist_manager.compose(playlists=[playlist_1, playlist_2], nb_songs=20)
+    tracks = playlist_manager.compose(composition_config=configuration, user_playlists=[playlist_1, playlist_2])
     assert len(tracks) == 20
     assert len([t for t in tracks if t.id.startswith("p")]) == len([t for t in tracks if t.id.startswith("q")]) == 10
 
 
 @patch("managers.client.ClientManager.get_tracks")
-def test_playlist_compose_with_mapping_value(
-    mock_get_tracks, playlist_1_tracks, playlist_2_tracks, playlist_1, playlist_2, mock_client_manager
+def test_playlist_compose_from_playlists_with_different_weights(
+    mock_get_tracks, playlist_1, playlist_2, playlist_1_tracks, playlist_2_tracks, mock_client_manager
 ):
     playlist_manager = PlaylistManager(mock_client_manager)
-    mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
-
-    tracks = playlist_manager.compose(
-        playlists=[playlist_1, playlist_2], nb_songs=20, mapping_value={"p": 1.5, "q": 0.5}
+    configuration = ComposerConfig(
+        nb_songs=20, playlists=[ComposerConfigItem(name="p", weight=1), ComposerConfigItem(name="q", weight=0.2)]
     )
-    assert len(tracks) == 20
-    assert len([t for t in tracks if t.id.startswith("p")]) == 15
-    assert len([t for t in tracks if t.id.startswith("q")]) == 5
+    mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
+
+    tracks = playlist_manager.compose(composition_config=configuration, user_playlists=[playlist_1, playlist_2])
+    assert len(tracks) == 21
+    assert len([t for t in tracks if t.id.startswith("p")]) == 17
+    assert len([t for t in tracks if t.id.startswith("q")]) == 4
 
 
 @patch("managers.client.ClientManager.get_tracks")
-def test_playlist_compose_with_partial_mapping_value(
-    mock_get_tracks, playlist_1_tracks, playlist_2_tracks, playlist_1, playlist_2, mock_client_manager
-):
+def test_playlist_compose_with_empty_playlists(mock_client_manager):
     playlist_manager = PlaylistManager(mock_client_manager)
-    mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
-
-    tracks = playlist_manager.compose(playlists=[playlist_1, playlist_2], nb_songs=20, mapping_value={"p": 1.5})
-    assert len(tracks) == 15
-    assert len([t for t in tracks if t.id.startswith("p")]) == 15
-
-
-@patch("managers.client.ClientManager.get_tracks")
-def test_playlist_compose_with_empty_playlists(
-    mock_get_tracks, playlist_1_tracks, playlist_2_tracks, mock_client_manager
-):
-    playlist_manager = PlaylistManager(mock_client_manager)
-    mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
-
-    tracks = playlist_manager.compose(playlists=[], nb_songs=20)
+    configuration = ComposerConfig(nb_songs=20, playlists=[])
+    tracks = playlist_manager.compose(configuration)
     assert len(tracks) == 0
 
 
@@ -84,19 +118,15 @@ def test_tracks_from_artist_name(
     assert len(tracks) == expected_nb_songs
 
 
-@pytest.mark.parametrize(
-    "name, mapping, expected",
-    [
-        # standard case
-        ("playlist", {"playlist": 1}, 1),
-        # multiple playlists in the mapping
-        ("playlist", {"playlist": 1, "other": 2}, 1),
-        # name not in the mapping
-        ("playlist", {"other": 2}, 0),
-        # empty mapping
-        ("playlist", {}, 0),
-    ],
-)
-def test_get_playlist_value(name, mapping, expected):
-    output = get_playlist_value(name, mapping)
-    assert output == expected
+@patch("managers.client.ClientManager.get_tracks")
+def test_tracks_from_playlist_name(
+    mock_get_tracks, playlist_1, playlist_2, playlist_1_tracks, playlist_2_tracks, mock_client_manager
+):
+    playlist_manager = PlaylistManager(mock_client_manager)
+    mock_get_tracks.side_effect = [playlist_1_tracks]
+    tracks = playlist_manager.tracks_from_playlist_name(
+        playlist_name="p", nb_tracks=10, user_playlists=[playlist_1, playlist_2]
+    )
+
+    assert len(tracks) == 10
+    assert all(t.name.startswith("test_track_p") for t in tracks)

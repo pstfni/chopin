@@ -1,7 +1,12 @@
+import math
 from typing import List, Literal, Optional
 
 import numpy as np
-from pydantic import BaseModel, confloat, conint, conlist, root_validator
+from pydantic import BaseModel, confloat, conint, conlist, root_validator, validator
+
+from utils import get_logger
+
+logger = get_logger(__name__)
 
 
 class ComposerConfigItem(BaseModel):
@@ -29,6 +34,10 @@ class ComposerConfigRecommendation(ComposerConfigItem):
         "acousticness", "danceability", "energy", "instrumentalness", "liveness", "loudness", "speechiness", "valence"
     ]
     value: confloat(ge=0, lt=1)
+
+    @validator("name")
+    def update_name_with_spotify_feature_format(cls, v):
+        return f"feature_{v}"
 
 
 class ComposerConfig(BaseModel):
@@ -60,8 +69,11 @@ class ComposerConfig(BaseModel):
         item_weights: List[float] = [
             item.weight for category in ["playlists", "artists", "features"] for item in values.get(category)
         ]
-        sum_of_weights = np.array(list(item_weights)).sum()
+        sum_of_weights: float = np.array(list(item_weights)).sum()
+        total_nb_songs: int = 0
         for category in {"playlists", "artists", "features"}:
             for item in values.get(category):
-                item.nb_songs = int((item.weight / sum_of_weights) * values["nb_songs"])
+                item.nb_songs = math.ceil((item.weight / sum_of_weights) * values["nb_songs"])
+                total_nb_songs += item.nb_songs
+        logger.info(f"With the composer configuration parsed, {total_nb_songs} will be added.")
         return values

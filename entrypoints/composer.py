@@ -29,6 +29,7 @@ def main(
     """
     client = ClientManager(SpotifyClient().get_client())
     playlist_manager = PlaylistManager(client)
+    user_playlists = client.get_user_playlists()
 
     LOGGER.info("🤖 Composing . . .")
 
@@ -36,28 +37,15 @@ def main(
         # The user didn't give a config to compose its playlist, we create one from its playlists
         config = ComposerConfig(
             nb_songs=nb_songs,
-            playlists=[
-                ComposerConfigItem(name=playlist.name, weight=1) for playlist in playlist_manager.user_playlists
-            ],
+            playlists=[ComposerConfigItem(name=playlist.name, weight=1) for playlist in user_playlists],
         )
 
     else:
         config = ComposerConfig.parse_obj(yaml.safe_load(open(composition_config, "r")))
 
-    tracks = []
-    for playlist in config.playlists:
-        tracks.extend(
-            playlist_manager.tracks_from_playlist_name(playlist_name=playlist.name, nb_tracks=playlist.nb_songs)
-        )
-    for artist in config.artists:
-        tracks.extend(playlist_manager.tracks_from_artist_name(artist_name=artist.name, nb_tracks=artist.nb_songs))
-    for feature in config.features:
-        # todo implement this
-        pass
+    tracks = playlist_manager.compose(composition_config=config, user_playlists=user_playlists)
 
-    target_playlist = [
-        playlist for playlist in playlist_manager.user_playlists if playlist.name == simplify_string(name)
-    ]
+    target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(name)]
     if target_playlist:
         playlist = target_playlist[0]
         playlist_manager.replace(uri=playlist.uri, tracks=tracks)
