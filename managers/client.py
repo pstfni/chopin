@@ -169,5 +169,6 @@ class ClientManager:
         seed_tracks: List[str],
         limit: int,
         **kwargs,
-    ):
-        return self.client.recommendations(seed_artists, seed_genres, seed_tracks, limit, **kwargs)
+    ) -> List[TrackData]:
+        response = self.client.recommendations(seed_artists, seed_genres, seed_tracks, limit, **kwargs)["tracks"]
+        return [TrackData(**track) for track in response]

@@ -120,5 +120,5 @@ class RecommendationManager:
             seed_tracks=seed_tracks,
             limit=max_recommendations,
             **kwargs,
-        )["tracks"]
-        return [TrackData(**track) for track in recommendations]
+        )
+        return recommendations

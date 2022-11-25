@@ -15,7 +15,6 @@ LOGGER = get_logger(__name__)
 
 def main(
     nb_songs: Optional[int] = typer.Argument(300, help="Number of songs for the playlist"),
-    name: Optional[str] = typer.Argument("🤖 Robot Mix", help="Name for your playlist"),
     composition_config: Optional[Path] = typer.Option(
         None, help="Path to a YAML file with composition for your playlists"
     ),
@@ -45,13 +44,13 @@ def main(
 
     tracks = playlist_manager.compose(composition_config=config, user_playlists=user_playlists)
 
-    target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(name)]
+    target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(config.name)]
     if target_playlist:
         playlist = target_playlist[0]
         playlist_manager.replace(uri=playlist.uri, tracks=tracks)
 
     else:
-        playlist = client.create_playlist(name)
+        playlist = client.create_playlist(config.name, description=config.description)
         playlist_manager.fill(uri=playlist.uri, tracks=tracks)
 
 

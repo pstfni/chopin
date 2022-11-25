@@ -75,5 +75,5 @@ class ComposerConfig(BaseModel):
             for item in values.get(category):
                 item.nb_songs = math.ceil((item.weight / sum_of_weights) * values["nb_songs"])
                 total_nb_songs += item.nb_songs
-        logger.info(f"With the composer configuration parsed, {total_nb_songs} will be added.")
+        logger.info(f"With the composer configuration parsed, {total_nb_songs} songs will be added.")
         return values

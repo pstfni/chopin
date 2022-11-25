@@ -86,6 +86,27 @@ class PlaylistManager:
         tracks = self.client.get_tracks(playlist_uri=playlist.uri)
         return np.random.choice(tracks, nb_tracks, replace=False)
 
+    def tracks_from_feature_name(
+        self, seeds: List[TrackData], feature_name: str, feature_value: float, nb_tracks: int
+    ) -> List[TrackData]:
+        """Get a number of tracks from a recommendation. The recommendation will use a set of tracks as a seed and a
+        feature to target.
+
+        Args:
+            seeds: Reference tracks for the recommendation
+            feature_name: Target feature to use for the recommendation
+            feature_value: Value of the target feature
+            nb_tracks: Number of tracks to recommend
+
+        Returns:
+            A list of recommended track data.
+        """
+        seed_tracks = [track.id for track in seeds]
+        tracks = self.client.get_recommendations(
+            seed_tracks=seed_tracks, limit=nb_tracks, seed_artists=[], seed_genres=[], **{feature_name: feature_value}
+        )
+        return tracks
+
     def compose(
         self, composition_config: ComposerConfig, user_playlists: Optional[List[PlaylistData]] = None
     ) -> List[TrackData]:
@@ -111,14 +132,25 @@ class PlaylistManager:
                 "to the compose function if user playlists are in the config."
             )
         for playlist in tqdm(composition_config.playlists):
+            logger.info(f"Adding {playlist.nb_songs} tracks from playlist {playlist.name}")
             tracks.extend(
                 self.tracks_from_playlist_name(
                     playlist_name=playlist.name, nb_tracks=playlist.nb_songs, user_playlists=user_playlists
                 )
             )
         for artist in tqdm(composition_config.artists):
+            logger.info(f"Adding {artist.nb_songs} tracks for artist {artist.name}")
             tracks.extend(self.tracks_from_artist_name(artist_name=artist.name, nb_tracks=artist.nb_songs))
         for feature in composition_config.features:
-            # todo implement this
-            pass
+            logger.info(f"Adding {feature.nb_songs} tracks from recommendations with {feature.name}")
+            seed_tracks = np.random.choice(tracks, 5, replace=False)
+            recommended_tracks = self.tracks_from_feature_name(
+                seeds=seed_tracks,
+                feature_name=feature.name,
+                feature_value=feature.value,
+                nb_tracks=feature.nb_songs,
+            )
+            tracks.extend(recommended_tracks)
+
+            logger.info(f"Some recommended tracks: {[t.name for t in recommended_tracks[:5]]}")
         return tracks
