@@ -1,13 +1,13 @@
 import datetime
-import json
 import random
 
 import numpy as np
 import pandas as pd
 import pytest
 
+from managers.playlist import PlaylistManager
 from ml.data import format_records, format_track, normalize_features, read_playlist
-from schemas.base import AlbumData, TrackData, TrackFeaturesData
+from schemas.base import AlbumData, PlaylistSummary, TrackData, TrackFeaturesData
 
 
 @pytest.fixture
@@ -66,19 +66,20 @@ def track_2():
     )
 
 
-def test_read_playlist(tmp_path, playlist_1_tracks):
-    with open(tmp_path / "test.json", "w") as outfile:
-        json.dump([track.to_flatten_dict() for track in playlist_1_tracks], outfile)
+def test_read_playlist(tmp_path, playlist_1, playlist_1_tracks):
+    playlist = PlaylistSummary(playlist=playlist_1, tracks=playlist_1_tracks)
+    PlaylistManager(None).dump(playlist, tmp_path / "test.json")
     name, tracks = read_playlist(tmp_path / "test.json")
     assert name == "test"
-    assert tracks == playlist_1_tracks
+    assert len(tracks) == 50
+    assert tracks[0].name == "test_track_p_0"
 
 
 def test_format_track(track):
     out = format_track(track)
     assert out == {
         "name": "test",
-        "album.release_date": 1992,
+        "album.release_date": "1992",
         "features.acousticness": -1,
         "features.danceability": -0.8,
         "features.energy": -0.6,
@@ -106,7 +107,7 @@ def test_format_records(track, split, expected_split):
     record = format_records(track, "test", split)
     assert record == {
         "name": "test",
-        "album.release_date": 1992,
+        "album.release_date": "1992",
         "features.acousticness": -1,
         "features.danceability": -0.8,
         "features.energy": -0.6,

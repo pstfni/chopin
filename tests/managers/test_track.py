@@ -33,11 +33,6 @@ def test_set_audio_features(track_list, request, mock_client_manager):
         assert track.features is not None
 
 
-def test_dump(tmp_path, playlist_1_tracks):
-    track_manager = TrackManager(None)
-    track_manager.dump(playlist_1_tracks, filepath=tmp_path / "tracks.json")
-
-
 def test_compute_tsne():
     track_manager = TrackManager(None)
     track = TrackData(

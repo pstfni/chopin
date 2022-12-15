@@ -26,6 +26,21 @@ def track_data(id_: str = "id") -> TrackData:
         uri=f"spotify:track:{id_}",
         duration_ms=1000,
         popularity=50,
+        artists=[artist_data(id_)],
+        features=TrackFeaturesData(
+            acousticness=0.1,
+            danceability=0.2,
+            energy=0.3,
+            instrumentalness=0.4,
+            liveness=0.5,
+            loudness=0.6,
+            speechiness=0.7,
+            valence=0.8,
+            tempo=0.9,
+            mode=1,
+            key=2,
+            analysis_url="url",
+        ),
     )
 
 

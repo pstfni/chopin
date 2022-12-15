@@ -1,10 +1,13 @@
+import json
+from pathlib import Path
 from typing import List, Optional
 
 import numpy as np
+from pydantic.json import pydantic_encoder
 from tqdm import tqdm
 
 from managers.client import ClientManager
-from schemas.base import PlaylistData, TrackData
+from schemas.base import PlaylistData, PlaylistSummary, TrackData
 from schemas.composer import ComposerConfig
 from utils import get_logger, simplify_string
 
@@ -154,3 +157,15 @@ class PlaylistManager:
 
             logger.info(f"Some recommended tracks: {[t.name for t in recommended_tracks[:5]]}")
         return tracks
+
+    @staticmethod
+    def dump(playlist: PlaylistSummary, filepath: Path):
+        """Dump a playlist in a JSON format.
+
+        Args:
+            playlist: The playlist to write
+            filepath: Target file to receive the dump
+        """
+        json_str = json.dumps(playlist, default=pydantic_encoder)
+        with open(filepath, "w") as f:
+            f.write(json_str)

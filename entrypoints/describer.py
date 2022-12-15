@@ -4,15 +4,17 @@ from typing import Optional
 import typer
 
 from managers.client import ClientManager
+from managers.playlist import PlaylistManager
 from managers.spotify_client import SpotifyClient
 from managers.track import TrackManager
+from schemas.base import PlaylistSummary
 from utils import get_logger
 
 logger = get_logger(__name__)
 
 
 def main(
-    output: Path = typer.Argument(..., help="Output directory"),
+    output: Optional[Path] = typer.Argument(None, help="Output directory"),
     name: Optional[str] = typer.Argument(
         None, help="Specific name of a playlist to fetch. If none, all playlists are fetched"
     ),
@@ -24,6 +26,7 @@ def main(
 
     client = ClientManager(SpotifyClient().get_client())
     track_manager = TrackManager(client)
+    playlist_manager = PlaylistManager(client)
 
     user_playlists = client.get_user_playlists()
     if name:
@@ -32,11 +35,16 @@ def main(
         target_playlists = user_playlists
 
     for target_playlist in target_playlists:
-        out_file = output / f"{target_playlist.name}.json"
-        logger.info(f"Describing playlist {target_playlist.name} in {out_file}")
+
         tracks = client.get_tracks(target_playlist.uri)
         tracks = track_manager.set_audio_features(tracks)
-        track_manager.dump(tracks, out_file)
+        summarized_playlist = PlaylistSummary(playlist=target_playlist, tracks=tracks)
+        if output:
+            out_file = output / f"{target_playlist.name}.json"
+            logger.info(f"Describing playlist {target_playlist.name} in {out_file}")
+            playlist_manager.dump(summarized_playlist, out_file)
+        else:
+            print(summarized_playlist)
 
 
 if __name__ == "__main__":

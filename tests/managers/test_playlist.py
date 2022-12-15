@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from managers.playlist import PlaylistManager
-from schemas.base import PlaylistData
+from schemas.base import PlaylistData, PlaylistSummary
 from schemas.composer import ComposerConfig, ComposerConfigItem
 
 
@@ -130,3 +130,12 @@ def test_tracks_from_playlist_name(
 
     assert len(tracks) == 10
     assert all(t.name.startswith("test_track_p") for t in tracks)
+
+
+def test_dump(tmp_path, playlist_1, playlist_1_tracks):
+    playlist_manager = PlaylistManager(None)
+    playlist_summary = PlaylistSummary(playlist=playlist_1, tracks=playlist_1_tracks)
+    outfile = tmp_path / "outfile.json"
+    with open(outfile, "w"):
+        playlist_manager.dump(playlist_summary, outfile)
+    assert outfile.exists()

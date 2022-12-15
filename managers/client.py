@@ -83,9 +83,12 @@ class ClientManager:
             self.client.playlist_add_items(playlist_uri, page_tracks)
 
     def replace_tracks_in_playlist(self, playlist_uri: str, track_ids: List[str]):
-        paginated_tracks = [track_ids[i : i + 99] for i in range(0, len(track_ids), 99)]
+        tracks_to_remove = self.get_tracks(playlist_uri)
+        tracks_to_remove_ids = [track.id for track in tracks_to_remove]
+        paginated_tracks = [tracks_to_remove_ids[i : i + 99] for i in range(0, len(tracks_to_remove_ids), 99)]
         for page_tracks in paginated_tracks:
-            self.client.playlist_replace_items(playlist_uri, page_tracks)
+            self.client.playlist_remove_all_occurrences_of_items(playlist_uri, page_tracks)
+        self.add_tracks_to_playlist(playlist_uri, track_ids)
 
     def get_hot_artists(self, limit=50) -> List[ArtistData]:
         response = self.client.current_user_top_artists(limit=limit, time_range="short_term")["items"]

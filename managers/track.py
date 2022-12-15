@@ -1,10 +1,7 @@
-import json
-from pathlib import Path
 from typing import List
 
 import numpy as np
 import pandas as pd
-from pydantic.json import pydantic_encoder
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 
@@ -35,18 +32,6 @@ class TrackManager:
     def save_tracks(self, tracks: List[TrackData]):
         track_uris = [track.uri for track in tracks]
         self.client.like_tracks(track_uris)
-
-    @staticmethod
-    def dump(tracks: List[TrackData], filepath: Path):
-        """
-        Dump a list of track in a JSON format
-        Args:
-            tracks: A list of track data
-            filepath: Target file to receive the json dump
-        """
-        json_str = json.dumps(tracks, default=pydantic_encoder)
-        with open(filepath, "w") as f:
-            f.write(json_str)
 
     @staticmethod
     def compute_tsne(tracks: List[TrackData]) -> np.ndarray:

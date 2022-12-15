@@ -4,12 +4,12 @@ import pytest
 
 from managers.recommendation import RecommendationManager, _generate_target_features
 from schemas.base import TrackData, TrackFeaturesData
-from tests.conftest import artist_data, spotify_track, track_data
+from tests.conftest import artist_data, track_data
 
 
 def side_effect_recommendations(seed_tracks, seed_artists, seed_genres, limit, **kwargs):
-    tracks = [spotify_track() for _ in range(limit)]
-    return {"tracks": tracks}
+    tracks = [track_data(str(i)) for i in range(limit)]
+    return tracks
 
 
 @pytest.mark.parametrize("max_recommendations", [0, 50])

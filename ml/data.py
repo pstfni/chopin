@@ -22,7 +22,7 @@ def read_playlist(playlist_filepath: Path) -> Tuple[str, List[TrackData]]:
     """
     playlist_name = playlist_filepath.stem
     playlist = json.load(open(playlist_filepath, "r"))
-    tracks = [TrackData.parse_obj(track) for track in playlist]
+    tracks = [TrackData.parse_obj(track) for track in playlist["tracks"]]
     return playlist_name, tracks
 
 
@@ -52,7 +52,6 @@ def format_track(track: TrackData) -> Dict[str, Any]:
             },
         }
     )
-    track["album.release_date"] = track["album.release_date"].year
     return track
 
 
