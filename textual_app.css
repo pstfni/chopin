@@ -1,0 +1,22 @@
+Screen {
+    align: center top;
+}
+
+#list-view {
+    width: 30;
+    height: auto;
+    margin: 2 2;
+    dock: left;
+}
+
+Label {
+    padding: 1 2;
+}
+
+#playlist-view {
+    overflow: auto scroll;
+    min-width: 100%;
+}
+#playlist {
+    width: auto;
+}

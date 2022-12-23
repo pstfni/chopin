@@ -15,4 +15,4 @@ pandas==1.3.5
 scikit-learn==1.0.2
 
 # Visualisation
-streamlit
+textual==0.8.0

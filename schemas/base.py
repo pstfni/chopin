@@ -109,9 +109,11 @@ class PlaylistSummary(BaseModel):
         return values
 
     def __str__(self):
+        feat_str = "\n\t".join([str(feat) for feat in self._avg_features])
         return (
-            f"------ Playlist {self.playlist.name} ------\n"
+            f"Playlist {self.playlist.name}\n"
             f"\t{self._nb_tracks} tracks\n"
             f"\t{self._nb_artists} artists\n"
+            f"{feat_str}"
             f"\t{self._avg_features} average features\n"
         )
