@@ -31,9 +31,18 @@ class ComposerConfigRecommendation(ComposerConfigItem):
     """
 
     name: Literal[
-        "acousticness", "danceability", "energy", "instrumentalness", "liveness", "loudness", "speechiness", "valence"
+        "acousticness",
+        "danceability",
+        "energy",
+        "instrumentalness",
+        "liveness",
+        "loudness",
+        "speechiness",
+        "tempo",
+        "popularity",
+        "valence",
     ]
-    value: confloat(ge=0, lt=1)
+    value: float  # relaxed constraint. todo: see if we can have constraint based on feature type (or add validators)
 
     @validator("name")
     def update_name_with_spotify_feature_format(cls, v):

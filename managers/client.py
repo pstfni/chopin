@@ -156,10 +156,11 @@ class ClientManager:
         items = response.get("items")
         if not items:
             raise ValueError(f"Couldn't retrieve playlists for query {artist_name}")
+        target_playlist = f"This is {artist_name}".lower()
         playlist = [
             playlist
             for playlist in items
-            if playlist["owner"]["uri"] == SPOTIFY_USER_URI and playlist["name"].startswith(f"This Is {artist_name}")
+            if playlist["owner"]["uri"] == SPOTIFY_USER_URI and playlist["name"].lower().startswith(target_playlist)
         ]
         if playlist:
             return PlaylistData(**playlist[0])
