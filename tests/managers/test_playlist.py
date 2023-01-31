@@ -4,7 +4,7 @@ import pytest
 
 from managers.playlist import PlaylistManager
 from schemas.base import PlaylistData, PlaylistSummary
-from schemas.composer import ComposerConfig, ComposerConfigItem
+from schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
 
 
 @patch("managers.client.ClientManager.get_this_is_playlist")
@@ -80,6 +80,19 @@ def test_playlist_compose_from_playlists_with_different_weights(
     assert len(tracks) == 21
     assert len([t for t in tracks if t.id.startswith("p")]) == 17
     assert len([t for t in tracks if t.id.startswith("q")]) == 4
+
+
+@patch("managers.client.ClientManager.get_history_tracks")
+def test_playlist_compose_from_history(mock_get_history_tracks, playlist_1_tracks, mock_client_manager):
+    playlist_manager = PlaylistManager(mock_client_manager)
+    configuration = ComposerConfig(
+        nb_songs=20, history=[ComposerConfigListeningHistory(time_range="short_term", weight=1)]
+    )
+    mock_get_history_tracks.side_effect = [playlist_1_tracks]
+
+    tracks = playlist_manager.compose(composition_config=configuration)
+    assert mock_get_history_tracks.call_args[1]["limit"] == 20
+    assert all([t.id.startswith("p") for t in tracks])
 
 
 @patch("managers.client.ClientManager.get_tracks")

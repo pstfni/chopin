@@ -1,4 +1,5 @@
 import json
+import random
 from pathlib import Path
 from typing import List, Optional
 
@@ -122,7 +123,7 @@ class PlaylistManager:
                 the configuration with the Spotify URI.
 
         Returns:
-            A list of track data, the tracks to be added to your playlist.
+            A list of track data, the tracks to be added to your playlist. The tracks are shuffled.
 
         Raises:
             AttributeError: if 'playlists' are in the configuration but user_playlists is not passed.
@@ -154,9 +155,11 @@ class PlaylistManager:
                 nb_tracks=feature.nb_songs,
             )
             tracks.extend(recommended_tracks)
-
             logger.info(f"Some recommended tracks: {[t.name for t in recommended_tracks[:5]]}")
-        return tracks
+        for history in composition_config.history:
+            logger.info(f"Adding {history.nb_songs} tracks from user {history.time_range} best songs")
+            tracks.extend(self.client.get_history_tracks(time_range=history.time_range, limit=history.nb_songs))
+        return random.sample(tracks, len(tracks))
 
     @staticmethod
     def dump(playlist: PlaylistSummary, filepath: Path):

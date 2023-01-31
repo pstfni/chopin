@@ -2,7 +2,7 @@ import math
 from typing import List, Literal, Optional
 
 import numpy as np
-from pydantic import BaseModel, confloat, conint, conlist, root_validator, validator
+from pydantic import BaseModel, ValidationError, confloat, conint, conlist, root_validator, validator
 
 from utils import get_logger
 
@@ -18,7 +18,7 @@ class ComposerConfigItem(BaseModel):
     """
 
     name: str
-    weight: confloat(ge=0)
+    weight: confloat(ge=0) = 1
     nb_songs: Optional[int] = 0
 
 
@@ -49,6 +49,20 @@ class ComposerConfigRecommendation(ComposerConfigItem):
         return f"feature_{v}"
 
 
+class ComposerConfigListeningHistory(BaseModel):
+    """Base schema for the configuration section which will add the current user's best songs.
+
+    Attributes:
+        time_range: Time criteria for the best tracks. One of short_term (~ last 4 weeks), medium_term (~ last 6 months)
+            or long_term (~ all time).
+        weight: Weight of the input in the final composition
+    """
+
+    time_range: Literal["short_term", "medium_term", "long_term"] = "short_term"
+    weight: confloat(ge=0) = 1
+    nb_songs: Optional[int] = 0
+
+
 class ComposerConfig(BaseModel):
     """Schema for a composer configuration.
 
@@ -67,6 +81,14 @@ class ComposerConfig(BaseModel):
     playlists: Optional[List[ComposerConfigItem]] = []
     artists: Optional[List[ComposerConfigItem]] = []
     features: Optional[conlist(ComposerConfigRecommendation, max_items=5)] = []
+    history: Optional[conlist(ComposerConfigListeningHistory, max_items=3)] = []
+
+    @validator("history")
+    def history_field_ranges_must_be_unique(cls, v):
+        ranges = [item.time_range for item in v]
+        if len(set(ranges)) != len(ranges):
+            raise ValidationError("time_range items for history must be unique")
+        return v
 
     @root_validator
     def fill_nb_songs(cls, values):
@@ -75,12 +97,11 @@ class ComposerConfig(BaseModel):
         Args:
             values: Attributes of the composer configuration model.
         """
-        item_weights: List[float] = [
-            item.weight for category in ["playlists", "artists", "features"] for item in values.get(category)
-        ]
+        categories = {"playlists", "artists", "features", "history"}
+        item_weights: List[float] = [item.weight for category in categories for item in values.get(category)]
         sum_of_weights: float = np.array(list(item_weights)).sum()
         total_nb_songs: int = 0
-        for category in {"playlists", "artists", "features"}:
+        for category in categories:
             for item in values.get(category):
                 item.nb_songs = math.ceil((item.weight / sum_of_weights) * values["nb_songs"])
                 total_nb_songs += item.nb_songs

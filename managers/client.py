@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Literal
 
 import requests
 import spotipy
@@ -14,6 +14,7 @@ TRACK_FIELDS = (
     "items.track.artists.uri, items.track.artists.name, items.track.artists.id, items.track.artists.genre"
 )
 SPOTIFY_USER_URI = "spotify:user:spotify"
+SPOTIFY_API_HISTORY_LIMIT = 50
 
 
 class ClientManager:
@@ -90,21 +91,25 @@ class ClientManager:
             self.client.playlist_remove_all_occurrences_of_items(playlist_uri, page_tracks)
         self.add_tracks_to_playlist(playlist_uri, track_ids)
 
+    def get_history_tracks(
+        self, time_range: Literal["short_term", "medium_term", "long_term"], limit: int
+    ) -> List[TrackData]:
+        if limit > SPOTIFY_API_HISTORY_LIMIT:
+            logger.warning(
+                f"Asked for {limit} tracks for {time_range} best songs, "
+                f"but Spotify API limits to {SPOTIFY_API_HISTORY_LIMIT}"
+            )
+            limit = SPOTIFY_API_HISTORY_LIMIT
+        response = self.client.current_user_top_tracks(limit=limit, time_range=time_range)["items"]
+        return [TrackData(**track) for track in response]
+
     def get_hot_artists(self, limit=50) -> List[ArtistData]:
         response = self.client.current_user_top_artists(limit=limit, time_range="short_term")["items"]
         return [ArtistData(**artist) for artist in response]
 
-    def get_hot_tracks(self, limit=50) -> List[TrackData]:
-        response = self.client.current_user_top_tracks(limit=limit, time_range="short_term")["items"]
-        return [TrackData(**track) for track in response]
-
     def get_top_artists(self, limit=50) -> List[ArtistData]:
         response = self.client.current_user_top_artists(limit=limit, time_range="long_term")["items"]
         return [ArtistData(**artist) for artist in response]
-
-    def get_top_tracks(self, limit=50) -> List[TrackData]:
-        response = self.client.current_user_top_tracks(limit=limit, time_range="long_term")["items"]
-        return [TrackData(**track) for track in response]
 
     def get_queue(self) -> List[TrackData]:
         if not self.client.current_playback().get("is_playing"):
