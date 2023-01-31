@@ -7,17 +7,17 @@ from schemas.base import PlaylistData, PlaylistSummary
 from schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
 
 
-@patch("managers.client.ClientManager.get_this_is_playlist")
+@patch("managers.client.ClientManager.get_titled_playlist")
 @patch("managers.client.ClientManager.get_tracks")
 def test_playlist_compose_from_artists(
-    mock_get_tracks, mock_get_this_is_playlist, playlist_1_tracks, playlist_2_tracks, mock_client_manager
+    mock_get_tracks, mock_get_titled_playlist, playlist_1_tracks, playlist_2_tracks, mock_client_manager
 ):
     playlist_manager = PlaylistManager(mock_client_manager)
     configuration = ComposerConfig(
         nb_songs=20,
         artists=[ComposerConfigItem(name="Artist", weight=1), ComposerConfigItem(name="Artist_2", weight=1)],
     )
-    mock_get_this_is_playlist.side_effect = [
+    mock_get_titled_playlist.side_effect = [
         PlaylistData(name="Artist", uri="uri"),
         PlaylistData(name="Artist_2", uri="uri_2"),
     ]
@@ -28,17 +28,17 @@ def test_playlist_compose_from_artists(
     assert len([t for t in tracks if t.id.startswith("p")]) == len([t for t in tracks if t.id.startswith("q")]) == 10
 
 
-@patch("managers.client.ClientManager.get_this_is_playlist")
+@patch("managers.client.ClientManager.get_titled_playlist")
 @patch("managers.client.ClientManager.get_tracks")
 def test_playlist_compose_from_artists_with_different_weights(
-    mock_get_tracks, mock_get_this_is_playlist, playlist_1_tracks, playlist_2_tracks, mock_client_manager
+    mock_get_tracks, mock_get_titled_playlist, playlist_1_tracks, playlist_2_tracks, mock_client_manager
 ):
     playlist_manager = PlaylistManager(mock_client_manager)
     configuration = ComposerConfig(
         nb_songs=20,
         artists=[ComposerConfigItem(name="Artist", weight=1), ComposerConfigItem(name="Artist_2", weight=0.5)],
     )
-    mock_get_this_is_playlist.side_effect = [
+    mock_get_titled_playlist.side_effect = [
         PlaylistData(name="Artist", uri="uri"),
         PlaylistData(name="Artist_2", uri="uri_2"),
     ]
@@ -104,10 +104,10 @@ def test_playlist_compose_with_empty_playlists(mock_client_manager):
 
 
 # Patchs are read bottom-up by pytest 🤯
-@patch("managers.client.ClientManager.get_this_is_playlist")
+@patch("managers.client.ClientManager.get_titled_playlist")
 @patch("managers.client.ClientManager.get_tracks")
 @pytest.mark.parametrize(
-    "nb_tracks, this_is_side_effect, expected_nb_songs",
+    "nb_tracks, titled_side_effect, expected_nb_songs",
     [
         (10, PlaylistData(name="a", uri="uri"), 10),
         (20, PlaylistData(name="a", uri="uri"), 20),
@@ -117,17 +117,17 @@ def test_playlist_compose_with_empty_playlists(mock_client_manager):
 )
 def test_tracks_from_artist_name(
     mock_get_tracks,
-    mock_get_this_is_playlist,
+    mock_get_titled_playlist,
     playlist_1_tracks,
     nb_tracks,
-    this_is_side_effect,
+    titled_side_effect,
     expected_nb_songs,
     mock_client_manager,
 ):
     playlist_manager = PlaylistManager(mock_client_manager)
     mock_get_tracks.side_effect = [playlist_1_tracks]
-    mock_get_this_is_playlist.side_effect = [this_is_side_effect]
-    tracks = playlist_manager.tracks_from_artist_name(artist_name="Artist", nb_tracks=nb_tracks)
+    mock_get_titled_playlist.side_effect = [titled_side_effect]
+    tracks = playlist_manager.tracks_from_artist_name(artist_name="Artist", nb_tracks=nb_tracks, title="")
     assert len(tracks) == expected_nb_songs
 
 
