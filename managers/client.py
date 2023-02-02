@@ -155,18 +155,17 @@ class ClientManager:
                 break
         return [TrackData(**track["track"]) for track in tracks]
 
-    def get_titled_playlist(self, title: str) -> PlaylistData | None:
+    def get_this_is_playlist(self, artist_name: str) -> PlaylistData | None:
         # NOTE : Strict match for 'This Is artist_name' !
-        response = self.client.search(q=title, limit=10, type="playlist")["playlists"]
+        response = self.client.search(q=artist_name, limit=10, type="playlist")["playlists"]
         items = response.get("items")
         if not items:
-            raise ValueError(f"Couldn't retrieve playlists for query {title}")
-
-        target = title.lower()  # sanity check
+            raise ValueError(f"Couldn't retrieve playlists for query {artist_name}")
+        target_playlist = f"This is {artist_name}".lower()
         playlist = [
             playlist
             for playlist in items
-            if playlist["owner"]["uri"] == SPOTIFY_USER_URI and playlist["name"].lower() == target
+            if playlist["owner"]["uri"] == SPOTIFY_USER_URI and playlist["name"].lower().startswith(target_playlist)
         ]
         if playlist:
             return PlaylistData(**playlist[0])

@@ -73,8 +73,6 @@ class ComposerConfig(BaseModel):
         playlists: A list of playlist names and their weight
         artists: A list of artists from which to pick songs, and their weight in the final composition
         features: A list of features and their value, to add recommendations based on recent listening
-        history: A list of criteria for your most listened songs.
-        radios: A list of artists from which to pick spotify radios.
     """
 
     name: str = "🤖 Robot Mix"
@@ -84,7 +82,6 @@ class ComposerConfig(BaseModel):
     artists: Optional[List[ComposerConfigItem]] = []
     features: Optional[conlist(ComposerConfigRecommendation, max_items=5)] = []
     history: Optional[conlist(ComposerConfigListeningHistory, max_items=3)] = []
-    radios: Optional[List[ComposerConfigItem]] = []
 
     @validator("history")
     def history_field_ranges_must_be_unique(cls, v):
@@ -100,7 +97,7 @@ class ComposerConfig(BaseModel):
         Args:
             values: Attributes of the composer configuration model.
         """
-        categories = {"playlists", "artists", "features", "history", "radios"}
+        categories = {"playlists", "artists", "features", "history"}
         item_weights: List[float] = [item.weight for category in categories for item in values.get(category)]
         sum_of_weights: float = np.array(list(item_weights)).sum()
         total_nb_songs: int = 0

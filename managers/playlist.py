@@ -70,7 +70,7 @@ class PlaylistManager:
         tracks = self.client.get_tracks(playlist_uri=playlist[0].uri)
         return np.random.choice(tracks, nb_tracks, replace=False)
 
-    def tracks_from_artist_name(self, artist_name: str, nb_tracks: int, title: str) -> List[TrackData]:
+    def tracks_from_artist_name(self, artist_name: str, nb_tracks: int) -> List[TrackData]:
         """Get a number of tracks from an artist or band.
 
         !!! note
@@ -79,12 +79,11 @@ class PlaylistManager:
         Args:
             artist_name: Name of the artist or band to fetch tracks from
             nb_tracks: Number of tracks to retrieve.
-            title: The playlist title to match. For example, 'This is Artist' or "Artist Radio'.
 
         Returns:
             A list of track data from the artists.
         """
-        playlist = self.client.get_titled_playlist(title)
+        playlist = self.client.get_this_is_playlist(artist_name)
         if not playlist:
             logger.warning(f"Couldn't retrieve tracks for artist {artist_name}")
             return []
@@ -145,10 +144,7 @@ class PlaylistManager:
             )
         for artist in tqdm(composition_config.artists):
             logger.info(f"Adding {artist.nb_songs} tracks for artist {artist.name}")
-            playlist_title = f"This is {artist.name}".lower()
-            tracks.extend(
-                self.tracks_from_artist_name(artist_name=artist.name, nb_tracks=artist.nb_songs, title=playlist_title)
-            )
+            tracks.extend(self.tracks_from_artist_name(artist_name=artist.name, nb_tracks=artist.nb_songs))
         for feature in composition_config.features:
             logger.info(f"Adding {feature.nb_songs} tracks from recommendations with {feature.name}")
             seed_tracks = np.random.choice(tracks, 5, replace=False)
@@ -163,12 +159,6 @@ class PlaylistManager:
         for history in composition_config.history:
             logger.info(f"Adding {history.nb_songs} tracks from user {history.time_range} best songs")
             tracks.extend(self.client.get_history_tracks(time_range=history.time_range, limit=history.nb_songs))
-        for artist in tqdm(composition_config.radios):
-            logger.info(f"Adding {artist.nb_songs} tracks from the radio of artist {artist.name}")
-            playlist_title = f"{artist.name} Radio".lower()
-            tracks.extend(
-                self.tracks_from_artist_name(artist_name=artist.name, nb_tracks=artist.nb_songs, title=playlist_title)
-            )
         return random.sample(tracks, len(tracks))
 
     @staticmethod
