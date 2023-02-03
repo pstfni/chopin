@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Optional
 
 import numpy as np
+import spotipy
 from pydantic.json import pydantic_encoder
 from tqdm import tqdm
 
@@ -137,6 +138,23 @@ class PlaylistManager:
             tracks.extend(self.client.get_artist_top_tracks(artist, MAX_TOP_TRACKS_ARTISTS))
         return np.random.choice(tracks, min(len(tracks), nb_tracks), replace=False)
 
+    def tracks_from_playlist_uri(self, playlist_uri: str, nb_tracks: int) -> List[TrackData]:
+        """Get tracks from a playlist URI.
+
+        Args:
+            playlist_uri: Name of the artist or band to fetch related tracks from
+            nb_tracks: Number of tracks to retrieve.
+
+        Returns:
+            A list of track data from the artist radio.
+        """
+        try:
+            tracks = self.client.get_tracks(playlist_uri=playlist_uri)
+        except spotipy.SpotifyException:
+            logger.warning(f"Couldn't retrieve playlist URI {playlist_uri}")
+            return []
+        return np.random.choice(tracks, min(len(tracks), nb_tracks), replace=False)
+
     def compose(
         self, composition_config: ComposerConfig, user_playlists: Optional[List[PlaylistData]] = None
     ) -> List[TrackData]:
@@ -188,6 +206,9 @@ class PlaylistManager:
         for radio in composition_config.radios:
             logger.info(f"Adding {radio.nb_songs} tracks with {radio.name} related artists and songs")
             tracks.extend(self.tracks_from_radio(artist_name=radio.name, nb_tracks=radio.nb_songs))
+        for uri in composition_config.uris:
+            logger.info(f"Adding {uri.nb_songs} tracks from playlist uri {uri.name}")
+            tracks.extend(self.tracks_from_playlist_uri(playlist_uri=uri.name, nb_tracks=uri.nb_songs))
         return random.sample(tracks, len(tracks))
 
     @staticmethod
