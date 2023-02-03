@@ -1,5 +1,6 @@
 import logging
 import os
+import unicodedata
 from typing import Any, Dict, List, Union
 
 import coloredlogs
@@ -127,3 +128,23 @@ def flatten_dict(dictionary: Dict) -> Dict:
         else:
             final_dict[key] = value
     return final_dict
+
+
+def match_strings(strings: List[str]) -> bool:
+    """Returns true if all strings match in our query universe. Basically, the check performed is on lowercase strings
+    without french (or other) unicode characters.
+
+    Args:
+        strings: A list of strings to match
+
+    Returns:
+        True if all strings are the same (minus lowercase and unicode special character differences)
+    """
+
+    def _normalize_string(_string: str) -> str:
+        return "".join(c for c in unicodedata.normalize("NFD", _string.lower()) if unicodedata.category(c) != "Mn")
+
+    if len(strings) < 2:
+        return True
+    target = _normalize_string(strings[0])
+    return all([_normalize_string(s) == target for s in strings[1:]])

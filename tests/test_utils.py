@@ -1,6 +1,6 @@
 import pytest
 
-from utils import flatten_dict, flatten_list, simplify_string
+from utils import flatten_dict, flatten_list, match_strings, simplify_string
 
 
 @pytest.mark.parametrize(
@@ -60,3 +60,19 @@ def test_flatten_list(in_list, expected_list):
 def test_simplify_string(input_string, expected_string):
     output_string = simplify_string(input_string)
     assert output_string == expected_string
+
+
+@pytest.mark.parametrize(
+    "input_strings, expected_result",
+    [
+        ([], True),
+        (["etienne"], True),
+        (["etienne", "EtiennE"], True),
+        (["etienne", "étienne", "Etienne"], True),
+        (["étienne", "etienne"], True),
+        (["etienne", "Daho"], False),
+        (["etienne😀", "etienne"], False),
+    ],
+)
+def test_match_strings(input_strings, expected_result):
+    assert match_strings(input_strings) == expected_result

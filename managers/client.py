@@ -1,10 +1,11 @@
+import random
 from typing import Any, Dict, List, Literal
 
 import requests
 import spotipy
 
 from schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData, UserData
-from utils import get_logger, simplify_string
+from utils import get_logger, match_strings, simplify_string
 
 logger = get_logger(__name__)
 
@@ -169,7 +170,22 @@ class ClientManager:
         ]
         if playlist:
             return PlaylistData(**playlist[0])
-        return
+
+    def search_artist(self, artist_name: str) -> ArtistData | None:
+        response = self.client.search(q=artist_name, limit=10, type="artist")["artists"]
+        items = response.get("items")
+        matched_artists = [artist for artist in items if match_strings([artist["name"], artist_name])]
+        if matched_artists:
+            return ArtistData(**matched_artists[0])
+
+    def get_related_artists(self, artist: ArtistData, max_related_artists: int = 10) -> List[ArtistData]:
+        response = self.client.artist_related_artists(artist_id=artist.id)["artists"][:max_related_artists]
+        return [ArtistData(**related_artist) for related_artist in response]
+
+    def get_artist_top_tracks(self, artist: ArtistData, max_tracks: int = 20) -> List[TrackData]:
+        response = self.client.artist_top_tracks(artist_id=artist.id)
+        tracks = response["tracks"]
+        return [TrackData(**track) for track in random.sample(tracks, min(len(tracks), max_tracks))]
 
     def get_recommendations(
         self,

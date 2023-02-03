@@ -13,6 +13,8 @@ from schemas.composer import ComposerConfig
 from utils import get_logger, simplify_string
 
 logger = get_logger(__name__)
+MAX_RELATED_ARTISTS = 10
+MAX_TOP_TRACKS_ARTISTS = 10
 
 
 class PlaylistManager:
@@ -111,6 +113,30 @@ class PlaylistManager:
         )
         return tracks
 
+    def tracks_from_radio(self, artist_name: str, nb_tracks: int) -> List[TrackData]:
+        """Get tracks from an artist radio.
+
+        !!! note
+            Unfortunately an artist radio isn't easily available in the Spotify API.
+            A "radio" of related tracks is created by picking top tracks of the artist and its related artists.
+
+        Args:
+            artist_name: Name of the artist or band to fetch related tracks from
+            nb_tracks: Number of tracks to retrieve.
+
+        Returns:
+            A list of track data from the artist radio.
+        """
+        artist = self.client.search_artist(artist_name)
+        if not artist:
+            logger.warning(f"Couldn't retrieve artist for search {artist_name}")
+            return []
+        related_artists = self.client.get_related_artists(artist, max_related_artists=MAX_RELATED_ARTISTS)
+        tracks = []
+        for artist in [artist] + related_artists:
+            tracks.extend(self.client.get_artist_top_tracks(artist, MAX_TOP_TRACKS_ARTISTS))
+        return np.random.choice(tracks, min(len(tracks), nb_tracks), replace=False)
+
     def compose(
         self, composition_config: ComposerConfig, user_playlists: Optional[List[PlaylistData]] = None
     ) -> List[TrackData]:
@@ -159,6 +185,9 @@ class PlaylistManager:
         for history in composition_config.history:
             logger.info(f"Adding {history.nb_songs} tracks from user {history.time_range} best songs")
             tracks.extend(self.client.get_history_tracks(time_range=history.time_range, limit=history.nb_songs))
+        for radio in composition_config.radios:
+            logger.info(f"Adding {radio.nb_songs} tracks with {radio.name} related artists and songs")
+            tracks.extend(self.tracks_from_radio(artist_name=radio.name, nb_tracks=radio.nb_songs))
         return random.sample(tracks, len(tracks))
 
     @staticmethod
