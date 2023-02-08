@@ -8,17 +8,49 @@ from icai.utils import flatten_dict
 
 
 class PlaylistData(BaseModel):
+    """Playlist representation.
+
+    Attributes:
+        name: Name of the playlist
+        uri: Spotify URI for the playlist
+    """
+
     name: str
     uri: str
 
 
 class UserData(BaseModel):
+    """User representation.
+
+    Attributes:
+        name: Name of the user
+        id: The user id
+        uri: Spotify URI for the user
+    """
+
     name: str
     id: str
     uri: str
 
 
 class TrackFeaturesData(BaseModel):
+    """Track audio features representation.
+
+    Attributes:
+        acousticness: A [0., 1.] value indicating how acoustic the track is. 1 is most acoustic
+        danceability: A [0., 1.] value for how suitable the track is for dancing. 1 is most danceable
+        energy: A [0., 1.] measure of intensity and activity. 1 feel fast, loud and noisy
+        instrumentalness: A [0., 1.] value indicating if the track contains vocals. 1 means no vocal content
+        liveness: A [0., 1.] confidence score for whether the track was captured in a live setting. 1 is performed live.
+        loudness: A decibel value for how loud the track is. Typically range between -60 and 0db for the loudest tracks.
+        speechiness: A [0., 1.] measure for spoken words presence in a track. 1 is a talk show
+        valence: A [0., 1.] score for the "positiveness" conveyed by the track. 1 are joyful songs.
+        tempo: Beats per minute of a track.
+        mode: Track modality. 0 is minor, 1 is major.
+        key: Pitch Class Notation for the track key. -1 indicates that no key was detected.
+        analysis_url: URL for the spotify page of the audio feature analysis.
+    """
+
     acousticness: Optional[float]
     danceability: Optional[float]
     energy: Optional[float]
@@ -37,6 +69,15 @@ class TrackFeaturesData(BaseModel):
 
 
 class AlbumData(BaseModel):
+    """Album data representation.
+
+    Attributes:
+        name: Album name
+        id: Album id
+        uri: Spotify URI for the album
+        release_date: The year the album was released.
+    """
+
     name: str
     id: str
     uri: str
@@ -56,6 +97,18 @@ class AlbumData(BaseModel):
 
 
 class ArtistData(BaseModel):
+    """Artist data representation.
+
+    Attributes:
+        name: Name of the artist
+        id: Id of the artist
+        uri: Spotify URI for the artist
+        genres: A list of strings describing the artist genres
+
+    !!! warning
+        The 'genres' information is not always available. And it can be quite flaky
+    """
+
     name: str
     id: str
     uri: str
@@ -66,6 +119,23 @@ class ArtistData(BaseModel):
 
 
 class TrackData(BaseModel):
+    """Representation of a track.
+
+    Attributes:
+        name: Track name
+        id: Track id
+        uri: Spotify URI for the track
+        duration_ms: Duration of the track, in milliseconds
+        popularity: A [0, 100] measure for the track popularity. 100 is most popular
+        album: The album data
+        artists: The artists on the track
+        features: Audio features of the track.
+
+    !!! warning
+        By default, tracks sent by the Spotify API do not contain audio feature information.
+        A call to the dedicated endpoint is necessary to fill the attribute.
+    """
+
     name: str
     id: str
     uri: str
@@ -82,6 +152,21 @@ class TrackData(BaseModel):
 
 
 class PlaylistSummary(BaseModel):
+    """Representation of a full playlist. It is used to describe playlists and back them up.
+
+    Attributes:
+        playlist: The playlist described
+        tracks: A list of TrackData in the playlist
+        _nb_tracks: Number of tracks in the playlist
+        _total_duration: Length (in milliseconds) of the playlist
+        _nb_artists: Number of artists in the playlist
+        _avg_features: Average values across the track features
+        _avg_popularity: Average popularity of the tracks in the playlist
+
+    !!! note
+        The private attributes are automatically computed in a validator.
+    """
+
     playlist: PlaylistData
     tracks: List[TrackData]
     _nb_tracks: Optional[int] = None

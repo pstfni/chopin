@@ -17,6 +17,11 @@ python-dotenv = "^0.19.2"
 coloredlogs = "^15.0"
 typer = "^0.6.1"
 
+# Documentation
+mkdocs = "*"
+mkdocstrings = "*"
+mkdocstrings-python = "*"
+mkdocs-material = "*"
 
 [tool.poetry.dev-dependencies]
 pytest-sugar = "*"

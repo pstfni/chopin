@@ -3,15 +3,27 @@ repo_url: https://github.com/pierrestefani/spotify-builder
 repo_name: pierrestefani/spotify-builder
 
 nav:
-  - Intro: 'index.md'
-  - About:
-    - Help: 'help.md'
+  - Introduction:
+    - "index.md"
+    - "getting_started.md"
+  - Guide:
+    - "guide/index.md"
+    - Compose:
+      - "guide/compose.md"
+      - "guide/sources.md"
+  - Reference:
+    - "reference/index.md"
+    - "reference/entrypoints.md"
+    - "reference/managers.md"
+    - "reference/schemas.md"
 
 theme:
   name: "material"
   icon:
     logo: material/library
     repo: fontawesome/brands/github
+    admonition:
+      tip: material/music-note-plus
   features:
     - navigation.indexes
     - navigation.tabs
@@ -42,9 +54,15 @@ markdown_extensions:
     - abbr
     - footnotes
     - md_in_html
+    - attr_list
+    - pymdownx.highlight:
+        anchor_linenums: true
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+    - pymdownx.details
     - pymdownx.tasklist:
         custom_checkbox: true
-    - pymdownx.highlight
     - pymdownx.arithmatex:
         generic: true
     - pymdownx.emoji:
@@ -53,3 +71,9 @@ markdown_extensions:
 
 plugins:
   - search
+  - mkdocstrings:
+      default_handler: python
+      watch:
+        - icai/managers/
+        - icai/schemas/
+        - icai/entrypoints/
