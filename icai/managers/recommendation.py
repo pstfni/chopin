@@ -2,9 +2,9 @@ from typing import Dict, List, Optional
 
 import numpy as np
 
-from managers.client import ClientManager
-from schemas.base import ArtistData, TrackData, TrackFeaturesData
-from utils import get_logger
+from icai.managers.client import ClientManager
+from icai.schemas.base import ArtistData, TrackData, TrackFeaturesData
+from icai.utils import get_logger
 
 logger = get_logger(__name__)
 

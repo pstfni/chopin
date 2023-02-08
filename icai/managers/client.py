@@ -4,8 +4,8 @@ from typing import Any, Dict, List, Literal
 import requests
 import spotipy
 
-from schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData, UserData
-from utils import get_logger, match_strings, simplify_string
+from icai.schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData, UserData
+from icai.utils import get_logger, match_strings, simplify_string
 
 logger = get_logger(__name__)
 

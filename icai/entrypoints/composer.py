@@ -4,16 +4,16 @@ from typing import Optional
 import typer
 from ruamel import yaml
 
-from managers.client import ClientManager
-from managers.playlist import PlaylistManager
-from managers.spotify_client import SpotifyClient
-from schemas.composer import ComposerConfig, ComposerConfigItem
-from utils import get_logger, simplify_string
+from icai.managers.client import ClientManager
+from icai.managers.playlist import PlaylistManager
+from icai.managers.spotify_client import SpotifyClient
+from icai.schemas.composer import ComposerConfig, ComposerConfigItem
+from icai.utils import get_logger, simplify_string
 
 LOGGER = get_logger(__name__)
 
 
-def main(
+def compose(
     nb_songs: Optional[int] = typer.Argument(300, help="Number of songs for the playlist"),
     composition_config: Optional[Path] = typer.Option(
         None, help="Path to a YAML file with composition for your playlists"
@@ -54,5 +54,5 @@ def main(
         playlist_manager.fill(uri=playlist.uri, tracks=tracks)
 
 
-if __name__ == "__main__":
-    typer.run(main)
+def main():
+    typer.run(compose)

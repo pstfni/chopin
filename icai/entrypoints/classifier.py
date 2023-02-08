@@ -3,11 +3,11 @@ from pathlib import Path
 
 import typer
 
-from managers.client import ClientManager
-from managers.spotify_client import SpotifyClient
-from managers.track import TrackManager
-from ml import data
-from utils import get_logger
+from icai.managers.client import ClientManager
+from icai.managers.spotify_client import SpotifyClient
+from icai.managers.track import TrackManager
+from icai.ml import data
+from icai.utils import get_logger
 
 LOGGER = get_logger(__name__)
 

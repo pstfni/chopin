@@ -1,7 +1,7 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-from managers import CONFIG
+from icai.managers import CONFIG
 
 
 class SpotifyClient:

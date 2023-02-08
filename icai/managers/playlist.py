@@ -8,10 +8,10 @@ import spotipy
 from pydantic.json import pydantic_encoder
 from tqdm import tqdm
 
-from managers.client import ClientManager
-from schemas.base import PlaylistData, PlaylistSummary, TrackData
-from schemas.composer import ComposerConfig
-from utils import get_logger, simplify_string
+from icai.managers.client import ClientManager
+from icai.schemas.base import PlaylistData, PlaylistSummary, TrackData
+from icai.schemas.composer import ComposerConfig
+from icai.utils import get_logger, simplify_string
 
 logger = get_logger(__name__)
 MAX_RELATED_ARTISTS = 10

@@ -4,7 +4,7 @@ from typing import List, Optional
 import numpy as np
 from pydantic import BaseModel, root_validator, validator
 
-from utils import flatten_dict
+from icai.utils import flatten_dict
 
 
 class PlaylistData(BaseModel):

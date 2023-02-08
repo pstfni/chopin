@@ -4,8 +4,8 @@ from pathlib import Path
 import typer
 from sklearn.ensemble import RandomForestClassifier
 
-from ml import data, train
-from utils import get_logger
+from icai.ml import data, train
+from icai.utils import get_logger
 
 LOGGER = get_logger(__name__)
 

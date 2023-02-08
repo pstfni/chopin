@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from managers.recommendation import RecommendationManager, _generate_target_features
-from schemas.base import TrackData, TrackFeaturesData
+from icai.managers.recommendation import RecommendationManager, _generate_target_features
+from icai.schemas.base import TrackData, TrackFeaturesData
 from tests.conftest import artist_data, track_data
 
 

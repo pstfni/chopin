@@ -5,12 +5,12 @@ import typer
 from pydantic import ValidationError
 from ruamel.yaml import safe_load
 
-from managers.client import ClientManager
-from managers.playlist import PlaylistManager
-from managers.recommendation import RecommendationManager
-from managers.spotify_client import SpotifyClient
-from schemas.base import TrackFeaturesData
-from utils import get_logger
+from icai.managers.client import ClientManager
+from icai.managers.playlist import PlaylistManager
+from icai.managers.recommendation import RecommendationManager
+from icai.managers.spotify_client import SpotifyClient
+from icai.schemas.base import TrackFeaturesData
+from icai.utils import get_logger
 
 LOGGER = get_logger(__name__)
 MAX_SEEDS = 5  # Spotify only accepts up to 5 seeds for the recommendation

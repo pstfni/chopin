@@ -3,17 +3,17 @@ from typing import Optional
 
 import typer
 
-from managers.client import ClientManager
-from managers.playlist import PlaylistManager
-from managers.spotify_client import SpotifyClient
-from managers.track import TrackManager
-from schemas.base import PlaylistSummary
-from utils import get_logger
+from icai.managers.client import ClientManager
+from icai.managers.playlist import PlaylistManager
+from icai.managers.spotify_client import SpotifyClient
+from icai.managers.track import TrackManager
+from icai.schemas.base import PlaylistSummary
+from icai.utils import get_logger
 
 logger = get_logger(__name__)
 
 
-def main(
+def describe(
     output: Optional[Path] = typer.Argument(None, help="Output directory"),
     name: Optional[str] = typer.Argument(
         None, help="Specific name of a playlist to fetch. If none, all playlists are fetched"
@@ -47,5 +47,5 @@ def main(
             print(summarized_playlist)
 
 
-if __name__ == "__main__":
-    typer.run(main)
+def main():
+    typer.run(describe)

@@ -5,9 +5,9 @@ import pandas as pd
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 
-from managers.client import ClientManager
-from schemas.base import TrackData, TrackFeaturesData
-from utils import get_logger
+from icai.managers.client import ClientManager
+from icai.schemas.base import TrackData, TrackFeaturesData
+from icai.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -56,4 +56,4 @@ class TrackManager:
         tracks_features = pd.DataFrame.from_records(tracks_features)
         tracks_features = tracks_features.drop("analysis_url", axis=1)
         scaled_features = StandardScaler().fit_transform(tracks_features)
-        return TSNE(n_components=2, learning_rate="auto", init="random").fit_transform(scaled_features)
+        return TSNE(n_components=2, learning_rate="auto", init="random", perplexity=1.0).fit_transform(scaled_features)

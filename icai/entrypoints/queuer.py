@@ -2,15 +2,15 @@ from typing import Optional
 
 import typer
 
-from managers.client import ClientManager
-from managers.playlist import PlaylistManager
-from managers.spotify_client import SpotifyClient
-from utils import get_logger, simplify_string
+from icai.managers.client import ClientManager
+from icai.managers.playlist import PlaylistManager
+from icai.managers.spotify_client import SpotifyClient
+from icai.utils import get_logger, simplify_string
 
 LOGGER = get_logger(__name__)
 
 
-def main(
+def queue(
     name: Optional[str] = typer.Argument("🔮 Queued Mix", help="Name for your playlist"),
 ):
     """Create a playlist and shuffle it from the user's queue.
@@ -38,5 +38,5 @@ def main(
     playlist_manager.fill(uri=playlist.uri, tracks=playlist_tracks)
 
 
-if __name__ == "__main__":
-    typer.run(main)
+def main():
+    typer.run(queue)
