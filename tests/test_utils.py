@@ -1,6 +1,6 @@
 import pytest
 
-from utils import flatten_dict, flatten_list, match_strings, simplify_string
+from spotify_builder.utils import flatten_dict, flatten_list, match_strings, simplify_string
 
 
 @pytest.mark.parametrize(

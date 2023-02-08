@@ -4,8 +4,8 @@ from pathlib import Path
 import typer
 from sklearn.ensemble import RandomForestClassifier
 
-from ml import data, train
-from utils import get_logger
+from spotify_builder.ml import data, train
+from spotify_builder.utils import get_logger
 
 LOGGER = get_logger(__name__)
 

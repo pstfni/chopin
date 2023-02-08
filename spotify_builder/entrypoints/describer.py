@@ -3,12 +3,12 @@ from typing import Optional
 
 import typer
 
-from managers.client import ClientManager
-from managers.playlist import PlaylistManager
-from managers.spotify_client import SpotifyClient
-from managers.track import TrackManager
-from schemas.base import PlaylistSummary
-from utils import get_logger
+from spotify_builder.managers.client import ClientManager
+from spotify_builder.managers.playlist import PlaylistManager
+from spotify_builder.managers.spotify_client import SpotifyClient
+from spotify_builder.managers.track import TrackManager
+from spotify_builder.schemas.base import PlaylistSummary
+from spotify_builder.utils import get_logger
 
 logger = get_logger(__name__)
 

@@ -4,7 +4,7 @@ from typing import List, Literal, Optional
 import numpy as np
 from pydantic import BaseModel, ValidationError, confloat, conint, conlist, root_validator, validator
 
-from utils import get_logger
+from spotify_builder.utils import get_logger
 
 logger = get_logger(__name__)
 

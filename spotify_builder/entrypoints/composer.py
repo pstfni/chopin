@@ -4,11 +4,11 @@ from typing import Optional
 import typer
 from ruamel import yaml
 
-from managers.client import ClientManager
-from managers.playlist import PlaylistManager
-from managers.spotify_client import SpotifyClient
-from schemas.composer import ComposerConfig, ComposerConfigItem
-from utils import get_logger, simplify_string
+from spotify_builder.managers.client import ClientManager
+from spotify_builder.managers.playlist import PlaylistManager
+from spotify_builder.managers.spotify_client import SpotifyClient
+from spotify_builder.schemas.composer import ComposerConfig, ComposerConfigItem
+from spotify_builder.utils import get_logger, simplify_string
 
 LOGGER = get_logger(__name__)
 

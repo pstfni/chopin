@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 
-from schemas.base import TrackData
+from spotify_builder.schemas.base import TrackData
 
 
 def read_playlist(playlist_filepath: Path) -> Tuple[str, List[TrackData]]:

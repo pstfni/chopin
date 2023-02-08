@@ -5,9 +5,9 @@ import pandas as pd
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 
-from managers.client import ClientManager
-from schemas.base import TrackData, TrackFeaturesData
-from utils import get_logger
+from spotify_builder.managers.client import ClientManager
+from spotify_builder.schemas.base import TrackData, TrackFeaturesData
+from spotify_builder.utils import get_logger
 
 logger = get_logger(__name__)
 

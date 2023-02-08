@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 import pytest
 from spotipy.client import Spotify
 
-from managers.client import ClientManager
-from schemas.base import PlaylistData
+from spotify_builder.managers.client import ClientManager
+from spotify_builder.schemas.base import PlaylistData
 
 
 def test_create_playlist(spotify_playlist, spotify_user, mock_client_manager):

@@ -4,8 +4,8 @@ from typing import Any, Dict, List, Literal
 import requests
 import spotipy
 
-from schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData, UserData
-from utils import get_logger, match_strings, simplify_string
+from spotify_builder.schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData, UserData
+from spotify_builder.utils import get_logger, match_strings, simplify_string
 
 logger = get_logger(__name__)
 

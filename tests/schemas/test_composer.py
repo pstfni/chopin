@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from schemas.composer import ComposerConfig, ComposerConfigRecommendation
+from spotify_builder.schemas.composer import ComposerConfig, ComposerConfigRecommendation
 
 
 def test_fill_nb_songs():

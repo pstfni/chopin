@@ -8,10 +8,10 @@ import spotipy
 from pydantic.json import pydantic_encoder
 from tqdm import tqdm
 
-from managers.client import ClientManager
-from schemas.base import PlaylistData, PlaylistSummary, TrackData
-from schemas.composer import ComposerConfig
-from utils import get_logger, simplify_string
+from spotify_builder.managers.client import ClientManager
+from spotify_builder.schemas.base import PlaylistData, PlaylistSummary, TrackData
+from spotify_builder.schemas.composer import ComposerConfig
+from spotify_builder.utils import get_logger, simplify_string
 
 logger = get_logger(__name__)
 MAX_RELATED_ARTISTS = 10

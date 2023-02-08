@@ -2,8 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from managers.track import TrackManager
-from schemas.base import TrackData, TrackFeaturesData
+from spotify_builder.managers.track import TrackManager
+from spotify_builder.schemas.base import TrackData, TrackFeaturesData
 from tests.conftest import spotify_audio_feature
 
 

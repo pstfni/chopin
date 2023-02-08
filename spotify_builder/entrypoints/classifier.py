@@ -3,11 +3,11 @@ from pathlib import Path
 
 import typer
 
-from managers.client import ClientManager
-from managers.spotify_client import SpotifyClient
-from managers.track import TrackManager
-from ml import data
-from utils import get_logger
+from spotify_builder.managers.client import ClientManager
+from spotify_builder.managers.spotify_client import SpotifyClient
+from spotify_builder.managers.track import TrackManager
+from spotify_builder.ml import data
+from spotify_builder.utils import get_logger
 
 LOGGER = get_logger(__name__)
 
