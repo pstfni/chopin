@@ -1,8 +1,8 @@
 import pytest
 from spotipy.client import Spotify
 
-from spotify_builder.managers.client import ClientManager
-from spotify_builder.schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData
+from icai.managers.client import ClientManager
+from icai.schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData
 
 
 @pytest.fixture

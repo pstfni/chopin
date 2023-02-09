@@ -5,9 +5,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from spotify_builder.managers.playlist import PlaylistManager
-from spotify_builder.ml.data import format_records, format_track, normalize_features, read_playlist
-from spotify_builder.schemas.base import AlbumData, PlaylistSummary, TrackData, TrackFeaturesData
+from icai.managers.playlist import PlaylistManager
+from icai.ml.data import format_records, format_track, normalize_features, read_playlist
+from icai.schemas.base import AlbumData, PlaylistSummary, TrackData, TrackFeaturesData
 
 
 @pytest.fixture
