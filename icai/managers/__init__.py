@@ -1,3 +1,3 @@
 import dotenv
 
-CONFIG = dotenv.dotenv_values("../.env")
+CONFIG = dotenv.dotenv_values(".env")
