@@ -189,6 +189,15 @@ class PlaylistManager:
         for artist in tqdm(composition_config.artists):
             logger.info(f"Adding {artist.nb_songs} tracks for artist {artist.name}")
             tracks.extend(self.tracks_from_artist_name(artist_name=artist.name, nb_tracks=artist.nb_songs))
+        for history in composition_config.history:
+            logger.info(f"Adding {history.nb_songs} tracks from user {history.time_range} best songs")
+            tracks.extend(self.client.get_history_tracks(time_range=history.time_range, limit=history.nb_songs))
+        for radio in composition_config.radios:
+            logger.info(f"Adding {radio.nb_songs} tracks with {radio.name} related artists and songs")
+            tracks.extend(self.tracks_from_radio(artist_name=radio.name, nb_tracks=radio.nb_songs))
+        for uri in composition_config.uris:
+            logger.info(f"Adding {uri.nb_songs} tracks from playlist uri {uri.name}")
+            tracks.extend(self.tracks_from_playlist_uri(playlist_uri=uri.name, nb_tracks=uri.nb_songs))
         for feature in composition_config.features:
             logger.info(f"Adding {feature.nb_songs} tracks from recommendations with {feature.name}")
             seed_tracks = np.random.choice(tracks, 5, replace=False)
@@ -200,15 +209,6 @@ class PlaylistManager:
             )
             tracks.extend(recommended_tracks)
             logger.info(f"Some recommended tracks: {[t.name for t in recommended_tracks[:5]]}")
-        for history in composition_config.history:
-            logger.info(f"Adding {history.nb_songs} tracks from user {history.time_range} best songs")
-            tracks.extend(self.client.get_history_tracks(time_range=history.time_range, limit=history.nb_songs))
-        for radio in composition_config.radios:
-            logger.info(f"Adding {radio.nb_songs} tracks with {radio.name} related artists and songs")
-            tracks.extend(self.tracks_from_radio(artist_name=radio.name, nb_tracks=radio.nb_songs))
-        for uri in composition_config.uris:
-            logger.info(f"Adding {uri.nb_songs} tracks from playlist uri {uri.name}")
-            tracks.extend(self.tracks_from_playlist_uri(playlist_uri=uri.name, nb_tracks=uri.nb_songs))
         return random.sample(tracks, len(tracks))
 
     @staticmethod

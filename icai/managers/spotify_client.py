@@ -1,11 +1,13 @@
+from pathlib import Path
+
+import dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-from icai.managers import CONFIG
-
 
 class SpotifyClient:
-    def __init__(self):
+    def __init__(self, env_path: Path = ".env"):
+        CONFIG = dotenv.dotenv_values(env_path)
         auth_manager = SpotifyOAuth(
             client_id=CONFIG["client_id"],
             client_secret=CONFIG["client_secret"],
