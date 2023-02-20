@@ -2,10 +2,10 @@ from typing import Optional
 
 import typer
 
-from icai.managers.client import ClientManager
-from icai.managers.playlist import PlaylistManager
-from icai.managers.spotify_client import SpotifyClient
-from icai.utils import get_logger, simplify_string
+from chopin.managers.client import ClientManager
+from chopin.managers.playlist import PlaylistManager
+from chopin.managers.spotify_client import SpotifyClient
+from chopin.utils import get_logger, simplify_string
 
 LOGGER = get_logger(__name__)
 

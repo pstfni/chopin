@@ -12,8 +12,8 @@ compose, upload or classify playlists easily.
 Clone the repository and setup.
 
 ```shell
-git clone git@github.com:pierrestefani/icai.git
-cd icai/
+git clone git@github.com:pierrestefani/chopin.git
+cd chopin/
 make setup
 ```
 

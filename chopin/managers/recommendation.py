@@ -2,9 +2,9 @@ from typing import Dict, List, Optional
 
 import numpy as np
 
-from icai.managers.client import ClientManager
-from icai.schemas.base import ArtistData, TrackData, TrackFeaturesData
-from icai.utils import get_logger
+from chopin.managers.client import ClientManager
+from chopin.schemas.base import ArtistData, TrackData, TrackFeaturesData
+from chopin.utils import get_logger
 
 logger = get_logger(__name__)
 

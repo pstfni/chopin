@@ -74,6 +74,6 @@ plugins:
   - mkdocstrings:
       default_handler: python
       watch:
-        - icai/managers/
-        - icai/schemas/
-        - icai/entrypoints/
+        - chopin/managers/
+        - chopin/schemas/
+        - chopin/entrypoints/

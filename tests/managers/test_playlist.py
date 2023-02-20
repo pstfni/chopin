@@ -2,13 +2,13 @@ from unittest.mock import patch
 
 import pytest
 
-from icai.managers.playlist import PlaylistManager
-from icai.schemas.base import PlaylistData, PlaylistSummary
-from icai.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
+from chopin.managers.playlist import PlaylistManager
+from chopin.schemas.base import PlaylistData, PlaylistSummary
+from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
 
 
-@patch("icai.managers.client.ClientManager.get_this_is_playlist")
-@patch("icai.managers.client.ClientManager.get_tracks")
+@patch("chopin.managers.client.ClientManager.get_this_is_playlist")
+@patch("chopin.managers.client.ClientManager.get_tracks")
 def test_playlist_compose_from_artists(
     mock_get_tracks, mock_get_this_is_playlist, playlist_1_tracks, playlist_2_tracks, mock_client_manager
 ):
@@ -28,8 +28,8 @@ def test_playlist_compose_from_artists(
     assert len([t for t in tracks if t.id.startswith("p")]) == len([t for t in tracks if t.id.startswith("q")]) == 10
 
 
-@patch("icai.managers.client.ClientManager.get_this_is_playlist")
-@patch("icai.managers.client.ClientManager.get_tracks")
+@patch("chopin.managers.client.ClientManager.get_this_is_playlist")
+@patch("chopin.managers.client.ClientManager.get_tracks")
 def test_playlist_compose_from_artists_with_different_weights(
     mock_get_tracks, mock_get_this_is_playlist, playlist_1_tracks, playlist_2_tracks, mock_client_manager
 ):
@@ -51,7 +51,7 @@ def test_playlist_compose_from_artists_with_different_weights(
     assert len([t for t in tracks if t.id.startswith("q")]) == 7
 
 
-@patch("icai.managers.client.ClientManager.get_tracks")
+@patch("chopin.managers.client.ClientManager.get_tracks")
 def test_playlist_compose_from_playlists(
     mock_get_tracks, playlist_1, playlist_2, playlist_1_tracks, playlist_2_tracks, mock_client_manager
 ):
@@ -66,7 +66,7 @@ def test_playlist_compose_from_playlists(
     assert len([t for t in tracks if t.id.startswith("p")]) == len([t for t in tracks if t.id.startswith("q")]) == 10
 
 
-@patch("icai.managers.client.ClientManager.get_tracks")
+@patch("chopin.managers.client.ClientManager.get_tracks")
 def test_playlist_compose_from_playlists_with_different_weights(
     mock_get_tracks, playlist_1, playlist_2, playlist_1_tracks, playlist_2_tracks, mock_client_manager
 ):
@@ -82,7 +82,7 @@ def test_playlist_compose_from_playlists_with_different_weights(
     assert len([t for t in tracks if t.id.startswith("q")]) == 4
 
 
-@patch("icai.managers.client.ClientManager.get_history_tracks")
+@patch("chopin.managers.client.ClientManager.get_history_tracks")
 def test_playlist_compose_from_history(mock_get_history_tracks, playlist_1_tracks, mock_client_manager):
     playlist_manager = PlaylistManager(mock_client_manager)
     configuration = ComposerConfig(
@@ -95,7 +95,7 @@ def test_playlist_compose_from_history(mock_get_history_tracks, playlist_1_track
     assert all([t.id.startswith("p") for t in tracks])
 
 
-@patch("icai.managers.client.ClientManager.get_tracks")
+@patch("chopin.managers.client.ClientManager.get_tracks")
 def test_playlist_compose_with_empty_playlists(mock_client_manager):
     playlist_manager = PlaylistManager(mock_client_manager)
     configuration = ComposerConfig(nb_songs=20, playlists=[])
@@ -104,8 +104,8 @@ def test_playlist_compose_with_empty_playlists(mock_client_manager):
 
 
 # Patchs are read bottom-up by pytest 🤯
-@patch("icai.managers.client.ClientManager.get_this_is_playlist")
-@patch("icai.managers.client.ClientManager.get_tracks")
+@patch("chopin.managers.client.ClientManager.get_this_is_playlist")
+@patch("chopin.managers.client.ClientManager.get_tracks")
 @pytest.mark.parametrize(
     "nb_tracks, this_is_side_effect, expected_nb_songs",
     [
@@ -131,7 +131,7 @@ def test_tracks_from_artist_name(
     assert len(tracks) == expected_nb_songs
 
 
-@patch("icai.managers.client.ClientManager.get_tracks")
+@patch("chopin.managers.client.ClientManager.get_tracks")
 def test_tracks_from_playlist_name(
     mock_get_tracks, playlist_1, playlist_2, playlist_1_tracks, playlist_2_tracks, mock_client_manager
 ):

@@ -1,6 +1,6 @@
 import pytest
 
-from icai.utils import flatten_dict, flatten_list, match_strings, simplify_string
+from chopin.utils import flatten_dict, flatten_list, match_strings, simplify_string
 
 
 @pytest.mark.parametrize(

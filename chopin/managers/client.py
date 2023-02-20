@@ -4,8 +4,8 @@ from typing import Any, Dict, List, Literal
 import requests
 import spotipy
 
-from icai.schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData, UserData
-from icai.utils import get_logger, match_strings, simplify_string
+from chopin.schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData, UserData
+from chopin.utils import get_logger, match_strings, simplify_string
 
 logger = get_logger(__name__)
 

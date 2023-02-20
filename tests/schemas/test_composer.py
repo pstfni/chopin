@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from icai.schemas.composer import ComposerConfig, ComposerConfigRecommendation
+from chopin.schemas.composer import ComposerConfig, ComposerConfigRecommendation
 
 
 def test_fill_nb_songs():

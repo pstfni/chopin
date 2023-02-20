@@ -1,9 +1,9 @@
 import sys
 from typing import List
 
-from icai.managers.client import ClientManager
-from icai.managers.spotify_client import SpotifyClient
-from icai.schemas.base import TrackData, UserData
+from chopin.managers.client import ClientManager
+from chopin.managers.spotify_client import SpotifyClient
+from chopin.schemas.base import TrackData, UserData
 
 if __name__ == "__main__":
     client = ClientManager(SpotifyClient(env_path=sys.argv[1]).get_client())

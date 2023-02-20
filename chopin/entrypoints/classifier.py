@@ -3,11 +3,11 @@ from pathlib import Path
 
 import typer
 
-from icai.managers.client import ClientManager
-from icai.managers.spotify_client import SpotifyClient
-from icai.managers.track import TrackManager
-from icai.ml import data
-from icai.utils import get_logger
+from chopin.managers.client import ClientManager
+from chopin.managers.spotify_client import SpotifyClient
+from chopin.managers.track import TrackManager
+from chopin.ml import data
+from chopin.utils import get_logger
 
 LOGGER = get_logger(__name__)
 

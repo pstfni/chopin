@@ -5,9 +5,9 @@ import pandas as pd
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 
-from icai.managers.client import ClientManager
-from icai.schemas.base import TrackData, TrackFeaturesData
-from icai.utils import get_logger
+from chopin.managers.client import ClientManager
+from chopin.schemas.base import TrackData, TrackFeaturesData
+from chopin.utils import get_logger
 
 logger = get_logger(__name__)
 

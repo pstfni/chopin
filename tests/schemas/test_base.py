@@ -1,6 +1,6 @@
 import pytest
 
-from icai.schemas.base import PlaylistSummary, TrackFeaturesData
+from chopin.schemas.base import PlaylistSummary, TrackFeaturesData
 
 
 def test_playlist_summary(playlist_1, playlist_1_tracks):
