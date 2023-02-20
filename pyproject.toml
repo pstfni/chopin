@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "icai"
+name = "chopin"
 version = "0.1.0-0"
-description = "ICAI: Compose and play with Spotify playlists"
+description = "chopin: Compose and play with Spotify playlists"
 authors = ["Pierre Stefani"]
-packages = [{include="icai"}]
+packages = [{include="chopin"}]
 
 [tool.poetry.dependencies]
 python = ">=3.10, <3.11"
@@ -45,9 +45,9 @@ select = [
 "**/__init__.py" = ['F401']
 
 [tool.poetry.scripts]
-composer = "icai.entrypoints.composer:main"
-queuer = "icai.entrypoints.queuer:main"
-describer = "icai.entrypoints.describer:main"
+composer = "chopin.entrypoints.composer:main"
+queuer = "chopin.entrypoints.queuer:main"
+describer = "chopin.entrypoints.describer:main"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]

@@ -1,9 +1,9 @@
 # Managers
 
-::: icai.managers.playlist
+::: chopin.managers.playlist
 
-::: icai.managers.recommendation
+::: chopin.managers.recommendation
 
-::: icai.managers.track
+::: chopin.managers.track
 
-::: icai.managers.client
+::: chopin.managers.client

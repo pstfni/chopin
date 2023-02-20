@@ -4,7 +4,7 @@
 
 The base schemas are Pydantic models used to represent track, artist, album or playlist data.
 
-::: icai.schemas.base
+::: chopin.schemas.base
     options: 
         heading_level: 3
 
@@ -12,7 +12,7 @@ The base schemas are Pydantic models used to represent track, artist, album or p
 
 The composer schema is used to configure your playlist composition. 
 
-::: icai.schemas.composer
+::: chopin.schemas.composer
     options:
         heading_level: 3
 

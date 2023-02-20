@@ -1,6 +1,6 @@
-## ICAI
+## chopin
 
-ICAI is a tool to manage your Spotify library. With the ICAI CLI, you can describe, 
+chopin is a tool to manage your Spotify library. With the chopin CLI, you can describe, 
 compose, upload or classify playlists easily.
 
 ![](docs/img/demo.gif)
@@ -46,7 +46,7 @@ More infos about the scopes and what they do is available on the [Spotify Develo
 
 Once you have:
 
-* installed the icai project
+* installed the chopin project
 * created your spotify developer account and added your credentials in the `.env` file
 
 You can make sure everything is installed properly by running:

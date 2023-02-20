@@ -1,13 +1,13 @@
 # Entrypoints
 
-::: icai.entrypoints.composer
+::: chopin.entrypoints.composer
     options:
         show_signature: false
 
-::: icai.entrypoints.describer
+::: chopin.entrypoints.describer
     options:
         show_signature: false
 
-::: icai.entrypoints.queuer
+::: chopin.entrypoints.queuer
     options:
         show_signature: false
