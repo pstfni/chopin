@@ -12,7 +12,7 @@ compose, upload or classify playlists easily.
 Clone the repository and setup.
 
 ```shell
-git clone git@github.com:pierrestefani/chopin.git
+git clone git@github.com:pstfni/chopin.git
 cd chopin/
 make setup
 ```

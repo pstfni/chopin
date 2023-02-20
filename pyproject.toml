@@ -2,7 +2,7 @@
 name = "chopin"
 version = "0.1.0-0"
 description = "chopin: Compose and play with Spotify playlists"
-authors = ["Pierre Stefani"]
+authors = ["pstfni"]
 packages = [{include="chopin"}]
 
 [tool.poetry.dependencies]
