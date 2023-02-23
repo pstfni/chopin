@@ -2,7 +2,7 @@ name: Publish site on GitHub Pages
 on:
   push:
     branches:
-      - docs/deploy
+      - master
 permissions:
   contents: write
 jobs:
