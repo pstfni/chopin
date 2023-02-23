@@ -7,10 +7,11 @@ nav:
     - "index.md"
     - "getting_started.md"
   - Guide:
-    - "guide/index.md"
-    - Compose:
-      - "guide/compose.md"
+    - "🤖 Compose a playlist":
+      - "guide/composer.md"
       - "guide/sources.md"
+    - "guide/queuer.md"
+    - "guide/describer.md"
   - Reference:
     - "reference/index.md"
     - "reference/entrypoints.md"

@@ -1,9 +1,9 @@
-# Compose
+# Composer
 
-Create hours of playlist from scratch in a few seconds with the `compose` entrypoint.
+Create hours of playlist from scratch in a few seconds with the `composer` entrypoint.
 
 ```shell
-python entrypoints.compose -c composition_config.yaml
+composer -c composition_config.yaml
 ```
 
 ## How to compose your playlist

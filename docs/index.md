@@ -8,7 +8,7 @@ A CLI to describe, compose, upload or classify playlists easily.
 
 ![](img/demo.gif)
 
-New here ? [Get started](getting_started.md){ .md-button .md-button--primary } Or [follow the guide](guide/index.md){ .md-button .md-button}
+New here ? [Get started](./getting_started.md){ .md-button .md-button--primary } Or [follow the guide](guide/composer){ .md-button .md-button}
 
 ### What features are available
 
