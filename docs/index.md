@@ -1,10 +1,10 @@
-# Spotify Playlist Manager
+# Chopin
 
-Welcome to the spotify-builder documentation
+Welcome to the Chopin, the Spotify Playlist manager.
 
-### What is spotify-builder
+### What is Chopin ?
 
-A CLI to describe, compose, upload or classify playlists easily.
+A CLI to describe, compose, and goof around with playlists easily.
 
 ![](img/demo.gif)
 
@@ -12,7 +12,7 @@ New here ? [Get started](./getting_started.md){ .md-button .md-button--primary }
 
 ### What features are available
 
-Three entrypoints come with the spotify-builder repository: 
+Three entrypoints come with the chopin repository: 
 
 <center>
 
