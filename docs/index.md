@@ -1,6 +1,6 @@
 # Chopin
 
-Welcome to the Chopin, the Spotify Playlist manager.
+Welcome to Chopin, the Spotify Playlist manager.
 
 ### What is Chopin ?
 
