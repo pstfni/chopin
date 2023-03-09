@@ -1,10 +1,5 @@
 from typing import List
 
-import numpy as np
-import pandas as pd
-from sklearn.manifold import TSNE
-from sklearn.preprocessing import StandardScaler
-
 from chopin.managers.client import ClientManager
 from chopin.schemas.base import TrackData, TrackFeaturesData
 from chopin.utils import get_logger
@@ -32,28 +27,3 @@ class TrackManager:
     def save_tracks(self, tracks: List[TrackData]):
         track_uris = [track.uri for track in tracks]
         self.client.like_tracks(track_uris)
-
-    @staticmethod
-    def compute_tsne(tracks: List[TrackData]) -> np.ndarray:
-        """Compute TSNE over the track data, using their features.
-
-        Args:
-            tracks: A list of tracks.
-
-        !!! warning ""
-            Features should have already been fetched (using `set_audio_features` for example)
-
-        Returns:
-            2D projection of the tracks
-
-        Raises:
-            ValueError: if there are not enough tracks for the TSNE computation. >=2 tracks are needed
-        """
-        tracks_features = [track.features.dict() for track in tracks if track.features]
-        if len(tracks_features) < 2:
-            raise ValueError("Not enough track features available to compute the TSNE.")
-
-        tracks_features = pd.DataFrame.from_records(tracks_features)
-        tracks_features = tracks_features.drop("analysis_url", axis=1)
-        scaled_features = StandardScaler().fit_transform(tracks_features)
-        return TSNE(n_components=2, learning_rate="auto", init="random", perplexity=1.0).fit_transform(scaled_features)
