@@ -17,6 +17,11 @@ python-dotenv = "^0.19.2"
 coloredlogs = "^15.0"
 typer = "^0.6.1"
 
+[tool.poetry.dev-dependencies]
+pytest-sugar = "*"
+ruff = "*"
+pandas = "*"
+
 [tool.poetry.group.docs]
 optional = true
 
@@ -26,10 +31,10 @@ mkdocstrings = "^0.20"
 mkdocstrings-python = "^0.8"
 mkdocs-material = "^8.5"
 
-[tool.poetry.dev-dependencies]
-pytest-sugar = "*"
-ruff = "*"
-pandas = "*"
+[tool.poetry.group.ml]
+optional = true
+
+[tool.poetry.group.ml.dependencies]
 scikit-learn = "^1.2.1"
 
 [tool.ruff]
