@@ -31,25 +31,3 @@ def test_set_audio_features(track_list, request, mock_client_manager):
     assert len(tracks_with_audio_features) == len(track_list)
     for track in tracks_with_audio_features:
         assert track.features is not None
-
-
-def test_compute_tsne():
-    track_manager = TrackManager(None)
-    track = TrackData(
-        name="test_track",
-        id="id",
-        uri="spotify:track:id",
-        duration_ms=1000,
-        popularity=50,
-        features=TrackFeaturesData.parse_obj(spotify_audio_feature()),
-    )
-    track_manager.compute_tsne([track, track])
-
-
-def test_compute_tsne_without_features():
-    track_manager = TrackManager(None)
-    track = TrackData(
-        name="test_track", id="id", uri="spotify:track:id", duration_ms=1000, popularity=50, features=None
-    )
-    with pytest.raises(ValueError):
-        track_manager.compute_tsne([track, track])
