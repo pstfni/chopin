@@ -11,7 +11,7 @@ class SpotifyClient:
         auth_manager = SpotifyOAuth(
             client_id=CONFIG["client_id"],
             client_secret=CONFIG["client_secret"],
-            redirect_uri="http://localhost:8888/callback",
+            redirect_uri=CONFIG["redirect_uri"],
             scope=CONFIG["scope"],
         )
         self.client = spotipy.Spotify(auth_manager=auth_manager)

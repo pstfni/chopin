@@ -1,4 +1,5 @@
 import math
+from enum import Enum
 from typing import List, Literal, Optional
 
 import numpy as np
@@ -7,6 +8,21 @@ from pydantic import BaseModel, ValidationError, confloat, conint, conlist, root
 from chopin.utils import get_logger
 
 logger = get_logger(__name__)
+
+
+class TrackFeature(Enum):
+    """Enumeration for the available Spotify track feature."""
+
+    ACOUSTICNESS = "acousticness"
+    DANCEABILITY = "danceability"
+    ENERGY = "energy"
+    INSTRUMENTALNESS = "instrumentalness"
+    LIVENESS = "liveness"
+    LOUDNESS = "loudness"
+    SPEECHINESS = "speechiness"
+    TEMPO = "tempo"
+    POPULARITY = "popularity"
+    VALENCE = "valence"
 
 
 class ComposerConfigItem(BaseModel):
@@ -30,23 +46,15 @@ class ComposerConfigRecommendation(ComposerConfigItem):
         value: Target value to recommend
     """
 
-    name: Literal[
-        "acousticness",
-        "danceability",
-        "energy",
-        "instrumentalness",
-        "liveness",
-        "loudness",
-        "speechiness",
-        "tempo",
-        "popularity",
-        "valence",
-    ]
+    name: TrackFeature
     value: float  # relaxed constraint. todo: see if we can have constraint based on feature type (or add validators)
 
     @validator("name")
     def update_name_with_spotify_feature_format(cls, v):
-        return f"feature_{v}"
+        return f"feature_{v.value}"
+
+    class Config:
+        use_enum_values: True
 
 
 class ComposerConfigListeningHistory(BaseModel):
