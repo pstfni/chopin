@@ -166,7 +166,7 @@ class ClientManager:
         playlist = [
             playlist
             for playlist in items
-            if playlist["owner"]["uri"] == SPOTIFY_USER_URI and playlist["name"].lower().startswith(target_playlist)
+            if playlist["owner"]["uri"] == SPOTIFY_USER_URI and match_strings([playlist["name"], target_playlist])
         ]
         if playlist:
             return PlaylistData(**playlist[0])

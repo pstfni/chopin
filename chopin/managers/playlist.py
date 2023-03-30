@@ -71,7 +71,7 @@ class PlaylistManager:
             logger.warning(f"Couldn't retrieve tracks for playlist {playlist_name}")
             return []
         tracks = self.client.get_tracks(playlist_uri=playlist[0].uri)
-        return np.random.choice(tracks, nb_tracks, replace=False)
+        return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
 
     def tracks_from_artist_name(self, artist_name: str, nb_tracks: int) -> List[TrackData]:
         """Get a number of tracks from an artist or band.
@@ -91,7 +91,7 @@ class PlaylistManager:
             logger.warning(f"Couldn't retrieve tracks for artist {artist_name}")
             return []
         tracks = self.client.get_tracks(playlist_uri=playlist.uri)
-        return np.random.choice(tracks, nb_tracks, replace=False)
+        return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
 
     def tracks_from_feature_name(
         self, seeds: List[TrackData], feature_name: str, feature_value: float, nb_tracks: int
@@ -173,12 +173,6 @@ class PlaylistManager:
             AttributeError: if 'playlists' are in the configuration but user_playlists is not passed.
         """
         tracks: List[TrackData] = []
-        if composition_config.playlists and not user_playlists:
-            # We must have the existing user playlists in order to retrieve the name from the uri.
-            raise AttributeError(
-                "Missing the user_playlists parameter. It should be passed"
-                "to the compose function if user playlists are in the config."
-            )
         for playlist in tqdm(composition_config.playlists):
             logger.info(f"Adding {playlist.nb_songs} tracks from playlist {playlist.name}")
             tracks.extend(
@@ -200,15 +194,16 @@ class PlaylistManager:
             tracks.extend(self.tracks_from_playlist_uri(playlist_uri=uri.name, nb_tracks=uri.nb_songs))
         for feature in composition_config.features:
             logger.info(f"Adding {feature.nb_songs} tracks from recommendations with {feature.name}")
+            # todo: choose good seeds rather than random ones
             seed_tracks = np.random.choice(tracks, 5, replace=False)
-            recommended_tracks = self.tracks_from_feature_name(
-                seeds=seed_tracks,
-                feature_name=feature.name,
-                feature_value=feature.value,
-                nb_tracks=feature.nb_songs,
+            tracks.extend(
+                self.tracks_from_feature_name(
+                    seeds=seed_tracks,
+                    feature_name=feature.name,
+                    feature_value=feature.value,
+                    nb_tracks=feature.nb_songs,
+                )
             )
-            tracks.extend(recommended_tracks)
-            logger.info(f"Some recommended tracks: {[t.name for t in recommended_tracks[:5]]}")
         return random.sample(tracks, len(tracks))
 
     @staticmethod
