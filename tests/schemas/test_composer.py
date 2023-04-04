@@ -53,7 +53,7 @@ def test_fill_nb_songs_with_history():
 @pytest.mark.parametrize(
     "recommendation_item, expected_item",
     [
-        # Make sure renaming works
+        # Make sure enumeration with value works
         (
             {
                 "name": "acousticness",
@@ -61,7 +61,7 @@ def test_fill_nb_songs_with_history():
                 "weight": 0.1,
             },
             {
-                "name": "feature_acousticness",
+                "name": "acousticness",
                 "value": 0.8,
                 "weight": 0.1,
                 "nb_songs": 0,

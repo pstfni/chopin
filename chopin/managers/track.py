@@ -1,6 +1,8 @@
 from typing import List
 
-from chopin.managers.client import ClientManager
+import numpy as np
+
+from chopin.managers.client import SPOTIFY_RECOMMENDATION_SEED_LIMIT, ClientManager
 from chopin.schemas.base import TrackData, TrackFeaturesData
 from chopin.utils import get_logger
 
@@ -48,3 +50,44 @@ class TrackManager:
         """
         track_uris = [track.uri for track in tracks]
         self.client.like_tracks(track_uris)
+
+
+def find_seeds(
+    tracks: List[TrackData], feature: str, value: float, nb_seeds=SPOTIFY_RECOMMENDATION_SEED_LIMIT
+) -> List[TrackData]:
+    """For a given feature, find close tracks in a list of tracks.
+
+    !!! example
+        Let's say we have the following tracks: ["Robot Rock", "Nightcall", "Pogo", "Imagine", "Into My Arms"], and
+        the user wants new songs with high energy. We may want to use "Robot Rock", "Nightcall" or "Pogo" as seeds
+        for the new tracks.
+
+    Args:
+        tracks: The candidate list of tracks
+        feature: The target feature
+        value: The target value for the feature
+        nb_seeds: The number of track as seeds to return. Defaults to the SPOTIFY API limit for seeds.
+
+    Returns:
+        Good candidates for a seed to search for this feature.
+
+    Raises:
+        ValueError: if there are no features in the tracks
+        ValueError: if the track list is empty
+        ValueError: if the feature is not found in the tracks.
+    """
+    nb_tracks = len(tracks)
+    if not nb_tracks:
+        raise ValueError("Cannot find good tracks in an empty track list")
+    if not tracks[0].features:
+        raise ValueError(
+            "Features are necessary to use `find_seed`. You may want to `set_audio_features` to add"
+            "the Spotify features to your track list"
+        )
+    features = np.array([getattr(track.features, feature) for track in tracks])
+    if (features == None).any():  # noqa: E711
+        raise ValueError(f"Could not retrieve feature {feature} for the tracks.")
+    target = np.repeat([value], nb_tracks)
+    out_size = min(nb_seeds, nb_tracks)
+    indexes = np.argpartition(np.abs(features - target), out_size)
+    return [tracks[i] for i in indexes[:out_size]]

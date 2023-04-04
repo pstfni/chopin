@@ -9,6 +9,7 @@ from pydantic.json import pydantic_encoder
 from tqdm import tqdm
 
 from chopin.managers.client import ClientManager
+from chopin.managers.track import TrackManager, find_seeds
 from chopin.schemas.base import PlaylistData, PlaylistSummary, TrackData
 from chopin.schemas.composer import ComposerConfig
 from chopin.utils import get_logger, simplify_string
@@ -109,9 +110,13 @@ class PlaylistManager:
             A list of recommended track data.
         """
         seed_tracks = [track.id for track in seeds]
+        # from "energy" to "feature_energy"
+        feature_name = f"feature_{feature_name}"
         tracks = self.client.get_recommendations(
             seed_tracks=seed_tracks, limit=nb_tracks, seed_artists=[], seed_genres=[], **{feature_name: feature_value}
         )
+        logger.critical(f"Some seeds: {', '.join([t.name for t in seeds[:5]])}")
+        logger.critical(f"Some recommended tracks: {', '.join([t.name for t in tracks[:5]])}")
         return tracks
 
     def tracks_from_radio(self, artist_name: str, nb_tracks: int) -> List[TrackData]:
@@ -194,8 +199,9 @@ class PlaylistManager:
             tracks.extend(self.tracks_from_playlist_uri(playlist_uri=uri.name, nb_tracks=uri.nb_songs))
         for feature in composition_config.features:
             logger.info(f"Adding {feature.nb_songs} tracks from recommendations with {feature.name}")
-            # todo: choose good seeds rather than random ones
-            seed_tracks = np.random.choice(tracks, 5, replace=False)
+            track_manager = TrackManager(self.client)
+            tracks = track_manager.set_audio_features(tracks)
+            seed_tracks = find_seeds(tracks, feature.name, feature.value)
             tracks.extend(
                 self.tracks_from_feature_name(
                     seeds=seed_tracks,
