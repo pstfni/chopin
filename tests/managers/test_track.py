@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from chopin.managers.track import TrackManager
+from chopin.managers.track import TrackManager, find_seeds
 from chopin.schemas.base import TrackData, TrackFeaturesData
 from tests.conftest import spotify_audio_feature
 
@@ -31,3 +31,50 @@ def test_set_audio_features(track_list, request, mock_client_manager):
     assert len(tracks_with_audio_features) == len(track_list)
     for track in tracks_with_audio_features:
         assert track.features is not None
+
+
+@pytest.mark.parametrize(
+    "feature, value, expected_track_id",
+    [
+        # high acousticness
+        ("acousticness", 0.82, "chill_track"),
+        # high energy
+        ("energy", 0.6, "pop_track"),
+        # low instrumentalness
+        ("instrumentalness", 0.02, "pop_track"),
+        # unknown feature
+        pytest.param("valence", 0.82, 0, marks=pytest.mark.xfail(strict=True, raises=ValueError)),
+    ],
+)
+def test_find_seeds(feature, value, expected_track_id, mock_client_manager):
+    # Arrange
+    track_1 = TrackData(
+        name="chill track",
+        id="chill_track",
+        uri="",
+        duration_ms=0,
+        popularity=0,
+        features=TrackFeaturesData(
+            acousticness=0.8,
+            instrumentalness=0.6,
+            danceability=0.2,
+            energy=0.2,
+        ),
+    )
+    track_2 = TrackData(
+        name="pop track",
+        id="pop_track",
+        uri="",
+        duration_ms=0,
+        popularity=0,
+        features=TrackFeaturesData(
+            acousticness=0.2,
+            instrumentalness=0.3,
+            danceability=0.8,
+            energy=0.7,
+        ),
+    )
+    tracks = [track_1, track_2]
+
+    out_track = find_seeds(tracks, feature, value, nb_seeds=1)
+    assert out_track[0].id == expected_track_id

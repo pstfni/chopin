@@ -16,6 +16,7 @@ TRACK_FIELDS = (
 )
 SPOTIFY_USER_URI = "spotify:user:spotify"
 SPOTIFY_API_HISTORY_LIMIT = 50
+SPOTIFY_RECOMMENDATION_SEED_LIMIT = 5
 
 
 class ClientManager:

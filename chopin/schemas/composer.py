@@ -50,8 +50,8 @@ class ComposerConfigRecommendation(ComposerConfigItem):
     value: float  # relaxed constraint. todo: see if we can have constraint based on feature type (or add validators)
 
     @validator("name")
-    def update_name_with_spotify_feature_format(cls, v):
-        return f"feature_{v.value}"
+    def update_name_with_value(cls, v):
+        return v.value
 
     class Config:
         use_enum_values: True
