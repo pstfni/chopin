@@ -1,6 +1,6 @@
 import pytest
 
-from chopin.utils import flatten_dict, flatten_list, match_strings, simplify_string
+from chopin.utils import extract_uri_from_playlist_link, flatten_dict, flatten_list, match_strings, simplify_string
 
 
 @pytest.mark.parametrize(
@@ -76,3 +76,16 @@ def test_simplify_string(input_string, expected_string):
 )
 def test_match_strings(input_strings, expected_result):
     assert match_strings(input_strings) == expected_result
+
+
+@pytest.mark.parametrize(
+    "input_link, expected_uri",
+    [
+        ("", ""),
+        ("https://open.spotify.com/playlist/37i9dQZF1DWWv8B5EWK7bn?si=8d52c3fef8d74064", "37i9dQZF1DWWv8B5EWK7bn"),
+        ("https://open.spotify.com/playlist/2ZdqnoI2DcFMqTfIaLnbss?si=c4c4244a4488423b", "2ZdqnoI2DcFMqTfIaLnbss"),
+        ("https://open.spotify.com/playlist/aplaylistthatdonotfollowtheuriformat", ""),
+    ],
+)
+def test_extract_uri_from_playlist_link(input_link: str, expected_uri: str):
+    assert extract_uri_from_playlist_link(input_link) == expected_uri

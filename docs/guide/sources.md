@@ -105,10 +105,12 @@ uris:
   - name: 50FTlBiOVTyPgVtPYVUzdn
   - name: 7oK3UXsHYmC3PYGQFY5IOb
     weight: 0.5
+  - name: https://open.spotify.com/playlist/7oK3UXsHYmC3PYGQFY5IOb?si=eae4b209bee740f8
+    weight: 0.25
 ```
 
-!!! info "Finding the URI of a playlist"
-    URIs are hard to read but can be easily retrieved. The URL link to share a playlist will feature its URI:
+!!! info "Playlist URI or playlist links ?"
+    You can use both ! The URL link to share a playlist will feature its URI.
     For example: https://open.spotify.com/playlist/7oK3UXsHYmC3PYGQFY5IOb?si=eae4b209bee740f8 is a link for the 
     playlist URI `7oK3UXsHYmC3PYGQFY5IOb`.
 

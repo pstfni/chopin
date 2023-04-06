@@ -5,7 +5,7 @@ from typing import List, Literal, Optional
 import numpy as np
 from pydantic import BaseModel, ValidationError, confloat, conint, conlist, root_validator, validator
 
-from chopin.utils import get_logger
+from chopin.utils import extract_uri_from_playlist_link, get_logger
 
 logger = get_logger(__name__)
 
@@ -36,6 +36,16 @@ class ComposerConfigItem(BaseModel):
     name: str
     weight: confloat(ge=0) = 1
     nb_songs: Optional[int] = 0
+
+    @validator("name", pre=True)
+    def extract_uri_from_link(cls, v: str):
+        """If the value is an https link to spotify, extract the URI data.
+
+        This allow users to share full links to their playlists.
+        """
+        if v.startswith("https://open.spotify.com"):
+            return extract_uri_from_playlist_link(v)
+        return v
 
 
 class ComposerConfigRecommendation(ComposerConfigItem):

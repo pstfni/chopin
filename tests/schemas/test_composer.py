@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from chopin.schemas.composer import ComposerConfig, ComposerConfigRecommendation
+from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigRecommendation
 
 
 def test_fill_nb_songs():
@@ -77,4 +77,25 @@ def test_fill_nb_songs_with_history():
 )
 def test_composer_config_recommendation_item(recommendation_item, expected_item):
     out = ComposerConfigRecommendation(**recommendation_item)
+    assert out.dict() == expected_item
+
+
+@pytest.mark.parametrize(
+    "uri_item, expected_item",
+    [
+        # Default case: uri
+        ({"name": "37i9dQZF1DWWv8B5EWK7bn"}, {"name": "37i9dQZF1DWWv8B5EWK7bn", "weight": 1, "nb_songs": 0}),
+        # Validated case: link becomes uri
+        (
+            {"name": "https://open.spotify.com/playlist/37i9dQZF1DWWv8B5EWK7bn?si=8d52c3fef8d74064"},
+            {"name": "37i9dQZF1DWWv8B5EWK7bn", "weight": 1, "nb_songs": 0},
+        ),
+        # Bad input case: nothing happpens
+        ({"name": "d$fd5f_not_an^$$$uri"}, {"name": "d$fd5f_not_an^$$$uri", "weight": 1, "nb_songs": 0}),
+        # Empty input case
+        ({"name": ""}, {"name": "", "weight": 1, "nb_songs": 0}),
+    ],
+)
+def test_composer_config_uri_item(uri_item, expected_item):
+    out = ComposerConfigItem(**uri_item)
     assert out.dict() == expected_item

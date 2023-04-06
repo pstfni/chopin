@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import unicodedata
 from typing import Any, Dict, List, Union
 
@@ -148,3 +149,22 @@ def match_strings(strings: List[str]) -> bool:
         return True
     target = _normalize_string(strings[0])
     return all([_normalize_string(s) == target for s in strings[1:]])
+
+
+def extract_uri_from_playlist_link(playlist_link: str) -> str:
+    """Parse a playlist link and returns the playlist URI. The playlist URI is later used to query the Spotify API.
+
+    ??? example
+        `https://open.spotify.com/playlist/37i9dQZF1DWWv8B5EWK7bn?si=8d52c3fef8d74064` becomes `37i9dQZF1DWWv8B5EWK7bn`
+
+    Args:
+        playlist_link: https link to a Spotify playlist.
+
+    Returns:
+        The playlist URI
+    """
+    pattern = r"playlist/([a-zA-Z0-9]+)\?"
+    match = re.search(pattern, playlist_link)
+    if match:
+        return match.group(1)
+    return ""
