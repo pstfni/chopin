@@ -5,7 +5,7 @@ import typer
 from chopin.managers.client import ClientManager
 from chopin.managers.playlist import PlaylistManager
 from chopin.managers.spotify_client import SpotifyClient
-from chopin.utils import get_logger, simplify_string
+from chopin.utils import get_logger
 
 LOGGER = get_logger(__name__)
 
@@ -25,17 +25,7 @@ def queue(
     playlist_manager = PlaylistManager(client)
 
     LOGGER.info("🔮 Queuing . . .")
-
-    user_playlists = client.get_user_playlists()
-    target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(name)]
-    playlist_tracks = client.get_queue()
-
-    if target_playlist:
-        playlist = target_playlist[0]
-    else:
-        playlist = client.create_playlist(name)
-
-    playlist_manager.fill(uri=playlist.uri, tracks=playlist_tracks)
+    playlist_manager.create_playlist_from_queue(name)
 
 
 def main():

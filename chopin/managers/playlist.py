@@ -17,6 +17,7 @@ from chopin.utils import get_logger, simplify_string
 logger = get_logger(__name__)
 MAX_RELATED_ARTISTS = 10
 MAX_TOP_TRACKS_ARTISTS = 10
+MAX_SEEDS = 5
 
 
 class PlaylistManager:
@@ -28,6 +29,28 @@ class PlaylistManager:
             client: A ClientManager instance, for all the calls related to the Spotify API.
         """
         self.client = client
+
+    def create(self, name: str, description: str = "Randomly Generated Mix", overwrite: bool = True) -> PlaylistData:
+        """Create a new, empty, playlist.
+
+        !!! warning
+            If the `name` of the playlist is an existing playlist, and overwrite is `True`, the said playlist will
+            be emptied.
+
+        Args:
+            name: name of your playlist.
+            description: description of your playlist
+            overwrite: Overwrite the existing playlist if the `name` is already used.
+
+        Returns:
+            Created playlist
+        """
+        user_playlists = self.client.get_user_playlists()
+        target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(name)]
+        if target_playlist and overwrite:
+            self.client.replace_tracks_in_playlist(target_playlist[0].uri, [])
+            return target_playlist[0]
+        return self.client.create_playlist(name=name, description=description)
 
     def fill(self, uri: str, tracks: List[TrackData]):
         """Fill a playlist with tracks.
@@ -42,15 +65,57 @@ class PlaylistManager:
         track_ids = list(set([track.id for track in tracks]))
         self.client.add_tracks_to_playlist(uri, track_ids)
 
-    def replace(self, uri: str, tracks: List[TrackData]):
-        """Replace playlist items with new ones.
+    def create_playlist_from_queue(self, name: str, description: str = "Mix generated from queue") -> PlaylistData:
+        """Create a playlist from the user's queue.
 
         Args:
-           uri: uri of the playlist to replace
-           tracks: List of track uuids to add to the playlist
+            name: The name of the playlist
+            description: An optional description
+
+        Returns:
+            The created playlist
+
+        Notes:
+            Due to Spotify limitations, only 20 songs from the queue can be fetched and added to the playlist.
         """
-        track_ids = list(set([track.id for track in tracks]))
-        self.client.replace_tracks_in_playlist(uri, track_ids)
+        playlist = self.create(name, description, overwrite=True)
+        tracks = self.client.get_queue()
+        self.fill(uri=playlist.uri, tracks=tracks)
+        return playlist
+
+    def create_playlist_from_recommendations(
+        self, name: str, nb_songs: int, description: str = "Mix generated from recommendations"
+    ) -> PlaylistData:
+        """Create a playlist from the user recent's listening history, with recommendations.
+
+        Args:
+            name: The name of the playlist
+            nb_songs: Number of songs
+            description: An optional description
+
+        Returns:
+            The created playlist
+
+        Notes:
+            Due to Spotify recommendation limits, the playlist cannot have more than 100 songs.
+        """
+        playlist = self.create(name, description, overwrite=True)
+        nb_songs = min(nb_songs, 100)
+
+        recent_artists = self.client.get_hot_artists(MAX_SEEDS)
+        tracks = self.client.get_recommendations(
+            seed_artists=[artist.id for artist in recent_artists], seed_genres=[], seed_tracks=[], limit=nb_songs // 2
+        )
+
+        recent_tracks = self.client.get_history_tracks(time_range="short_term", limit=MAX_SEEDS)
+        tracks += self.client.get_recommendations(
+            seed_artists=[],
+            seed_genres=[],
+            seed_tracks=[track.id for track in recent_tracks],
+            limit=nb_songs // 2,
+        )
+        self.fill(uri=playlist.uri, tracks=tracks)
+        return playlist
 
     def tracks_from_playlist_name(
         self, playlist_name: str, nb_tracks: int, user_playlists: List[PlaylistData]

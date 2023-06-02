@@ -7,6 +7,26 @@ from chopin.schemas.base import PlaylistData, PlaylistSummary
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
 
 
+@patch("chopin.managers.client.ClientManager.get_user_playlists")
+@patch("chopin.managers.client.ClientManager.create_playlist")
+@patch("chopin.managers.client.ClientManager.replace_tracks_in_playlist")
+@pytest.mark.parametrize("name", ["new_playlist", "playlist_1"])
+def test_create(
+    mock_replace_tracks_in_playlist, mock_create_playlist, mock_get_user_playlists, mock_client_manager, name
+):
+    playlist_manager = PlaylistManager(mock_client_manager)
+    mock_get_user_playlists.return_value = [
+        PlaylistData(name="playlist_1", uri="uri"),
+    ]
+    mock_create_playlist.return_value = PlaylistData(name=name, uri="uri")
+    mock_replace_tracks_in_playlist.return_value = 200
+
+    playlist = playlist_manager.create(name, "a description", overwrite=True)
+    if name == "playlist_1":
+        mock_replace_tracks_in_playlist.assert_called_once
+    assert playlist.name == name
+
+
 @patch("chopin.managers.client.ClientManager.get_this_is_playlist")
 @patch("chopin.managers.client.ClientManager.get_tracks")
 def test_playlist_compose_from_artists(
