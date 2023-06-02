@@ -43,8 +43,6 @@ class PlaylistManager:
 
         Returns:
             Created playlist
-
-        Todo: add a test
         """
         user_playlists = self.client.get_user_playlists()
         target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(name)]
@@ -65,6 +63,24 @@ class PlaylistManager:
         """
         track_ids = list(set([track.id for track in tracks]))
         self.client.add_tracks_to_playlist(uri, track_ids)
+
+    def create_playlist_from_queue(self, name: str, description: str = "Mix generated from queue") -> PlaylistData:
+        """Create a playlist from the user's queue.
+
+        Args:
+            name: The name of the playlist
+            description: An optional description
+
+        Returns:
+            The created playlist
+
+        Notes:
+            Due to Spotify limitations, only 20 songs from the queue can be fetched and added to the playlist.
+        """
+        playlist = self.create(name, description, overwrite=True)
+        tracks = self.client.get_queue()
+        self.fill(uri=playlist.uri, tracks=tracks)
+        return playlist
 
     def tracks_from_playlist_name(
         self, playlist_name: str, nb_tracks: int, user_playlists: List[PlaylistData]

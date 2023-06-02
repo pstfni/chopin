@@ -10,22 +10,6 @@ from chopin.utils import get_logger
 LOGGER = get_logger(__name__)
 
 
-def create_playlist_from_queue(client: ClientManager, name: str):
-    """Create a playlist from the user's queue.
-
-    Args:
-        client: A Client Manager, for all calls with spotipy
-        name: The name of the playlist.
-
-    Todo: Move this somewhere else.
-    """
-    playlist_manager = PlaylistManager(client)
-    playlist = playlist_manager.create(name, overwrite=True)
-    tracks = client.get_queue()
-    playlist_manager.fill(uri=playlist.uri, tracks=tracks)
-    return playlist
-
-
 def queue(
     name: Optional[str] = typer.Argument("🔮 Queued Mix", help="Name for your playlist"),
 ):
@@ -38,8 +22,10 @@ def queue(
         Due to Spotify API limits, the maximum number of songs you can use is 20.
     """
     client = ClientManager(SpotifyClient().get_client())
+    playlist_manager = PlaylistManager(client)
+
     LOGGER.info("🔮 Queuing . . .")
-    create_playlist_from_queue(client, name)
+    playlist_manager.create_playlist_from_queue(name)
 
 
 def main():
