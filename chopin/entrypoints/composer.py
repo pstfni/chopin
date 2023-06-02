@@ -8,7 +8,7 @@ from chopin.managers.client import ClientManager
 from chopin.managers.playlist import PlaylistManager
 from chopin.managers.spotify_client import SpotifyClient
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
-from chopin.utils import get_logger, simplify_string
+from chopin.utils import get_logger
 
 LOGGER = get_logger(__name__)
 
@@ -44,14 +44,8 @@ def compose(
 
     tracks = playlist_manager.compose(composition_config=config, user_playlists=user_playlists)
 
-    target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(config.name)]
-    if target_playlist:
-        playlist = target_playlist[0]
-        playlist_manager.replace(uri=playlist.uri, tracks=tracks)
-
-    else:
-        playlist = client.create_playlist(config.name, description=config.description)
-        playlist_manager.fill(uri=playlist.uri, tracks=tracks)
+    playlist = playlist_manager.create(name=config.name, description=config.description, overwrite=True)
+    playlist_manager.fill(uri=playlist.uri, tracks=tracks)
 
 
 def main():

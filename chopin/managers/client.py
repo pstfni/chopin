@@ -45,6 +45,12 @@ class ClientManager:
         self.user = UserData(name=user["display_name"], id=user["id"], uri=user["uri"])
         return self.user
 
+    def get_currently_playing(self) -> TrackData | None:
+        response = self.client.current_playback()
+        if not response or response["currently_playing_type"] != "track":
+            return None
+        return TrackData.parse_obj(response["item"])
+
     def get_tracks(self, playlist_uri: str) -> List[TrackData]:
         """
         Get tracks of a given playlist

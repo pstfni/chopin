@@ -29,6 +29,30 @@ class PlaylistManager:
         """
         self.client = client
 
+    def create(self, name: str, description: str = "Randomly Generated Mix", overwrite: bool = True) -> PlaylistData:
+        """Create a new, empty, playlist.
+
+        !!! warning
+            If the `name` of the playlist is an existing playlist, and overwrite is `True`, the said playlist will
+            be emptied.
+
+        Args:
+            name: name of your playlist.
+            description: description of your playlist
+            overwrite: Overwrite the existing playlist if the `name` is already used.
+
+        Returns:
+            Created playlist
+
+        Todo: add a test
+        """
+        user_playlists = self.client.get_user_playlists()
+        target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(name)]
+        if target_playlist and overwrite:
+            self.client.replace_tracks_in_playlist(target_playlist[0].uri, [])
+            return target_playlist[0]
+        return self.client.create_playlist(name=name, description=description)
+
     def fill(self, uri: str, tracks: List[TrackData]):
         """Fill a playlist with tracks.
 
@@ -41,16 +65,6 @@ class PlaylistManager:
         """
         track_ids = list(set([track.id for track in tracks]))
         self.client.add_tracks_to_playlist(uri, track_ids)
-
-    def replace(self, uri: str, tracks: List[TrackData]):
-        """Replace playlist items with new ones.
-
-        Args:
-           uri: uri of the playlist to replace
-           tracks: List of track uuids to add to the playlist
-        """
-        track_ids = list(set([track.id for track in tracks]))
-        self.client.replace_tracks_in_playlist(uri, track_ids)
 
     def tracks_from_playlist_name(
         self, playlist_name: str, nb_tracks: int, user_playlists: List[PlaylistData]
