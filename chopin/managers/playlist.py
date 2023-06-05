@@ -17,6 +17,7 @@ from chopin.utils import get_logger, simplify_string
 logger = get_logger(__name__)
 MAX_RELATED_ARTISTS = 10
 MAX_TOP_TRACKS_ARTISTS = 10
+MAX_SEEDS = 5
 
 
 class PlaylistManager:
@@ -79,6 +80,40 @@ class PlaylistManager:
         """
         playlist = self.create(name, description, overwrite=True)
         tracks = self.client.get_queue()
+        self.fill(uri=playlist.uri, tracks=tracks)
+        return playlist
+
+    def create_playlist_from_recommendations(
+        self, name: str, nb_songs: int, description: str = "Mix generated from recommendations"
+    ) -> PlaylistData:
+        """Create a playlist from the user recent's listening history, with recommendations.
+
+        Args:
+            name: The name of the playlist
+            nb_songs: Number of songs
+            description: An optional description
+
+        Returns:
+            The created playlist
+
+        Notes:
+            Due to Spotify recommendation limits, the playlist cannot have more than 100 songs.
+        """
+        playlist = self.create(name, description, overwrite=True)
+        nb_songs = min(nb_songs, 100)
+
+        recent_artists = self.client.get_hot_artists(MAX_SEEDS)
+        tracks = self.client.get_recommendations(
+            seed_artists=[artist.id for artist in recent_artists], seed_genres=[], seed_tracks=[], limit=nb_songs // 2
+        )
+
+        recent_tracks = self.client.get_history_tracks(time_range="short_term", limit=MAX_SEEDS)
+        tracks += self.client.get_recommendations(
+            seed_artists=[],
+            seed_genres=[],
+            seed_tracks=[track.id for track in recent_tracks],
+            limit=nb_songs // 2,
+        )
         self.fill(uri=playlist.uri, tracks=tracks)
         return playlist
 
