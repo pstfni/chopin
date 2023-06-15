@@ -17,6 +17,12 @@ python-dotenv = "^0.19.2"
 coloredlogs = "^15.0"
 typer = "^0.6.1"
 
+[tool.poetry.group.cli]
+optional = true
+
+[tool.poetry.group.cli.dependencies]
+textual = "^0.27.0"
+
 [tool.poetry.dev-dependencies]
 pytest-sugar = "*"
 ruff = "*"
