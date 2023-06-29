@@ -1,0 +1,43 @@
+/* Widget config */
+Footer {
+  dock: bottom;
+  content-align: center middle;
+}
+
+ListView {
+    width: 30;
+    height: auto;
+    margin: 2 2;
+}
+
+ListItem {
+    color: white;
+    background: rgba(30, 255, 131, 0.69);
+}
+ListItem > Widget :hover {
+    background: rgba(30, 255, 131, 1);
+    width: 100%;
+    text-align: center;
+    }
+ListView:focus > ListItem.--highlight {
+    background: #11410f;
+    text-align: center;
+}
+ListItem > Widget {
+    height: auto;
+    width: auto;
+}
+
+Label {
+    padding: 2 1;
+    text-align: center
+}
+
+/* Screen config */
+#sidebar {
+    dock: left;
+    width: 15;
+    height: 100%;
+    color: #11410f;
+    background: rgba(30, 255, 131, 0.69);
+}
