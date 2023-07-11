@@ -1,24 +1,23 @@
 """Spotipy client initialization."""
-from pathlib import Path
-
-import dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
+from chopin.schemas.spotify_client import SpotifyConfig
+
 
 class SpotifyClient:
-    """Client for Spotify, using Spotipy and OAUTH."""
+    """Spotify client (via the spotipy lib) used in the app."""
 
-    def __init__(self, env_path: Path = ".env"):
-        CONFIG = dotenv.dotenv_values(env_path)
+    def __init__(self):
+        config = SpotifyConfig()
         auth_manager = SpotifyOAuth(
-            client_id=CONFIG["client_id"],
-            client_secret=CONFIG["client_secret"],
-            redirect_uri=CONFIG["redirect_uri"],
-            scope=CONFIG["scope"],
+            client_id=config.client_id.get_secret_value(),
+            client_secret=config.client_secret.get_secret_value(),
+            redirect_uri=config.redirect_uri,
+            scope=config.scope,
         )
         self.client = spotipy.Spotify(auth_manager=auth_manager)
 
     def get_client(self) -> spotipy.Spotify:
-        """Returns the spotipy client."""
+        """Get spotify client."""
         return self.client

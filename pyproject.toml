@@ -37,6 +37,12 @@ optional = true
 [tool.poetry.group.ml.dependencies]
 scikit-learn = "^1.2.1"
 
+[tool.poetry.group.api]
+optional = true
+
+[tool.poetry.group.api.dependencies]
+fastapi = "^0.100.0"
+
 [tool.ruff]
 line-length = 120
 exclude = ['.venv']

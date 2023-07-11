@@ -17,6 +17,9 @@ def shuffle(
     client = ClientManager(SpotifyClient().get_client())
 
     target_playlists = [playlist for playlist in client.get_user_playlists() if simplify_string(name) == playlist.name]
+    import pdb
+
+    pdb.set_trace()
     if not target_playlists:
         raise ValueError(f"Playlist {name} not found in user playlists")
 

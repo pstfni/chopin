@@ -1,40 +1,45 @@
-"""All the constants variables for Chopin."""
+"""Constant variables for Chopin."""
+from dataclasses import dataclass
+from typing import NamedTuple
 
 
+class PlaylistNamedTuple(NamedTuple):
+    """Small named tuple for information related to a playlist configuration.
+
+    Attributes:
+        name: default name for a playlist
+        description: default description for a playlist
+        nb_songs: default nb songs for a playlist
+    """
+
+    name: str
+    description: str
+    nb_songs: int
+
+
+@dataclass(frozen=True)
 class ConstantsNamespace:
-    """Namespace to hold and protect the constants."""
-
-    @property
-    def SPOTIFY_USER_URI(self):
-        return "spotify:user:spotify"
-
-    @property
-    def SPOTIFY_API_HISTORY_LIMIT(self):
-        return 50
-
-    @property
-    def SPOTIFY_RECOMMENDATION_SEED_LIMIT(self):
-        return 5
-
-    @property
-    def MAX_RELATED_ARTISTS(self):
-        return 10
-
-    @property
-    def MAX_TOP_TRACKS_ARTISTS(self):
-        return 10
-
-    @property
-    def MAX_SEEDS(self):
-        return 5
-
-    @property
-    def TRACK_FIELDS(self):
-        return (
-            "total, items.track.id, items.track.name, items.track.uri, items.track.duration_ms, items.track.popularity,"
-            "items.track.album.uri, items.track.album.name, items.track.album.release_date, items.track.album.id,"
-            "items.track.artists.uri, items.track.artists.name, items.track.artists.id, items.track.artists.genre"
-        )
+    RECOMMENDED_MIX = PlaylistNamedTuple(
+        name="💡 Recommended Mix",
+        description="Auto-generated playlist. Filled with recommendations",
+        nb_songs=100,
+    )
+    QUEUED_MIX = PlaylistNamedTuple(
+        name="🔮 Queued Mix",
+        description="Auto-generated playlist, from the user's queue.",
+        nb_songs=20,
+    )
+    SPOTIFY_USER_URI = "spotify:user:spotify"
+    SPOTIFY_API_HISTORY_LIMIT = 50
+    SPOTIFY_RECOMMENDATION_SEED_LIMIT = 5
+    MAX_RELATED_ARTISTS = 10
+    MAX_TOP_TRACKS_ARTISTS = 10
+    MAX_SEEDS = 5
+    TRACK_FIELDS = (
+        "total, items.track.id, items.track.name, items.track.uri, items.track.duration_ms, items.track.popularity,"
+        "items.track.album.uri, items.track.album.name, items.track.album.release_date, items.track.album.id,"
+        "items.track.artists.uri, items.track.artists.name, items.track.artists.id, items.track.artists.genre"
+    )
 
 
 constants = ConstantsNamespace()

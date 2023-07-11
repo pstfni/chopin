@@ -14,9 +14,8 @@ LOGGER = get_logger(__name__)
 
 
 def compose(
-    nb_songs: int | None = typer.Argument(300, help="Number of songs for the playlist"),
-    composition_config: Path
-    | None = typer.Option(None, help="Path to a YAML file with composition for your playlists"),
+    nb_songs: int = typer.Argument(300, help="Number of songs for the playlist"),
+    composition_config: Path = typer.Option(None, help="Path to a YAML file with composition for your playlists"),
 ):
     """Compose a playlist from existing ones.
 
