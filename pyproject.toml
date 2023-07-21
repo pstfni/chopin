@@ -41,13 +41,7 @@ scikit-learn = "^1.2.1"
 line-length = 120
 exclude = ['.venv']
 ignore = []
-select = [
-    'E',
-    'F',
-    'W',
-    "I",
-    "S",
-]
+select = ["F", "E", "W", "I", "N", "D", "S"]
 
 [tool.ruff.per-file-ignores]
 "**/__init__.py" = ['F401']
@@ -56,6 +50,7 @@ select = [
 composer = "chopin.entrypoints.composer:main"
 queuer = "chopin.entrypoints.queuer:main"
 describer = "chopin.entrypoints.describer:main"
+shuffler = "chopin.entrypoints.shuffler:main"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]

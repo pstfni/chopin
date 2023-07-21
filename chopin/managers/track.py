@@ -1,3 +1,4 @@
+import random
 from typing import List
 
 import numpy as np
@@ -50,6 +51,18 @@ class TrackManager:
         """
         track_uris = [track.uri for track in tracks]
         self.client.like_tracks(track_uris)
+
+
+def shuffle_tracks(tracks: list[TrackData]):
+    """Shuffle a list of tracks.
+
+    Args:
+        tracks: Tracks to shuffle
+
+    Returns:
+        Updated list of tracks
+    """
+    return random.sample(tracks, len(tracks))
 
 
 def find_seeds(

@@ -10,19 +10,22 @@ from chopin.utils import flatten_dict
 class PlaylistData(BaseModel):
     """Playlist representation.
 
-    Attributes:
+    Attributes
+    ----------
         name: Name of the playlist
         uri: Spotify URI for the playlist
     """
 
     name: str
     uri: str
+    description: str = ""
 
 
 class UserData(BaseModel):
     """User representation.
 
-    Attributes:
+    Attributes
+    ----------
         name: Name of the user
         id: The user id
         uri: Spotify URI for the user
@@ -36,7 +39,8 @@ class UserData(BaseModel):
 class TrackFeaturesData(BaseModel):
     """Track audio features representation.
 
-    Attributes:
+    Attributes
+    ----------
         acousticness: A [0., 1.] value indicating how acoustic the track is. 1 is most acoustic
         danceability: A [0., 1.] value for how suitable the track is for dancing. 1 is most danceable
         energy: A [0., 1.] measure of intensity and activity. 1 feel fast, loud and noisy
@@ -71,7 +75,8 @@ class TrackFeaturesData(BaseModel):
 class AlbumData(BaseModel):
     """Album data representation.
 
-    Attributes:
+    Attributes
+    ----------
         name: Album name
         id: Album id
         uri: Spotify URI for the album
@@ -99,7 +104,8 @@ class AlbumData(BaseModel):
 class ArtistData(BaseModel):
     """Artist data representation.
 
-    Attributes:
+    Attributes
+    ----------
         name: Name of the artist
         id: Id of the artist
         uri: Spotify URI for the artist
@@ -121,7 +127,8 @@ class ArtistData(BaseModel):
 class TrackData(BaseModel):
     """Representation of a track.
 
-    Attributes:
+    Attributes
+    ----------
         name: Track name
         id: Track id
         uri: Spotify URI for the track
@@ -154,7 +161,8 @@ class TrackData(BaseModel):
 class PlaylistSummary(BaseModel):
     """Representation of a full playlist. It is used to describe playlists and back them up.
 
-    Attributes:
+    Attributes
+    ----------
         playlist: The playlist described
         tracks: A list of TrackData in the playlist
         _nb_tracks: Number of tracks in the playlist

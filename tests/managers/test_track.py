@@ -1,8 +1,9 @@
+import random
 from unittest.mock import MagicMock
 
 import pytest
 
-from chopin.managers.track import TrackManager, find_seeds
+from chopin.managers.track import TrackManager, find_seeds, shuffle_tracks
 from chopin.schemas.base import TrackData, TrackFeaturesData
 from tests.conftest import spotify_audio_feature
 
@@ -78,3 +79,10 @@ def test_find_seeds(feature, value, expected_track_id, mock_client_manager):
 
     out_track = find_seeds(tracks, feature, value, nb_seeds=1)
     assert out_track[0].id == expected_track_id
+
+
+def test_shuffle_tracks(playlist_1_tracks):
+    random.seed(42)
+    tracks = shuffle_tracks(playlist_1_tracks)
+    assert len(tracks) == len(playlist_1_tracks)
+    assert tracks[0].name == "test_track_p_40"
