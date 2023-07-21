@@ -4,7 +4,7 @@ import pytest
 from spotipy.client import Spotify
 
 from chopin.managers.client import ClientManager
-from chopin.schemas.base import PlaylistData
+from chopin.schemas.playlist import PlaylistData
 
 
 def test_create_playlist(spotify_playlist, spotify_user, mock_client_manager):

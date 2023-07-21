@@ -1,11 +1,13 @@
+"""Schemas for playlist composition."""
 import math
 from enum import Enum
-from typing import List, Literal, Optional
+from typing import Literal
 
 import numpy as np
 from pydantic import BaseModel, ValidationError, confloat, conint, conlist, root_validator, validator
 
-from chopin.utils import extract_uri_from_playlist_link, get_logger
+from chopin.tools.logger import get_logger
+from chopin.tools.strings import extract_uri_from_playlist_link
 
 logger = get_logger(__name__)
 
@@ -35,7 +37,7 @@ class ComposerConfigItem(BaseModel):
 
     name: str
     weight: confloat(ge=0) = 1
-    nb_songs: Optional[int] = 0
+    nb_songs: int | None = 0
 
     @validator("name", pre=True)
     def extract_uri_from_link(cls, v: str):
@@ -78,7 +80,7 @@ class ComposerConfigListeningHistory(BaseModel):
 
     time_range: Literal["short_term", "medium_term", "long_term"] = "short_term"
     weight: confloat(ge=0) = 1
-    nb_songs: Optional[int] = 0
+    nb_songs: int | None = 0
 
 
 class ComposerConfig(BaseModel):
@@ -98,12 +100,12 @@ class ComposerConfig(BaseModel):
     name: str = "🤖 Robot Mix"
     description: str = "Randomly generated mix"
     nb_songs: conint(gt=0)
-    playlists: Optional[List[ComposerConfigItem]] = []
-    artists: Optional[List[ComposerConfigItem]] = []
-    features: Optional[conlist(ComposerConfigRecommendation, max_items=5)] = []
-    history: Optional[conlist(ComposerConfigListeningHistory, max_items=3)] = []
-    radios: Optional[List[ComposerConfigItem]] = []
-    uris: Optional[List[ComposerConfigItem]] = []
+    playlists: list[ComposerConfigItem] | None = []
+    artists: list[ComposerConfigItem] | None = []
+    features: conlist(ComposerConfigRecommendation, max_items=5) | None = []
+    history: conlist(ComposerConfigListeningHistory, max_items=3) | None = []
+    radios: list[ComposerConfigItem] | None = []
+    uris: list[ComposerConfigItem] | None = []
 
     @validator("history")
     def history_field_ranges_must_be_unique(cls, v):
@@ -120,7 +122,7 @@ class ComposerConfig(BaseModel):
             values: Attributes of the composer configuration model.
         """
         categories = {"playlists", "artists", "features", "history", "radios", "uris"}
-        item_weights: List[float] = [item.weight for category in categories for item in values.get(category)]
+        item_weights: list[float] = [item.weight for category in categories for item in values.get(category)]
         sum_of_weights: float = np.array(list(item_weights)).sum()
         total_nb_songs: int = 0
         for category in categories:

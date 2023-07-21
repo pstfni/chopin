@@ -1,5 +1,5 @@
+"""Compose a playlist entrypoint."""
 from pathlib import Path
-from typing import Optional
 
 import typer
 from ruamel import yaml
@@ -8,16 +8,15 @@ from chopin.managers.client import ClientManager
 from chopin.managers.playlist import PlaylistManager
 from chopin.managers.spotify_client import SpotifyClient
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
-from chopin.utils import get_logger
+from chopin.tools.logger import get_logger
 
 LOGGER = get_logger(__name__)
 
 
 def compose(
-    nb_songs: Optional[int] = typer.Argument(300, help="Number of songs for the playlist"),
-    composition_config: Optional[Path] = typer.Option(
-        None, help="Path to a YAML file with composition for your playlists"
-    ),
+    nb_songs: int | None = typer.Argument(300, help="Number of songs for the playlist"),
+    composition_config: Path
+    | None = typer.Option(None, help="Path to a YAML file with composition for your playlists"),
 ):
     """Compose a playlist from existing ones.
 
@@ -40,7 +39,7 @@ def compose(
         )
 
     else:
-        config = ComposerConfig.parse_obj(yaml.safe_load(open(composition_config, "r")))
+        config = ComposerConfig.parse_obj(yaml.safe_load(open(composition_config)))
 
     tracks = playlist_manager.compose(composition_config=config, user_playlists=user_playlists)
 
@@ -48,5 +47,5 @@ def compose(
     playlist_manager.fill(uri=playlist.uri, tracks=tracks)
 
 
-def main():
+def main():  # noqa: D103
     typer.run(compose)

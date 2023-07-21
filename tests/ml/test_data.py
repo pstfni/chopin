@@ -7,7 +7,9 @@ import pytest
 
 from chopin.managers.playlist import PlaylistManager
 from chopin.ml.data import format_records, format_track, normalize_features, read_playlist
-from chopin.schemas.base import AlbumData, PlaylistSummary, TrackData, TrackFeaturesData
+from chopin.schemas.album import AlbumData
+from chopin.schemas.playlist import PlaylistSummary
+from chopin.schemas.track import TrackData, TrackFeaturesData
 
 
 @pytest.fixture

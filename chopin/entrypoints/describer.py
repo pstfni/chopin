@@ -1,5 +1,5 @@
+"""Describer entrypoint."""
 from pathlib import Path
-from typing import Optional
 
 import typer
 
@@ -7,23 +7,21 @@ from chopin.managers.client import ClientManager
 from chopin.managers.playlist import PlaylistManager
 from chopin.managers.spotify_client import SpotifyClient
 from chopin.managers.track import TrackManager
-from chopin.schemas.base import PlaylistSummary
-from chopin.utils import get_logger
+from chopin.schemas.playlist import PlaylistSummary
+from chopin.tools.logger import get_logger
 
 logger = get_logger(__name__)
 
 
 def describe(
-    output: Optional[Path] = typer.Argument(None, help="Output directory"),
-    name: Optional[str] = typer.Argument(
-        None, help="Specific name of a playlist to fetch. If none, all playlists are fetched"
-    ),
+    output: Path | None = typer.Argument(None, help="Output directory"),
+    name: str
+    | None = typer.Argument(None, help="Specific name of a playlist to fetch. If none, all playlists are fetched"),
 ):
     """Retrieve data from a playlist and describe it.
 
     The playlist(s) (summarized as JSONs) will be written into files.
     """
-
     client = ClientManager(SpotifyClient().get_client())
     track_manager = TrackManager(client)
     playlist_manager = PlaylistManager(client)
@@ -47,5 +45,5 @@ def describe(
             print(summarized_playlist)
 
 
-def main():
+def main():  # noqa: D103
     typer.run(describe)

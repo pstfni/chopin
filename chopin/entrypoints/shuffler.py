@@ -1,9 +1,11 @@
+"""Entrypoint to shuffle a playlist."""
 import typer
 
 from chopin.managers.client import ClientManager
 from chopin.managers.spotify_client import SpotifyClient
 from chopin.managers.track import shuffle_tracks
-from chopin.utils import get_logger, simplify_string
+from chopin.tools.logger import get_logger
+from chopin.tools.strings import simplify_string
 
 LOGGER = get_logger(__name__)
 
@@ -25,5 +27,5 @@ def shuffle(
     client.replace_tracks_in_playlist(playlist.uri, track_ids=[track.id for track in tracks])
 
 
-def main():
+def main():  # noqa: D103
     typer.run(shuffle)

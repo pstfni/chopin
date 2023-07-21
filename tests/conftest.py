@@ -2,7 +2,9 @@ import pytest
 from spotipy.client import Spotify
 
 from chopin.managers.client import ClientManager
-from chopin.schemas.base import ArtistData, PlaylistData, TrackData, TrackFeaturesData
+from chopin.schemas.artist import ArtistData
+from chopin.schemas.playlist import PlaylistData
+from chopin.schemas.track import TrackData, TrackFeaturesData
 
 
 @pytest.fixture

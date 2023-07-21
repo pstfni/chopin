@@ -3,8 +3,8 @@ from unittest.mock import patch
 import pytest
 
 from chopin.managers.playlist import PlaylistManager
-from chopin.schemas.base import PlaylistData, PlaylistSummary
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
+from chopin.schemas.playlist import PlaylistData, PlaylistSummary
 
 
 @patch("chopin.managers.client.ClientManager.get_user_playlists")

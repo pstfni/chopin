@@ -1,17 +1,15 @@
-"""
-Module for all things related to the data : parsing, normalization, formatting, ... before ML models
-"""
+"""Module for all things related to the data : parsing, normalization, formatting, ... before ML models."""
 import json
 import random
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import pandas as pd
 
-from chopin.schemas.base import TrackData
+from chopin.schemas.track import TrackData
 
 
-def read_playlist(playlist_filepath: Path) -> Tuple[str, List[TrackData]]:
+def read_playlist(playlist_filepath: Path) -> tuple[str, list[TrackData]]:
     """From a filepath containing a playlist object, read the playlist data and returns a list of tracks.
 
     Args:
@@ -21,12 +19,12 @@ def read_playlist(playlist_filepath: Path) -> Tuple[str, List[TrackData]]:
         A dictionary, describing tracks
     """
     playlist_name = playlist_filepath.stem
-    playlist = json.load(open(playlist_filepath, "r"))
+    playlist = json.load(open(playlist_filepath))
     tracks = [TrackData.parse_obj(track) for track in playlist["tracks"]]
     return playlist_name, tracks
 
 
-def format_track(track: TrackData) -> Dict[str, Any]:
+def format_track(track: TrackData) -> dict[str, Any]:
     """Format a track for our ML needs.
 
     Args:
@@ -55,9 +53,9 @@ def format_track(track: TrackData) -> Dict[str, Any]:
     return track
 
 
-def format_records(track: TrackData, playlist_name: str, train_test_split: float = 0.8) -> Dict[str, Any]:
-    """
-    Format the record (a track data and a label - ie a playlist name) for ML experimentation
+def format_records(track: TrackData, playlist_name: str, train_test_split: float = 0.8) -> dict[str, Any]:
+    """Format the record (a track data and a label - ie a playlist name) for ML experimentation.
+
     Key features are selected here, release year is extracted, and a label is added.
 
     Args:
@@ -95,7 +93,7 @@ def normalize_features(records: pd.DataFrame) -> pd.DataFrame:
     return records
 
 
-def split_train_test_records(records: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def split_train_test_records(records: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Split a records dataframe into train and validation sets.
 
     Args:
@@ -110,7 +108,7 @@ def split_train_test_records(records: pd.DataFrame) -> Tuple[pd.DataFrame, pd.Da
     return train_records, test_records
 
 
-def create_train_records(playlist_filepaths: List[Path]) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def create_train_records(playlist_filepaths: list[Path]) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Read a list of playlists (from their paths) and create dataframe records.
 
     Args:
@@ -130,13 +128,13 @@ def create_train_records(playlist_filepaths: List[Path]) -> Tuple[pd.DataFrame, 
     return split_train_test_records(records)
 
 
-def _create_inference_records(tracks: List[Dict[str, Any]]):
+def _create_inference_records(tracks: list[dict[str, Any]]):
     records = pd.DataFrame().from_records(tracks)
     records = records.drop(["playlist.name", "split"], axis=1)
     return records
 
 
-def create_inference_records_from_paths(playlist_filepaths: List[Path]) -> pd.DataFrame:
+def create_inference_records_from_paths(playlist_filepaths: list[Path]) -> pd.DataFrame:
     """Read a list of playlist, from their paths, and create dataframe records.
 
     Args:
@@ -153,7 +151,7 @@ def create_inference_records_from_paths(playlist_filepaths: List[Path]) -> pd.Da
     return _create_inference_records(all_tracks)
 
 
-def create_inference_records_from_tracks(tracks: List[TrackData], name: Optional[str] = "") -> pd.DataFrame:
+def create_inference_records_from_tracks(tracks: list[TrackData], name: str | None = "") -> pd.DataFrame:
     """Create dataframe records for inference, based on a list of track data.
 
     Args:

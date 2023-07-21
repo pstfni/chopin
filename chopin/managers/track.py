@@ -1,23 +1,25 @@
+"""Operations on spotify tracks."""
 import random
-from typing import List
 
 import numpy as np
 
 from chopin.managers.client import SPOTIFY_RECOMMENDATION_SEED_LIMIT, ClientManager
-from chopin.schemas.base import TrackData, TrackFeaturesData
-from chopin.utils import get_logger
+from chopin.schemas.track import TrackData, TrackFeaturesData
+from chopin.tools.logger import get_logger
 
 logger = get_logger(__name__)
 
 
 class TrackManager:
-    """Class to handle all things related to your Spotify tracks, like getting their features, adding tracks to your
-    likes, I/O methods, ..."""
+    """Class to handle all things related to your Spotify tracks.
+
+    Let you access their features, adding tracks to your likes, I/O methods, ...
+    """
 
     def __init__(self, client: ClientManager):
         self.client = client
 
-    def get_audio_features(self, tracks: List[TrackData]) -> List[TrackFeaturesData]:
+    def get_audio_features(self, tracks: list[TrackData]) -> list[TrackFeaturesData]:
         """Parse tracks and call Spotify API to retrieve each track's features.
 
         Args:
@@ -29,7 +31,7 @@ class TrackManager:
         uris = [track.uri for track in tracks]
         return self.client.get_tracks_audio_features(uris)
 
-    def set_audio_features(self, tracks: List[TrackData]) -> List[TrackData]:
+    def set_audio_features(self, tracks: list[TrackData]) -> list[TrackData]:
         """Get the features of a list of tracks, and set the `features` attributes to enable later use.
 
         Args:
@@ -43,7 +45,7 @@ class TrackManager:
             tracks[i].features = audio_features[i]
         return tracks
 
-    def save_tracks(self, tracks: List[TrackData]):
+    def save_tracks(self, tracks: list[TrackData]):
         """Add tracks to the current user liked songs.
 
         Args:
@@ -66,8 +68,8 @@ def shuffle_tracks(tracks: list[TrackData]):
 
 
 def find_seeds(
-    tracks: List[TrackData], feature: str, value: float, nb_seeds=SPOTIFY_RECOMMENDATION_SEED_LIMIT
-) -> List[TrackData]:
+    tracks: list[TrackData], feature: str, value: float, nb_seeds=SPOTIFY_RECOMMENDATION_SEED_LIMIT
+) -> list[TrackData]:
     """For a given feature, find close tracks in a list of tracks.
 
     !!! example

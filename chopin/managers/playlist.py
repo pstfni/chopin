@@ -1,7 +1,7 @@
+"""Operations on spotify playlists."""
 import json
 import random
 from pathlib import Path
-from typing import List, Optional
 
 import numpy as np
 import spotipy
@@ -10,9 +10,11 @@ from tqdm import tqdm
 
 from chopin.managers.client import ClientManager
 from chopin.managers.track import TrackManager, find_seeds
-from chopin.schemas.base import PlaylistData, PlaylistSummary, TrackData
 from chopin.schemas.composer import ComposerConfig
-from chopin.utils import get_logger, simplify_string
+from chopin.schemas.playlist import PlaylistData, PlaylistSummary
+from chopin.schemas.track import TrackData
+from chopin.tools.logger import get_logger
+from chopin.tools.strings import simplify_string
 
 logger = get_logger(__name__)
 MAX_RELATED_ARTISTS = 10
@@ -22,8 +24,9 @@ MAX_SEEDS = 5
 
 class PlaylistManager:
     def __init__(self, client: ClientManager):
-        """Class to manage all operations related to your playlists. Here you can fill a playlist, replace its tracks,
-        compose a playlist ...
+        """Class to manage all operations related to your playlists.
+
+        Lets you fill a playlist, replace its tracks, compose a playlist ...
 
         Args:
             client: A ClientManager instance, for all the calls related to the Spotify API.
@@ -52,7 +55,7 @@ class PlaylistManager:
             return target_playlist[0]
         return self.client.create_playlist(name=name, description=description)
 
-    def fill(self, uri: str, tracks: List[TrackData]):
+    def fill(self, uri: str, tracks: list[TrackData]):
         """Fill a playlist with tracks.
 
         !!! note
@@ -118,8 +121,8 @@ class PlaylistManager:
         return playlist
 
     def tracks_from_playlist_name(
-        self, playlist_name: str, nb_tracks: int, user_playlists: List[PlaylistData]
-    ) -> List[TrackData]:
+        self, playlist_name: str, nb_tracks: int, user_playlists: list[PlaylistData]
+    ) -> list[TrackData]:
         """Get a number of tracks from a playlist.
 
         Args:
@@ -139,7 +142,7 @@ class PlaylistManager:
         tracks = self.client.get_tracks(playlist_uri=playlist[0].uri)
         return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
 
-    def tracks_from_artist_name(self, artist_name: str, nb_tracks: int) -> List[TrackData]:
+    def tracks_from_artist_name(self, artist_name: str, nb_tracks: int) -> list[TrackData]:
         """Get a number of tracks from an artist or band.
 
         !!! note
@@ -160,10 +163,11 @@ class PlaylistManager:
         return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
 
     def tracks_from_feature_name(
-        self, seeds: List[TrackData], feature_name: str, feature_value: float, nb_tracks: int
-    ) -> List[TrackData]:
-        """Get a number of tracks from a recommendation. The recommendation will use a set of tracks as a seed and a
-        feature to target.
+        self, seeds: list[TrackData], feature_name: str, feature_value: float, nb_tracks: int
+    ) -> list[TrackData]:
+        """Get a number of tracks from a recommendation.
+
+        The recommendation will use a set of tracks as a seed and a feature to target.
 
         Args:
             seeds: Reference tracks for the recommendation
@@ -180,11 +184,11 @@ class PlaylistManager:
         tracks = self.client.get_recommendations(
             seed_tracks=seed_tracks, limit=nb_tracks, seed_artists=[], seed_genres=[], **{feature_name: feature_value}
         )
-        logger.critical(f"Some seeds: {', '.join([t.name for t in seeds[:5]])}")
-        logger.critical(f"Some recommended tracks: {', '.join([t.name for t in tracks[:5]])}")
+        logger.debug(f"Some seeds: {', '.join([t.name for t in seeds[:5]])}")
+        logger.debug(f"Some recommended tracks: {', '.join([t.name for t in tracks[:5]])}")
         return tracks
 
-    def tracks_from_radio(self, artist_name: str, nb_tracks: int) -> List[TrackData]:
+    def tracks_from_radio(self, artist_name: str, nb_tracks: int) -> list[TrackData]:
         """Get tracks from an artist radio.
 
         !!! note
@@ -204,11 +208,11 @@ class PlaylistManager:
             return []
         related_artists = self.client.get_related_artists(artist, max_related_artists=MAX_RELATED_ARTISTS)
         tracks = []
-        for artist in [artist] + related_artists:
+        for artist in [artist, *related_artists]:
             tracks.extend(self.client.get_artist_top_tracks(artist, MAX_TOP_TRACKS_ARTISTS))
         return np.random.choice(tracks, min(len(tracks), nb_tracks), replace=False)
 
-    def tracks_from_playlist_uri(self, playlist_uri: str, nb_tracks: int) -> List[TrackData]:
+    def tracks_from_playlist_uri(self, playlist_uri: str, nb_tracks: int) -> list[TrackData]:
         """Get tracks from a playlist URI.
 
         Args:
@@ -226,8 +230,8 @@ class PlaylistManager:
         return np.random.choice(tracks, min(len(tracks), nb_tracks), replace=False)
 
     def compose(
-        self, composition_config: ComposerConfig, user_playlists: Optional[List[PlaylistData]] = None
-    ) -> List[TrackData]:
+        self, composition_config: ComposerConfig, user_playlists: list[PlaylistData] | None = None
+    ) -> list[TrackData]:
         """From a composition configuration, compose a playlist.
 
         Args:
@@ -242,7 +246,7 @@ class PlaylistManager:
         Raises:
             AttributeError: if 'playlists' are in the configuration but user_playlists is not passed.
         """
-        tracks: List[TrackData] = []
+        tracks: list[TrackData] = []
         for playlist in tqdm(composition_config.playlists):
             logger.info(f"Adding {playlist.nb_songs} tracks from playlist {playlist.name}")
             tracks.extend(

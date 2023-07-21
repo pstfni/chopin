@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from chopin.managers.track import TrackManager, find_seeds, shuffle_tracks
-from chopin.schemas.base import TrackData, TrackFeaturesData
+from chopin.schemas.track import TrackData, TrackFeaturesData
 from tests.conftest import spotify_audio_feature
 
 

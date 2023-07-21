@@ -8,21 +8,19 @@ repos:
         args: [--line-length=120, --experimental-string-processing]
 # Black for docstrings
 -   repo: https://github.com/asottile/blacken-docs
-    rev: v1.11.0
+    rev: 1.15.0
     hooks:
     -   id: blacken-docs
-        additional_dependencies: [black==21.9b0]
 # Ruff: flake8, pydocstyle & isort
 - repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: v0.0.116
+  rev: v0.0.278
   hooks:
     - id: ruff
       args:
         - --fix
-        - --per-file-ignores=tests/*:S101
 # Autoformat the doc
 - repo: https://github.com/myint/docformatter
-  rev: v1.3.1
+  rev: v1.7.5
   hooks:
     - id: docformatter
       args:

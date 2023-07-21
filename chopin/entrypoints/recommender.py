@@ -1,19 +1,18 @@
-from typing import Optional
-
+"""Entrypoint to create a recommended playlist."""
 import typer
 
 from chopin.managers.client import ClientManager
 from chopin.managers.playlist import PlaylistManager
 from chopin.managers.spotify_client import SpotifyClient
-from chopin.utils import get_logger
+from chopin.tools.logger import get_logger
 
 LOGGER = get_logger(__name__)
 MAX_SEEDS = 5  # Spotify only accepts up to 5 seeds for the recommendation
 
 
 def main(
-    nb_songs: Optional[int] = typer.Argument(100, min=0, max=100, help="Number of songs for the playlist"),
-    name: Optional[str] = typer.Argument("💡 Recommended Mix", help="Name for your playlist"),
+    nb_songs: int | None = typer.Argument(100, min=0, max=100, help="Number of songs for the playlist"),
+    name: str | None = typer.Argument("💡 Recommended Mix", help="Name for your playlist"),
 ):
     """Create a playlist from recommendations.
 
