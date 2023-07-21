@@ -3,7 +3,8 @@ import random
 
 import numpy as np
 
-from chopin.managers.client import SPOTIFY_RECOMMENDATION_SEED_LIMIT, ClientManager
+from chopin.constants import constants
+from chopin.managers.client import ClientManager
 from chopin.schemas.track import TrackData, TrackFeaturesData
 from chopin.tools.logger import get_logger
 
@@ -68,7 +69,7 @@ def shuffle_tracks(tracks: list[TrackData]):
 
 
 def find_seeds(
-    tracks: list[TrackData], feature: str, value: float, nb_seeds=SPOTIFY_RECOMMENDATION_SEED_LIMIT
+    tracks: list[TrackData], feature: str, value: float, nb_seeds=constants.SPOTIFY_RECOMMENDATION_SEED_LIMIT
 ) -> list[TrackData]:
     """For a given feature, find close tracks in a list of tracks.
 

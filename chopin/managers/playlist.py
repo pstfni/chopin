@@ -8,6 +8,7 @@ import spotipy
 from pydantic.json import pydantic_encoder
 from tqdm import tqdm
 
+from chopin.constants import constants
 from chopin.managers.client import ClientManager
 from chopin.managers.track import TrackManager, find_seeds
 from chopin.schemas.composer import ComposerConfig
@@ -17,9 +18,6 @@ from chopin.tools.logger import get_logger
 from chopin.tools.strings import simplify_string
 
 logger = get_logger(__name__)
-MAX_RELATED_ARTISTS = 10
-MAX_TOP_TRACKS_ARTISTS = 10
-MAX_SEEDS = 5
 
 
 class PlaylistManager:
@@ -105,12 +103,12 @@ class PlaylistManager:
         playlist = self.create(name, description, overwrite=True)
         nb_songs = min(nb_songs, 100)
 
-        recent_artists = self.client.get_hot_artists(MAX_SEEDS)
+        recent_artists = self.client.get_hot_artists(constants.MAX_SEEDS)
         tracks = self.client.get_recommendations(
             seed_artists=[artist.id for artist in recent_artists], seed_genres=[], seed_tracks=[], limit=nb_songs // 2
         )
 
-        recent_tracks = self.client.get_history_tracks(time_range="short_term", limit=MAX_SEEDS)
+        recent_tracks = self.client.get_history_tracks(time_range="short_term", limit=constants.MAX_SEEDS)
         tracks += self.client.get_recommendations(
             seed_artists=[],
             seed_genres=[],
@@ -206,10 +204,10 @@ class PlaylistManager:
         if not artist:
             logger.warning(f"Couldn't retrieve artist for search {artist_name}")
             return []
-        related_artists = self.client.get_related_artists(artist, max_related_artists=MAX_RELATED_ARTISTS)
+        related_artists = self.client.get_related_artists(artist, max_related_artists=constants.MAX_RELATED_ARTISTS)
         tracks = []
         for artist in [artist, *related_artists]:
-            tracks.extend(self.client.get_artist_top_tracks(artist, MAX_TOP_TRACKS_ARTISTS))
+            tracks.extend(self.client.get_artist_top_tracks(artist, constants.MAX_TOP_TRACKS_ARTISTS))
         return np.random.choice(tracks, min(len(tracks), nb_tracks), replace=False)
 
     def tracks_from_playlist_uri(self, playlist_uri: str, nb_tracks: int) -> list[TrackData]:
