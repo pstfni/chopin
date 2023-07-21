@@ -5,6 +5,7 @@ from typing import Any, Literal
 import requests
 import spotipy
 
+from chopin.constants import constants
 from chopin.schemas.artist import ArtistData
 from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData, TrackFeaturesData
@@ -13,15 +14,6 @@ from chopin.tools.logger import get_logger
 from chopin.tools.strings import match_strings, simplify_string
 
 logger = get_logger(__name__)
-
-TRACK_FIELDS = (
-    "total, items.track.id, items.track.name, items.track.uri, items.track.duration_ms, items.track.popularity,"
-    "items.track.album.uri, items.track.album.name, items.track.album.release_date, items.track.album.id,"
-    "items.track.artists.uri, items.track.artists.name, items.track.artists.id, items.track.artists.genre"
-)
-SPOTIFY_USER_URI = "spotify:user:spotify"
-SPOTIFY_API_HISTORY_LIMIT = 50
-SPOTIFY_RECOMMENDATION_SEED_LIMIT = 5
 
 
 class ClientManager:
@@ -74,7 +66,7 @@ class ClientManager:
             response = self.client.playlist_items(
                 playlist_uri,
                 offset=offset,
-                fields=TRACK_FIELDS,
+                fields=constants.TRACK_FIELDS,
                 additional_types=["track"],
             )
             offset += len(response["items"])
@@ -108,12 +100,12 @@ class ClientManager:
     def get_history_tracks(
         self, time_range: Literal["short_term", "medium_term", "long_term"], limit: int
     ) -> list[TrackData]:
-        if limit > SPOTIFY_API_HISTORY_LIMIT:
+        if limit > constants.SPOTIFY_API_HISTORY_LIMIT:
             logger.warning(
                 f"Asked for {limit} tracks for {time_range} best songs, "
-                f"but Spotify API limits to {SPOTIFY_API_HISTORY_LIMIT}"
+                f"but Spotify API limits to {constants.SPOTIFY_API_HISTORY_LIMIT}"
             )
-            limit = SPOTIFY_API_HISTORY_LIMIT
+            limit = constants.SPOTIFY_API_HISTORY_LIMIT
         response = self.client.current_user_top_tracks(limit=limit, time_range=time_range)["items"]
         return [TrackData(**track) for track in response]
 
@@ -179,7 +171,8 @@ class ClientManager:
         playlist = [
             playlist
             for playlist in items
-            if playlist["owner"]["uri"] == SPOTIFY_USER_URI and match_strings([playlist["name"], target_playlist])
+            if playlist["owner"]["uri"] == constants.SPOTIFY_USER_URI
+            and match_strings([playlist["name"], target_playlist])
         ]
         if playlist:
             return PlaylistData(**playlist[0])

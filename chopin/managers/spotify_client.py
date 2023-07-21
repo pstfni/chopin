@@ -1,3 +1,4 @@
+"""Spotipy client initialization."""
 from pathlib import Path
 
 import dotenv
@@ -6,6 +7,8 @@ from spotipy.oauth2 import SpotifyOAuth
 
 
 class SpotifyClient:
+    """Client for Spotify, using Spotipy and OAUTH."""
+
     def __init__(self, env_path: Path = ".env"):
         CONFIG = dotenv.dotenv_values(env_path)
         auth_manager = SpotifyOAuth(
@@ -17,4 +20,5 @@ class SpotifyClient:
         self.client = spotipy.Spotify(auth_manager=auth_manager)
 
     def get_client(self) -> spotipy.Spotify:
+        """Returns the spotipy client."""
         return self.client
