@@ -1,5 +1,5 @@
 """Pydantic schemas for tracks."""
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from chopin.schemas.album import AlbumData
 from chopin.schemas.artist import ArtistData
@@ -25,21 +25,20 @@ class TrackFeaturesData(BaseModel):
         analysis_url: URL for the spotify page of the audio feature analysis.
     """
 
-    acousticness: float | None
-    danceability: float | None
-    energy: float | None
-    instrumentalness: float | None
-    liveness: float | None
-    loudness: float | None
-    speechiness: float | None
-    valence: float | None
-    tempo: float | None
-    mode: int | None
-    key: int | None
-    analysis_url: str | None
+    acousticness: float | None = None
+    danceability: float | None = None
+    energy: float | None = None
+    instrumentalness: float | None = None
+    liveness: float | None = None
+    loudness: float | None = None
+    speechiness: float | None = None
+    valence: float | None = None
+    tempo: float | None = None
+    mode: int | None = None
+    key: int | None = None
+    analysis_url: str | None = None
 
-    class Config:
-        extra = "ignore"
+    model_config = ConfigDict(extra="ignore")
 
 
 class TrackData(BaseModel):

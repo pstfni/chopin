@@ -1,10 +1,10 @@
 """Schemas for playlist composition."""
 import math
 from enum import Enum
-from typing import Literal
+from typing import Annotated, Literal
 
 import numpy as np
-from pydantic import BaseModel, ValidationError, confloat, conint, conlist, root_validator, validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from chopin.tools.logger import get_logger
 from chopin.tools.strings import extract_uri_from_playlist_link
@@ -35,11 +35,11 @@ class ComposerConfigItem(BaseModel):
         weight: Weight of the input in the final composition
     """
 
-    name: str
-    weight: confloat(ge=0) = 1
+    name: Annotated[str, extract_uri_from_playlist_link]
+    weight: Annotated[float, Field(ge=0)] = 1.0
     nb_songs: int | None = 0
 
-    @validator("name", pre=True)
+    @field_validator("name", mode="before")
     def extract_uri_from_link(cls, v: str):
         """If the value is an https link to spotify, extract the URI data.
 
@@ -61,12 +61,11 @@ class ComposerConfigRecommendation(ComposerConfigItem):
     name: TrackFeature
     value: float  # relaxed constraint. todo: see if we can have constraint based on feature type (or add validators)
 
-    @validator("name")
+    model_config = ConfigDict()
+
+    @field_validator("name")
     def update_name_with_value(cls, v):
         return v.value
-
-    class Config:
-        use_enum_values: True
 
 
 class ComposerConfigListeningHistory(BaseModel):
@@ -79,7 +78,7 @@ class ComposerConfigListeningHistory(BaseModel):
     """
 
     time_range: Literal["short_term", "medium_term", "long_term"] = "short_term"
-    weight: confloat(ge=0) = 1
+    weight: Annotated[float, Field(ge=0)] = 1
     nb_songs: int | None = 0
 
 
@@ -99,22 +98,22 @@ class ComposerConfig(BaseModel):
 
     name: str = "🤖 Robot Mix"
     description: str = "Randomly generated mix"
-    nb_songs: conint(gt=0)
+    nb_songs: Annotated[int, Field(gt=0)]
     playlists: list[ComposerConfigItem] | None = []
     artists: list[ComposerConfigItem] | None = []
-    features: conlist(ComposerConfigRecommendation, max_items=5) | None = []
-    history: conlist(ComposerConfigListeningHistory, max_items=3) | None = []
+    features: Annotated[list[ComposerConfigRecommendation], Field(max_length=5)] | None = []
+    history: Annotated[list[ComposerConfigListeningHistory], Field(max_length=3)] | None = []
     radios: list[ComposerConfigItem] | None = []
     uris: list[ComposerConfigItem] | None = []
 
-    @validator("history")
+    @field_validator("history")
     def history_field_ranges_must_be_unique(cls, v):
         ranges = [item.time_range for item in v]
         if len(set(ranges)) != len(ranges):
-            raise ValidationError("time_range items for history must be unique")
+            raise ValueError("time_range items for history must be unique")
         return v
 
-    @root_validator
+    @model_validator(mode="after")
     def fill_nb_songs(cls, values):
         """From the nb_songs and item weights, compute the nb_songs of each item.
 
@@ -122,12 +121,12 @@ class ComposerConfig(BaseModel):
             values: Attributes of the composer configuration model.
         """
         categories = {"playlists", "artists", "features", "history", "radios", "uris"}
-        item_weights: list[float] = [item.weight for category in categories for item in values.get(category)]
+        item_weights: list[float] = [item.weight for category in categories for item in getattr(values, category)]
         sum_of_weights: float = np.array(list(item_weights)).sum()
         total_nb_songs: int = 0
         for category in categories:
-            for item in values.get(category):
-                item.nb_songs = math.ceil((item.weight / sum_of_weights) * values["nb_songs"])
+            for item in getattr(values, category):
+                item.nb_songs = math.ceil((item.weight / sum_of_weights) * values.nb_songs)
                 total_nb_songs += item.nb_songs
         logger.info(f"With the composer configuration parsed, {total_nb_songs} songs will be added.")
         return values

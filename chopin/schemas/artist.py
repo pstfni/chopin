@@ -1,5 +1,5 @@
 """Pydantic schemas for artists."""
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ArtistData(BaseModel):
@@ -19,7 +19,6 @@ class ArtistData(BaseModel):
     name: str
     id: str
     uri: str
-    genres: list[str] | None
+    genres: list[str] | None = None
 
-    class Config:
-        extra = "ignore"
+    model_config = ConfigDict(extra="ignore")

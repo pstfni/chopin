@@ -1,6 +1,6 @@
 """Pydantic schemas for playlists."""
 import numpy as np
-from pydantic import BaseModel, root_validator
+from pydantic import BaseModel, model_validator
 
 from chopin.schemas.track import TrackData, TrackFeaturesData
 
@@ -44,22 +44,20 @@ class PlaylistSummary(BaseModel):
     _avg_features: TrackFeaturesData | None = None
     _avg_popularity: int | None = None
 
-    @root_validator()
+    @model_validator(mode="after")
     def fill_fields(cls, values):
         """Compute field values on initialzation."""
-        tracks = values["tracks"]
-        values["_nb_tracks"] = len(tracks)
-        values["_nb_artists"] = len(np.unique([track.artists[0].name for track in tracks]))
-        values["_total_duration"] = sum([track.duration_ms for track in tracks])
-        values["_avg_popularity"] = np.mean([track.popularity for track in tracks])
+        tracks = values.tracks
+        values._nb_tracks = len(tracks)
+        values._nb_artists = len(np.unique([track.artists[0].name for track in tracks]))
+        values._total_duration = sum([track.duration_ms for track in tracks])
+        values._avg_popularity = np.mean([track.popularity for track in tracks])
 
         # yayks
-        attributes = list(TrackFeaturesData.__fields__.keys())
+        attributes = list(TrackFeaturesData.model_fields.keys())
         attributes.pop(-1)  # remove analysis_url
         features = np.mean([[getattr(track.features, feat) for feat in attributes] for track in tracks], axis=0)
-        values["_avg_features"] = TrackFeaturesData(
-            **{attributes[i]: round(features[i], 3) for i in range(len(features))}
-        )
+        values._avg_features = TrackFeaturesData(**{attributes[i]: round(features[i], 3) for i in range(len(features))})
         # skyay
         return values
 

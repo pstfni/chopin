@@ -46,7 +46,7 @@ class ClientManager:
         response = self.client.current_playback()
         if not response or response["currently_playing_type"] != "track":
             return None
-        return TrackData.parse_obj(response["item"])
+        return TrackData.model_validate(response["item"])
 
     def get_tracks(self, playlist_uri: str) -> list[TrackData]:
         """Get tracks of a given playlist.
@@ -70,7 +70,7 @@ class ClientManager:
                 additional_types=["track"],
             )
             offset += len(response["items"])
-            response_tracks = [TrackData.parse_obj(r["track"]) for r in response["items"]]
+            response_tracks = [TrackData.model_validate(r["track"]) for r in response["items"]]
             tracks.extend(response_tracks)
 
             if len(response["items"]) == 0:

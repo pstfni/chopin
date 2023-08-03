@@ -11,7 +11,7 @@ def test_fill_nb_songs():
         "playlists": [{"name": "rock", "weight": 1}, {"name": "folk", "weight": 2}],
         "artists": [{"name": "Bruce Springsteen", "weight": 0.5}, {"name": "Soprano", "weight": 0}],
     }
-    out = ComposerConfig.parse_obj(composer_config)
+    out = ComposerConfig.model_validate(composer_config)
     assert out.playlists[0].nb_songs == 58
     assert out.playlists[1].nb_songs == 115
     assert out.artists[0].nb_songs == 29
@@ -26,7 +26,7 @@ def test_history_field_ranges_must_be_unique():
         "nb_songs": 100,
         "history": [{"time_range": "short_term"}, {"time_range": "medium_term"}, {"time_range": "long_term"}],
     }
-    ComposerConfig.parse_obj(composer_config)
+    ComposerConfig.model_validate(composer_config)
 
     # problemo
     bad_composer_config = {
@@ -34,7 +34,7 @@ def test_history_field_ranges_must_be_unique():
         "history": [{"time_range": "short_term"}, {"time_range": "short_term"}, {"time_range": "long_term"}],
     }
     with pytest.raises(ValidationError):
-        ComposerConfig.parse_obj(bad_composer_config)
+        ComposerConfig.model_validate(bad_composer_config)
 
 
 def test_fill_nb_songs_with_history():
@@ -44,7 +44,7 @@ def test_fill_nb_songs_with_history():
         "playlists": [{"name": "rock", "weight": 1}],
         "history": [{"time_range": "short_term", "weight": 1}],
     }
-    out = ComposerConfig.parse_obj(composer_config)
+    out = ComposerConfig.model_validate(composer_config)
     assert out.playlists[0].nb_songs == 50
     assert out.history[0].nb_songs == 50
     assert out.artists == []
@@ -77,7 +77,7 @@ def test_fill_nb_songs_with_history():
 )
 def test_composer_config_recommendation_item(recommendation_item, expected_item):
     out = ComposerConfigRecommendation(**recommendation_item)
-    assert out.dict() == expected_item
+    assert out.model_dump() == expected_item
 
 
 @pytest.mark.parametrize(
@@ -98,4 +98,4 @@ def test_composer_config_recommendation_item(recommendation_item, expected_item)
 )
 def test_composer_config_uri_item(uri_item, expected_item):
     out = ComposerConfigItem(**uri_item)
-    assert out.dict() == expected_item
+    assert out.model_dump() == expected_item

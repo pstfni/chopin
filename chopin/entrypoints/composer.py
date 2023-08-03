@@ -38,7 +38,7 @@ def compose(
         )
 
     else:
-        config = ComposerConfig.parse_obj(yaml.safe_load(open(composition_config)))
+        config = ComposerConfig.model_validate(yaml.safe_load(open(composition_config)))
 
     tracks = playlist_manager.compose(composition_config=config, user_playlists=user_playlists)
 

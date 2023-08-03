@@ -1,11 +1,9 @@
 """Operations on spotify playlists."""
-import json
 import random
 from pathlib import Path
 
 import numpy as np
 import spotipy
-from pydantic.json import pydantic_encoder
 from tqdm import tqdm
 
 from chopin.constants import constants
@@ -287,6 +285,6 @@ class PlaylistManager:
             playlist: The playlist to write
             filepath: Target file to receive the dump
         """
-        json_str = json.dumps(playlist, default=pydantic_encoder)
+        json_str = playlist.model_dump_json()
         with open(filepath, "w") as f:
             f.write(json_str)

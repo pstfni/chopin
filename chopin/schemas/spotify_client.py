@@ -1,4 +1,6 @@
-from pydantic import AnyHttpUrl, BaseSettings, SecretStr
+"""Schemas for the spotify client."""
+from pydantic import AnyHttpUrl, SecretStr
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class SpotifyConfig(BaseSettings):
@@ -7,5 +9,4 @@ class SpotifyConfig(BaseSettings):
     scope: str = "user-library-read"
     redirect_uri: AnyHttpUrl = "http://localhost:8888/callback"
 
-    class Config:
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file=".env")

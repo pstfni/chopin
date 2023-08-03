@@ -1,7 +1,7 @@
 """Pydantic schemas for albums."""
 from datetime import datetime
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 
 
 class AlbumData(BaseModel):
@@ -20,7 +20,7 @@ class AlbumData(BaseModel):
     uri: str
     release_date: str
 
-    @validator("release_date", pre=True, allow_reuse=True)
+    @field_validator("release_date", mode="before")
     def parse_release_date(cls, v):
         """Format the release date based on the level of detail available."""
         if isinstance(v, str):
