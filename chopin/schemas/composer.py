@@ -114,7 +114,7 @@ class ComposerConfig(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def fill_nb_songs(cls, values):
+    def fill_nb_songs(cls, values: "ComposerConfig") -> "ComposerConfig":
         """From the nb_songs and item weights, compute the nb_songs of each item.
 
         Args:

@@ -56,7 +56,7 @@ class TrackManager:
         self.client.like_tracks(track_uris)
 
 
-def shuffle_tracks(tracks: list[TrackData]):
+def shuffle_tracks(tracks: list[TrackData]) -> list[TrackData]:
     """Shuffle a list of tracks.
 
     Args:
@@ -69,7 +69,7 @@ def shuffle_tracks(tracks: list[TrackData]):
 
 
 def find_seeds(
-    tracks: list[TrackData], feature: str, value: float, nb_seeds=constants.SPOTIFY_RECOMMENDATION_SEED_LIMIT
+    tracks: list[TrackData], feature: str, value: float, nb_seeds: int = constants.SPOTIFY_RECOMMENDATION_SEED_LIMIT
 ) -> list[TrackData]:
     """For a given feature, find close tracks in a list of tracks.
 

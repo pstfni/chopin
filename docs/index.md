@@ -4,26 +4,26 @@ Welcome to Chopin, the Spotify Playlist manager.
 
 ### What is Chopin ?
 
-A CLI to describe, compose, and goof around with playlists easily.
+A CLI to describe, compose, manage your Spotify playlists.
 
-![](img/demo.gif)
+[Get started](./getting_started.md){ .md-button .md-button--primary } to install Chopin.
 
-New here ? [Get started](./getting_started.md){ .md-button .md-button--primary } Or [follow the guide](guide/composer){ .md-button .md-button}
+[Follow the guide](guide/compose.md){ .md-button .md-button} to use the Chopin commands.
+
+[Dive in the reference](reference/index.md){ .md-button .md-button} to see the developer documentation. 
 
 ### What features are available
 
 Three entrypoints come with the chopin repository: 
 
-<center>
-
-| Commands   | Description                                            |
-|:-----------|:-------------------------------------------------------|
-| `compose`  | 🤖 Create a playlist from various sources              |
-| `describe` | 📝 Save a playlist' tracks, artists and audio features |
-| `queue`    | 🔮 Turn your Spotify queue into a playlist             |
-| `shuffle`  | 🔀 Shuffle tracks in an existing playlist              |
 
 
+| Commands    | Description                                            |
+|:------------|:-------------------------------------------------------|
+| `compose`   | 🤖 Create a playlist from various sources              |
+| `describe`  | 📝 Save a playlist' tracks, artists and audio features |
+| `recommend` | 💡 Recommend songs in a new playlist                   |
+| `queue`     | 🔮 Turn your Spotify queue into a playlist             |
+| `shuffle`   | 🔀 Shuffle tracks in an existing playlist              |
 
-</center>
 

@@ -6,7 +6,6 @@ class ArtistData(BaseModel):
     """Artist data representation.
 
     Attributes:
-    ----------
         name: Name of the artist
         id: Id of the artist
         uri: Spotify URI for the artist

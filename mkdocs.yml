@@ -8,10 +8,12 @@ nav:
     - "getting_started.md"
   - Guide:
     - "🤖 Compose a playlist":
-      - "guide/composer.md"
+      - "guide/compose.md"
       - "guide/sources.md"
-    - "guide/queuer.md"
-    - "guide/describer.md"
+    - "guide/queue.md"
+    - "guide/describe.md"
+    - "guide/recommend.md"
+    - "guide/shuffle.md"
   - Reference:
     - "reference/index.md"
     - "reference/entrypoints.md"
@@ -31,6 +33,7 @@ theme:
     - navigation.instant
     - navigation.tracking
     - navigation.top
+    - navigation.footer
   palette:
     - scheme: default
       primary: green
@@ -66,15 +69,21 @@ markdown_extensions:
         custom_checkbox: true
     - pymdownx.arithmatex:
         generic: true
-    - pymdownx.emoji:
-        emoji_index: !!python/name:materialx.emoji.twemoji
-        emoji_generator: !!python/name:materialx.emoji.to_svg
 
 plugins:
   - search
   - mkdocstrings:
       default_handler: python
-      watch:
-        - chopin/managers/
-        - chopin/schemas/
-        - chopin/entrypoints/
+
+watch:
+  - chopin/managers/
+  - chopin/schemas/
+  - chopin/entrypoints/
+
+extra_css:
+  - css/termynal.css
+  - css/custom.css
+
+extra_javascript:
+  - js/termynal.js
+  - js/custom.js

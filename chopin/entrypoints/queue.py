@@ -10,7 +10,7 @@ LOGGER = get_logger(__name__)
 
 
 def queue(
-    name: str | None = typer.Argument("🔮 Queued Mix", help="Name for your playlist"),
+    name: str = typer.Argument("🔮 Queued Mix", help="Name for your playlist"),
 ):
     """Create a playlist and shuffle it from the user's queue.
 
@@ -23,8 +23,9 @@ def queue(
     client = ClientManager(SpotifyClient().get_client())
     playlist_manager = PlaylistManager(client)
 
-    LOGGER.info("🔮 Queuing . . .")
+    typer.echo("🔮 Queuing . . .")
     playlist_manager.create_playlist_from_queue(name)
+    typer.echo(f"Playlist '{name}' successfully created.")
 
 
 def main():  # noqa: D103

@@ -10,7 +10,6 @@ class TrackFeaturesData(BaseModel):
     """Track audio features representation.
 
     Attributes:
-    ----------
         acousticness: A [0., 1.] value indicating how acoustic the track is. 1 is most acoustic
         danceability: A [0., 1.] value for how suitable the track is for dancing. 1 is most danceable
         energy: A [0., 1.] measure of intensity and activity. 1 feel fast, loud and noisy
@@ -34,8 +33,8 @@ class TrackFeaturesData(BaseModel):
     speechiness: float | None = None
     valence: float | None = None
     tempo: float | None = None
-    mode: int | None = None
-    key: int | None = None
+    mode: float | None = None
+    key: float | None = None
     analysis_url: str | None = None
 
     model_config = ConfigDict(extra="ignore")
@@ -45,7 +44,6 @@ class TrackData(BaseModel):
     """Representation of a track.
 
     Attributes:
-    ----------
         name: Track name
         id: Track id
         uri: Spotify URI for the track

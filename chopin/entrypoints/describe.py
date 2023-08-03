@@ -14,9 +14,8 @@ logger = get_logger(__name__)
 
 
 def describe(
-    output: Path | None = typer.Argument(None, help="Output directory"),
-    name: str
-    | None = typer.Argument(None, help="Specific name of a playlist to fetch. If none, all playlists are fetched"),
+    output: Path = typer.Option(None, help="Output directory"),
+    name: str = typer.Option(None, help="Specific name of a playlist to fetch. If none, all playlists are fetched"),
 ):
     """Retrieve data from a playlist and describe it.
 
@@ -26,6 +25,7 @@ def describe(
     track_manager = TrackManager(client)
     playlist_manager = PlaylistManager(client)
 
+    typer.echo("📝 Describing . . .")
     user_playlists = client.get_user_playlists()
     if name:
         target_playlists = [playlist for playlist in user_playlists if name == playlist.name]
@@ -39,10 +39,10 @@ def describe(
         summarized_playlist = PlaylistSummary(playlist=target_playlist, tracks=tracks)
         if output:
             out_file = output / f"{target_playlist.name}.json"
-            logger.info(f"Describing playlist {target_playlist.name} in {out_file}")
+            typer.echo(f"Wrote playlist {target_playlist.name} in {out_file}")
             playlist_manager.dump(summarized_playlist, out_file)
         else:
-            print(summarized_playlist)
+            typer.echo(summarized_playlist)
 
 
 def main():  # noqa: D103

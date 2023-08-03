@@ -1,13 +1,13 @@
 # Entrypoints
 
-::: chopin.entrypoints.composer
+::: chopin.entrypoints.compose
     options:
         show_signature: false
 
-::: chopin.entrypoints.describer
+::: chopin.entrypoints.describe
     options:
         show_signature: false
 
-::: chopin.entrypoints.queuer
+::: chopin.entrypoints.queue
     options:
         show_signature: false

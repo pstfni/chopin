@@ -1,12 +1,19 @@
-# 🔮 Queuer
+# 🔮 Queue
 
-You cannot shuffle through songs in your queue. It is very frustating !
+You cannot shuffle through songs in your queue, so let's create a playlist to do so !
 
-With the `queuer ` entrypoint you can create a playlist from your queue, and do whatever you please with it!
+The `queue` entrypoint create a playlist from the songs in your queue.
 
-```shell
-queuer
+<div class="termy">
+
+```console
+$ queue 
+
+🔮 Queuing . . .
+Playlist '🔮 Queued Mix' successfully created.
 ```
+</div>
+
 
 !!! warning "Spotify API limitation"
     Queues are hard to retrieve from the Spotify API. For this reason, be aware that :

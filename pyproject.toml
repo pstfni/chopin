@@ -27,10 +27,10 @@ pandas = "*"
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-mkdocs = "^1.3"
+mkdocs = "^1.5"
 mkdocstrings = "^0.20"
-mkdocstrings-python = "^0.8"
-mkdocs-material = "^8.5"
+mkdocstrings-python = "^1.2"
+mkdocs-material = "^9.1"
 
 [tool.poetry.group.ml]
 optional = true
@@ -58,10 +58,11 @@ select = ["F", "E", "W", "I", "N", "D", "UP", "TRY200", "PERF", "RUF"]
 convention = "google"
 
 [tool.poetry.scripts]
-composer = "chopin.entrypoints.composer:main"
-queuer = "chopin.entrypoints.queuer:main"
-describer = "chopin.entrypoints.describer:main"
-shuffler = "chopin.entrypoints.shuffler:main"
+compose = "chopin.entrypoints.compose:main"
+queue = "chopin.entrypoints.queue:main"
+describe = "chopin.entrypoints.describe:main"
+shuffle = "chopin.entrypoints.shuffle:main"
+recommend = "chopin.entrypoints.recommend:main"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]

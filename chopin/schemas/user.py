@@ -6,7 +6,6 @@ class UserData(BaseModel):
     """User representation.
 
     Attributes:
-    ----------
         name: Name of the user
         id: The user id
         uri: Spotify URI for the user

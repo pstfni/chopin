@@ -1,10 +1,27 @@
-# Composer
+# Compose
 
-Create hours of playlist from scratch in a few seconds with the `composer` entrypoint.
+Compose playlists from scratch in a few seconds with the `composer` entrypoint.
 
-```shell
-composer -c composition_config.yaml
+
+<div class="termy">
+
+```console
+$ compose --nb-songs 50 
+
+🤖 Composing . . .
+
+<font color="#6ed47d">
+With the composer configuration parsed, 52 songs will be added.
+0%  |   |  0/4 
+25% |█   | Adding 13 tracks from playlist pop
+50% |██  | Adding 13 tracks from playlist rock
+75% |███ | Adding 13 tracks from playlist soul
+100%|████| Adding 13 tracks from playlist dance
+</font>
+Playlist '🤖 Robot Mix' successfully created.
 ```
+</div>
+
 
 ## How to compose your playlist
 
@@ -12,9 +29,9 @@ You can configure your own playlist with a YAML file. First, you can give your p
 Several subsections are available to use different sources to customize a playlist. Take the following example:
 
 ```yaml title="A composition configuration example"
-name: "Running"
-description: "Playlist for working  out"
-nb_songs: 200
+name: "Energy"
+description: "Playlist for working out"
+nb_songs: 16
 playlists:
   - name: rock
   - name: electro
@@ -23,12 +40,23 @@ artists:
   - name: Kraftwerk
 ```
 
-A playlist titled "Running" will be added to your Spotify library. It will have 200 songs:
+Give your YAML configuration to the entrypoint:
 
-- 50 from one of your playlist named 'rock'
-- 50 from another one of your playlist, 'techno'
-- 50 songs by Queen
-- and 50 Kraftwerk songs.
+<div class="termy">
+```console
+$ compose --composition-config playlist_composition.yaml
+```
+</div>
+
+A playlist titled "Energy" will be added to your Spotify library. It will have 200 songs:
+
+- 4 from one of your playlist named 'rock'
+- 4 from another one of your playlist, 'electro'
+- 4 songs by Queen
+- and 4 Kraftwerk songs.
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4eOSdWiCJQeMmLAdC479UV?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
 
 See the [sources](sources.md) for all the available sources and their options.
 

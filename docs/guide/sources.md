@@ -1,10 +1,12 @@
 # Available sources for playlist composition
 
-## playlists
+## Playlists
 
 A list of one or more of the _current user_ playlists. 
 
-```yaml title="Add songs from playlists"
+```yaml hl_lines="3 4 5 6 7 8" title="Add songs from playlists"
+name: "New playlist"
+nb_songs: 100
 playlists:
   - name: rock
   - name: chill
@@ -12,7 +14,7 @@ playlists:
     weight: 0.25
 ```
 
-!!! warning "About playlist names"
+??? warning "About playlist names"
     Playlists are given with their simplified name, stripped of emojis and spaces. For example,
     `rock 70s ✌` should be written as `rock70s` in the configuration.
 
@@ -22,12 +24,14 @@ playlists:
     python -c "from utils import simplify_string; print(simplify_string($playlist_name))"
     ```
 
-## artists
+## Artists
 
 A list of artists to pick songs from. The `name` is used to query the Spotify API and retrieve
 songs from Spotify's _This is ..._ playlists.
 
-```yaml title="Add songs from artists"
+```yaml hl_lines="3-8" title="Add songs from artists"
+name: "New playlist"
+nb_songs: 20
 artists:
   - name: David Bowie
   - name: The Beatles
@@ -35,14 +39,16 @@ artists:
     weight: 0.25
 ```
 
-## radios
+## Radios
 
 A list of artist's radios to pick songs from. The term "radio" refers here to the 
 Spotify's _Artist Name Radio_ playlists. 
 
 Songs from radios will include a few songs from the artist, and tracks from related artists.
 
-```yaml title="Add songs from artists' radios"
+```yaml hl_lines="3-8" title="Add songs from radios of artists"
+name: "New playlist"
+nb_songs: 50
 radios:
   - name: Pulp
   - name: Elvis Costello
@@ -50,13 +56,13 @@ radios:
     weight: 0.25
 ```
 
-!!! info "Radios and Spotify API"
+??? info "Radios and Spotify API"
     The Spotify API do not let you easily access or find these _Artist Name Radio_ playlists.
     
     For this feature, their behaviour was reproduced by picking songs of the artist, fetching its 
     related artists, and finally picking top songs of each related artists.
 
-## features
+## Features
 
 With features, you can add recommendations to your playlist. Based on the current playlist composition, and 
 the feature `value`, recommended songs will be added. Available features are described in the [API reference](../reference/schemas.md#base-schemas)
@@ -80,13 +86,13 @@ The above composition configuration will:
 2. Based on these songs, it will recommend relatively acoustic new ones.
 3. Finally, it will recommend popular songs.
 
-## history
+## History
 
-`history` let you add your best songs from the past! Three time ranges are available:
+`history` lets you add your favourite songs from the past! Three time ranges are available:
 
 - `short_term` for the last 4 weeks
 - `medium_term` for the last 6 months
-- `long_term` for your all time best.
+- `long_term` for your all-time best.
 
 ```yaml title="Add songs from your most-listened titles"
 history:
@@ -95,9 +101,9 @@ history:
     weight: 0.25
 ```
 
-## uris
+## Uris
 
-For full flexibility, you can use any kind of playlist in your composition. Simply add the Spotify playlist uri
+With uris, you can use any kind of playlist in your composition. Simply add the Spotify playlist uri or url
 in your YAML.
 
 ```yaml title="Add songs from any Spotify public playlist"
@@ -109,12 +115,12 @@ uris:
     weight: 0.25
 ```
 
-!!! info "Playlist URI or playlist links ?"
-    You can use both ! The URL link to share a playlist will feature its URI.
+!!! info "Playlist URI or playlist URL ?"
+    Both are supported. The URL link to share a playlist features its URI.
     For example: https://open.spotify.com/playlist/7oK3UXsHYmC3PYGQFY5IOb?si=eae4b209bee740f8 is a link for the 
     playlist URI `7oK3UXsHYmC3PYGQFY5IOb`.
 
-!!! abstract "Some playlist URIs to cover your needs"
+??? abstract "Some playlist URIs to cover your needs"
     
     - `7oK3UXsHYmC3PYGQFY5IOb` : Bob Dylan, the philosophy of modern song
     - `50FTlBiOVTyPgVtPYVUzdn` : Les Inrockuptibles, Trésors Cachés

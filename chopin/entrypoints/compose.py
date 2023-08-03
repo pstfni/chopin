@@ -14,7 +14,7 @@ LOGGER = get_logger(__name__)
 
 
 def compose(
-    nb_songs: int = typer.Argument(300, help="Number of songs for the playlist"),
+    nb_songs: int = typer.Argument(50, help="Number of songs for the playlist"),
     composition_config: Path = typer.Option(None, help="Path to a YAML file with composition for your playlists"),
 ):
     """Compose a playlist from existing ones.
@@ -28,7 +28,7 @@ def compose(
     playlist_manager = PlaylistManager(client)
     user_playlists = client.get_user_playlists()
 
-    LOGGER.info("🤖 Composing . . .")
+    typer.echo("🤖 Composing . . .")
 
     if not composition_config:
         # The user didn't give a config to compose its playlist, we create one from its playlists
@@ -44,6 +44,7 @@ def compose(
 
     playlist = playlist_manager.create(name=config.name, description=config.description, overwrite=True)
     playlist_manager.fill(uri=playlist.uri, tracks=tracks)
+    typer.echo(f"Playlist '{playlist.name}' successfully created.")
 
 
 def main():  # noqa: D103

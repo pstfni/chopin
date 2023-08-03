@@ -9,7 +9,6 @@ class PlaylistData(BaseModel):
     """Playlist representation.
 
     Attributes:
-    ----------
         name: Name of the playlist
         uri: Spotify URI for the playlist
     """
@@ -23,7 +22,6 @@ class PlaylistSummary(BaseModel):
     """Representation of a full playlist. It is used to describe playlists and back them up.
 
     Attributes:
-    ----------
         playlist: The playlist described
         tracks: A list of TrackData in the playlist
         _nb_tracks: Number of tracks in the playlist
@@ -42,7 +40,7 @@ class PlaylistSummary(BaseModel):
     _total_duration: float | None = None
     _nb_artists: int | None = None
     _avg_features: TrackFeaturesData | None = None
-    _avg_popularity: int | None = None
+    _avg_popularity: float | None = None
 
     @model_validator(mode="after")
     def fill_fields(cls, values):

@@ -8,7 +8,6 @@ class AlbumData(BaseModel):
     """Album data representation.
 
     Attributes:
-    ----------
         name: Album name
         id: Album id
         uri: Spotify URI for the album
@@ -18,7 +17,7 @@ class AlbumData(BaseModel):
     name: str
     id: str
     uri: str
-    release_date: str
+    release_date: str | int
 
     @field_validator("release_date", mode="before")
     def parse_release_date(cls, v):
