@@ -26,11 +26,10 @@ def describe(
     playlist_manager = PlaylistManager(client)
 
     typer.echo("📝 Describing . . .")
-    user_playlists = client.get_user_playlists()
     if name:
-        target_playlists = [playlist for playlist in user_playlists if name == playlist.name]
+        target_playlists = [client.get_named_playlist(name)]
     else:
-        target_playlists = user_playlists
+        target_playlists = client.get_user_playlists()
 
     for target_playlist in target_playlists:
 

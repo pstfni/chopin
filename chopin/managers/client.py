@@ -37,6 +37,16 @@ class ClientManager:
         playlists = self.client.current_user_playlists().get("items", [])
         return [PlaylistData(name=simplify_string(p["name"]), uri=p["uri"]) for p in playlists]
 
+    def get_named_playlist(self, name: str) -> PlaylistData:
+        """Find a user playlist based on its name."""
+        playlists = self.get_user_playlists()
+        names = [simplify_string(p.name) for p in playlists]
+        try:
+            index_ = names.index(simplify_string(name))
+        except ValueError as exc:
+            raise ValueError(f"Couldn't find playlist {name} in user playlists") from exc
+        return playlists[index_]
+
     def get_current_user(self) -> UserData:
         user = self.client.current_user()
         self.user = UserData(name=user["display_name"], id=user["id"], uri=user["uri"])

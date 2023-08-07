@@ -5,7 +5,6 @@ from chopin.managers.client import ClientManager
 from chopin.managers.spotify_client import SpotifyClient
 from chopin.managers.track import shuffle_tracks
 from chopin.tools.logger import get_logger
-from chopin.tools.strings import simplify_string
 
 LOGGER = get_logger(__name__)
 
@@ -16,13 +15,8 @@ def shuffle(
     """Shuffle an existing playlist."""
     client = ClientManager(SpotifyClient().get_client())
 
-    target_playlists = [playlist for playlist in client.get_user_playlists() if simplify_string(name) == playlist.name]
-
-    if not target_playlists:
-        raise ValueError(f"Playlist {name} not found in user playlists")
-
     typer.echo("🔀 Shuffling ...")
-    playlist = target_playlists[0]
+    playlist = client.get_named_playlist(name)
     tracks = client.get_tracks(playlist.uri)
     tracks = shuffle_tracks(tracks)
 
