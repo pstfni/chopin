@@ -48,7 +48,7 @@ $ compose --composition-config playlist_composition.yaml
 ```
 </div>
 
-A playlist titled "Energy" will be added to your Spotify library. It will have 200 songs:
+A playlist titled "Energy" will be added to your Spotify library. It will have 16 songs:
 
 - 4 from one of your playlist named 'rock'
 - 4 from another one of your playlist, 'electro'

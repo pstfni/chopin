@@ -17,17 +17,17 @@ def shuffle(
     client = ClientManager(SpotifyClient().get_client())
 
     target_playlists = [playlist for playlist in client.get_user_playlists() if simplify_string(name) == playlist.name]
-    import pdb
 
-    pdb.set_trace()
     if not target_playlists:
         raise ValueError(f"Playlist {name} not found in user playlists")
 
+    typer.echo("🔀 Shuffling ...")
     playlist = target_playlists[0]
     tracks = client.get_tracks(playlist.uri)
     tracks = shuffle_tracks(tracks)
 
     client.replace_tracks_in_playlist(playlist.uri, track_ids=[track.id for track in tracks])
+    typer.echo(f"Playlist {playlist.name} successfully shuffled.")
 
 
 def main():  # noqa: D103

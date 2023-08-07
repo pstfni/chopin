@@ -4,6 +4,11 @@ Sometimes you want to create a random order for your songs, but play them in seq
 
 The `shuffle ` entrypoint is a fast utility to shuffle tracks in your playlist
 
-```shell
-shuffle --name "chill"
+<div class="termy">
+
+```console
+$ shuffle 
+🔀 Shuffling . . .
+Playlist {name} succesfully shuffled.
 ```
+</div>
