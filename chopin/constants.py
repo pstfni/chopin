@@ -20,12 +20,12 @@ class PlaylistNamedTuple(NamedTuple):
 @dataclass(frozen=True)
 class ConstantsNamespace:
     RECOMMENDED_MIX = PlaylistNamedTuple(
-        name="💡 Recommended Mix",
+        name="💡 Musique Recommandée",
         description="Auto-generated playlist. Filled with recommendations",
         nb_songs=100,
     )
     QUEUED_MIX = PlaylistNamedTuple(
-        name="🔮 Queued Mix",
+        name="🔮 Musique à suivre",
         description="Auto-generated playlist, from the user's queue.",
         nb_songs=20,
     )

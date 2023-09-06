@@ -1,6 +1,7 @@
 """Create a playlist from the queue entrypoint."""
 import typer
 
+from chopin.constants import constants
 from chopin.managers.client import ClientManager
 from chopin.managers.playlist import PlaylistManager
 from chopin.managers.spotify_client import SpotifyClient
@@ -10,7 +11,7 @@ LOGGER = get_logger(__name__)
 
 
 def queue(
-    name: str = typer.Argument("🔮 Queued Mix", help="Name for your playlist"),
+    name: str = typer.Argument(constants.QUEUED_MIX.name, help="Name for your playlist"),
 ):
     """Create a playlist and shuffle it from the user's queue.
 

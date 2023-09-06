@@ -1,13 +1,14 @@
 """Entrypoint to create a recommended playlist."""
 import typer
 
+from chopin.constants import constants
 from chopin.managers.client import ClientManager
 from chopin.managers.playlist import PlaylistManager
 from chopin.managers.spotify_client import SpotifyClient
 
 
 def recommend(
-    name: str = typer.Argument("💡 Recommended Mix", help="Name for your playlist"),
+    name: str = typer.Argument(constants.RECOMMENDED_MIX.name, help="Name for your playlist"),
     nb_songs: int = typer.Argument(100, min=0, max=100, help="Number of songs for the playlist"),
 ):
     """Create a playlist from recommendations."""
