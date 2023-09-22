@@ -4,8 +4,9 @@ from enum import Enum
 from typing import Annotated, Literal
 
 import numpy as np
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from chopin.tools.dates import read_date
 from chopin.tools.logger import get_logger
 from chopin.tools.strings import extract_uri_from_playlist_link
 
@@ -99,6 +100,7 @@ class ComposerConfig(BaseModel):
     name: str = "🤖 Robot Mix"
     description: str = "Randomly generated mix"
     nb_songs: Annotated[int, Field(gt=0)]
+    release_range: Annotated[tuple[str | None, str | None] | None, AfterValidator(read_date)] | None = None
     playlists: list[ComposerConfigItem] | None = []
     artists: list[ComposerConfigItem] | None = []
     features: Annotated[list[ComposerConfigRecommendation], Field(max_length=5)] | None = []

@@ -90,6 +90,22 @@ Your new "Running" playlist will have 200 songs:
 - 67 songs by Queen
 - and 34 by Kraftwerk.
 
+## Use `release_range` to filter tracks by their release date
+
+The `release_range` option let you configure a date range for the tracks you want in your playlist.
+
+```yaml title="A playlist for this year releases" hl_lines="9"
+name: "Releases of the year"
+nb_songs: 100
+playlists:
+  - name: pop
+  - name: rock
+artists:
+  - name: Bleachers
+  - name: Fontaines D.C.
+release_range: ["01/01/2023", ]
+```
+
 ## Available sources
 
 There are many ways to compose your playlist, not just artists and your own playlists. [sources](sources.md) 

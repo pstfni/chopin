@@ -19,6 +19,7 @@ nav:
     - "reference/entrypoints.md"
     - "reference/managers.md"
     - "reference/schemas.md"
+    - "reference/tools.md"
 
 theme:
   name: "material"

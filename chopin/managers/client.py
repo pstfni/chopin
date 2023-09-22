@@ -1,5 +1,6 @@
 """All the functions to interact with the spotify API."""
 import random
+from datetime import datetime
 from typing import Any, Literal
 
 import requests
@@ -58,11 +59,14 @@ class ClientManager:
             return None
         return TrackData.model_validate(response["item"])
 
-    def get_tracks(self, playlist_uri: str) -> list[TrackData]:
+    def get_tracks(
+        self, playlist_uri: str, release_date_range: tuple[datetime.date, datetime.date] | None = None
+    ) -> list[TrackData]:
         """Get tracks of a given playlist.
 
         Args:
             playlist_uri: The uri of the playlist.
+            release_date_range: A date range; tracks to retrieve must have been released in this range.
 
 
         Returns:
@@ -81,6 +85,12 @@ class ClientManager:
             )
             offset += len(response["items"])
             response_tracks = [TrackData.model_validate(r["track"]) for r in response["items"]]
+            if release_date_range:
+                response_tracks = [
+                    track
+                    for track in response_tracks
+                    if release_date_range[0] <= track.album.release_date <= release_date_range[1]
+                ]
             tracks.extend(response_tracks)
 
             if len(response["items"]) == 0:

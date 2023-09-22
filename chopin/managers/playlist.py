@@ -12,6 +12,7 @@ from chopin.managers.track import TrackManager, find_seeds
 from chopin.schemas.composer import ComposerConfig
 from chopin.schemas.playlist import PlaylistData, PlaylistSummary
 from chopin.schemas.track import TrackData
+from chopin.tools.dates import ReleaseRange
 from chopin.tools.logger import get_logger
 from chopin.tools.strings import simplify_string
 
@@ -117,7 +118,11 @@ class PlaylistManager:
         return playlist
 
     def tracks_from_playlist_name(
-        self, playlist_name: str, nb_tracks: int, user_playlists: list[PlaylistData]
+        self,
+        playlist_name: str,
+        nb_tracks: int,
+        user_playlists: list[PlaylistData],
+        release_range: ReleaseRange | None = None,
     ) -> list[TrackData]:
         """Get a number of tracks from a playlist.
 
@@ -125,6 +130,7 @@ class PlaylistManager:
             playlist_name: The name of your playlist
             nb_tracks: Number of tracks to retrieve
             user_playlists: List of existing user playlists. Used to map the name with the URI.
+            release_range: An optional datetime range for the release date of the tracks.
 
         Returns:
             A list of track data from the playlists
@@ -135,10 +141,12 @@ class PlaylistManager:
         if not playlist:
             logger.warning(f"Couldn't retrieve tracks for playlist {playlist_name}")
             return []
-        tracks = self.client.get_tracks(playlist_uri=playlist[0].uri)
+        tracks = self.client.get_tracks(playlist_uri=playlist[0].uri, release_date_range=release_range)
         return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
 
-    def tracks_from_artist_name(self, artist_name: str, nb_tracks: int) -> list[TrackData]:
+    def tracks_from_artist_name(
+        self, artist_name: str, nb_tracks: int, release_range: ReleaseRange | None = None
+    ) -> list[TrackData]:
         """Get a number of tracks from an artist or band.
 
         !!! note
@@ -147,6 +155,7 @@ class PlaylistManager:
         Args:
             artist_name: Name of the artist or band to fetch tracks from
             nb_tracks: Number of tracks to retrieve.
+            release_range: An optional datetime range for the release date of the tracks.
 
         Returns:
             A list of track data from the artists.
@@ -155,7 +164,7 @@ class PlaylistManager:
         if not playlist:
             logger.warning(f"Couldn't retrieve tracks for artist {artist_name}")
             return []
-        tracks = self.client.get_tracks(playlist_uri=playlist.uri)
+        tracks = self.client.get_tracks(playlist_uri=playlist.uri, release_date_range=release_range)
         return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
 
     def tracks_from_feature_name(
@@ -208,18 +217,21 @@ class PlaylistManager:
             tracks.extend(self.client.get_artist_top_tracks(artist, constants.MAX_TOP_TRACKS_ARTISTS))
         return np.random.choice(tracks, min(len(tracks), nb_tracks), replace=False)
 
-    def tracks_from_playlist_uri(self, playlist_uri: str, nb_tracks: int) -> list[TrackData]:
+    def tracks_from_playlist_uri(
+        self, playlist_uri: str, nb_tracks: int, release_range: ReleaseRange | None = None
+    ) -> list[TrackData]:
         """Get tracks from a playlist URI.
 
         Args:
             playlist_uri: Name of the artist or band to fetch related tracks from
             nb_tracks: Number of tracks to retrieve.
+            release_range: An optional datetime range for the release date of the tracks.
 
         Returns:
             A list of track data from the artist radio.
         """
         try:
-            tracks = self.client.get_tracks(playlist_uri=playlist_uri)
+            tracks = self.client.get_tracks(playlist_uri=playlist_uri, release_date_range=release_range)
         except spotipy.SpotifyException:
             logger.warning(f"Couldn't retrieve playlist URI {playlist_uri}")
             return []
@@ -247,12 +259,19 @@ class PlaylistManager:
             logger.info(f"Adding {playlist.nb_songs} tracks from playlist {playlist.name}")
             tracks.extend(
                 self.tracks_from_playlist_name(
-                    playlist_name=playlist.name, nb_tracks=playlist.nb_songs, user_playlists=user_playlists
+                    playlist_name=playlist.name,
+                    nb_tracks=playlist.nb_songs,
+                    user_playlists=user_playlists,
+                    release_range=composition_config.release_range,
                 )
             )
         for artist in tqdm(composition_config.artists):
             logger.info(f"Adding {artist.nb_songs} tracks for artist {artist.name}")
-            tracks.extend(self.tracks_from_artist_name(artist_name=artist.name, nb_tracks=artist.nb_songs))
+            tracks.extend(
+                self.tracks_from_artist_name(
+                    artist_name=artist.name, nb_tracks=artist.nb_songs, release_range=composition_config.release_range
+                )
+            )
         for history in composition_config.history:
             logger.info(f"Adding {history.nb_songs} tracks from user {history.time_range} best songs")
             tracks.extend(self.client.get_history_tracks(time_range=history.time_range, limit=history.nb_songs))
@@ -261,7 +280,11 @@ class PlaylistManager:
             tracks.extend(self.tracks_from_radio(artist_name=radio.name, nb_tracks=radio.nb_songs))
         for uri in composition_config.uris:
             logger.info(f"Adding {uri.nb_songs} tracks from playlist uri {uri.name}")
-            tracks.extend(self.tracks_from_playlist_uri(playlist_uri=uri.name, nb_tracks=uri.nb_songs))
+            tracks.extend(
+                self.tracks_from_playlist_uri(
+                    playlist_uri=uri.name, nb_tracks=uri.nb_songs, release_range=composition_config.release_range
+                )
+            )
         for feature in composition_config.features:
             logger.info(f"Adding {feature.nb_songs} tracks from recommendations with {feature.name}")
             track_manager = TrackManager(self.client)
