@@ -1,9 +1,9 @@
 import random
-from unittest.mock import MagicMock
+from unittest.mock import patch
 
 import pytest
 
-from chopin.managers.track import TrackManager, find_seeds, shuffle_tracks
+from chopin.managers.track import find_seeds, get_audio_features, set_audio_features, shuffle_tracks
 from chopin.schemas.track import TrackData, TrackFeaturesData
 from tests.conftest import spotify_audio_feature
 
@@ -13,22 +13,28 @@ def side_effect_audio_features(tracks):
 
 
 @pytest.mark.parametrize("track_list", ["playlist_1_tracks", "playlist_2_tracks", "empty_playlist"])
-def test_get_audio_features(track_list, request, mock_client_manager):
+def test_get_audio_features(
+    track_list,
+    request,
+):
     track_list = request.getfixturevalue(track_list)
-    track_manager = TrackManager(mock_client_manager)
-    mock_client_manager.get_tracks_audio_features = MagicMock(side_effect=side_effect_audio_features)
 
-    audio_features = track_manager.get_audio_features(track_list)
+    with patch("chopin.managers.track.get_tracks_audio_features", side_effect=side_effect_audio_features):
+        audio_features = get_audio_features(track_list)
+
     assert len(audio_features) == len(track_list)
 
 
 @pytest.mark.parametrize("track_list", ["playlist_1_tracks", "playlist_2_tracks", "empty_playlist"])
-def test_set_audio_features(track_list, request, mock_client_manager):
+def test_set_audio_features(
+    track_list,
+    request,
+):
     track_list = request.getfixturevalue(track_list)
-    track_manager = TrackManager(mock_client_manager)
-    mock_client_manager.get_tracks_audio_features = MagicMock(side_effect=side_effect_audio_features)
 
-    tracks_with_audio_features = track_manager.set_audio_features(track_list)
+    with patch("chopin.managers.track.get_tracks_audio_features", side_effect=side_effect_audio_features):
+        tracks_with_audio_features = set_audio_features(track_list)
+
     assert len(tracks_with_audio_features) == len(track_list)
     for track in tracks_with_audio_features:
         assert track.features is not None
@@ -47,7 +53,11 @@ def test_set_audio_features(track_list, request, mock_client_manager):
         pytest.param("valence", 0.82, 0, marks=pytest.mark.xfail(strict=True, raises=ValueError)),
     ],
 )
-def test_find_seeds(feature, value, expected_track_id, mock_client_manager):
+def test_find_seeds(
+    feature,
+    value,
+    expected_track_id,
+):
     # Arrange
     track_1 = TrackData(
         name="chill track",

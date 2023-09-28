@@ -3,57 +3,50 @@ import random
 
 import numpy as np
 
+from chopin.client.tracks import get_tracks_audio_features, like_tracks
 from chopin.constants import constants
-from chopin.managers.client import ClientManager
 from chopin.schemas.track import TrackData, TrackFeaturesData
 from chopin.tools.logger import get_logger
 
 logger = get_logger(__name__)
 
 
-class TrackManager:
-    """Class to handle all things related to your Spotify tracks.
+def get_audio_features(tracks: list[TrackData]) -> list[TrackFeaturesData]:
+    """Parse tracks and call Spotify API to retrieve each track's features.
 
-    Let you access their features, adding tracks to your likes, I/O methods, ...
+    Args:
+        tracks: A list of N TrackData objects for which to retrieve features
+
+    Returns:
+        A list of N TrackFeaturesData object.
     """
+    uris = [track.uri for track in tracks]
+    return get_tracks_audio_features(uris)
 
-    def __init__(self, client: ClientManager):
-        self.client = client
 
-    def get_audio_features(self, tracks: list[TrackData]) -> list[TrackFeaturesData]:
-        """Parse tracks and call Spotify API to retrieve each track's features.
+def set_audio_features(tracks: list[TrackData]) -> list[TrackData]:
+    """Get the features of a list of tracks, and set the `features` attributes to enable later use.
 
-        Args:
-            tracks: A list of N TrackData objects for which to retrieve features
+    Args:
+        tracks: TrackData objects where you want to read features
 
-        Returns:
-            A list of N TrackFeaturesData object.
-        """
-        uris = [track.uri for track in tracks]
-        return self.client.get_tracks_audio_features(uris)
+    Returns:
+        Updated tracks, with features.
+    """
+    audio_features = get_audio_features(tracks)
+    for i in range(len(tracks)):
+        tracks[i].features = audio_features[i]
+    return tracks
 
-    def set_audio_features(self, tracks: list[TrackData]) -> list[TrackData]:
-        """Get the features of a list of tracks, and set the `features` attributes to enable later use.
 
-        Args:
-            tracks: TrackData objects where you want to read features
+def save_tracks(tracks: list[TrackData]):
+    """Add tracks to the current user liked songs.
 
-        Returns:
-            Updated tracks, with features.
-        """
-        audio_features = self.get_audio_features(tracks)
-        for i in range(len(tracks)):
-            tracks[i].features = audio_features[i]
-        return tracks
-
-    def save_tracks(self, tracks: list[TrackData]):
-        """Add tracks to the current user liked songs.
-
-        Args:
-            tracks: Tracks to add
-        """
-        track_uris = [track.uri for track in tracks]
-        self.client.like_tracks(track_uris)
+    Args:
+        tracks: Tracks to add
+    """
+    track_uris = [track.uri for track in tracks]
+    like_tracks(track_uris)
 
 
 def shuffle_tracks(tracks: list[TrackData]) -> list[TrackData]:

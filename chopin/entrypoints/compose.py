@@ -4,9 +4,8 @@ from pathlib import Path
 import typer
 from ruamel import yaml
 
-from chopin.managers.client import ClientManager
-from chopin.managers.playlist import PlaylistManager
-from chopin.managers.spotify_client import SpotifyClient
+from chopin.client.playlists import get_user_playlists
+from chopin.managers.playlist import compose, create, fill
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
 from chopin.tools.logger import get_logger
 
@@ -24,9 +23,7 @@ def compose(
 
     todo: write an how to documentation
     """
-    client = ClientManager(SpotifyClient().get_client())
-    playlist_manager = PlaylistManager(client)
-    user_playlists = client.get_user_playlists()
+    user_playlists = get_user_playlists()
 
     typer.echo("🤖 Composing . . .")
 
@@ -40,10 +37,10 @@ def compose(
     else:
         config = ComposerConfig.model_validate(yaml.safe_load(open(composition_config)))
 
-    tracks = playlist_manager.compose(composition_config=config, user_playlists=user_playlists)
+    tracks = compose(composition_config=config, user_playlists=user_playlists)
 
-    playlist = playlist_manager.create(name=config.name, description=config.description, overwrite=True)
-    playlist_manager.fill(uri=playlist.uri, tracks=tracks)
+    playlist = create(name=config.name, description=config.description, overwrite=True)
+    fill(uri=playlist.uri, tracks=tracks)
     typer.echo(f"Playlist '{playlist.name}' successfully created.")
 
 

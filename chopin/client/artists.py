@@ -1,0 +1,81 @@
+"""Spotify artist related API calls."""
+import random
+
+from chopin.client.settings import _client
+from chopin.constants import constants
+from chopin.schemas.artist import ArtistData
+from chopin.schemas.playlist import PlaylistData
+from chopin.schemas.track import TrackData
+from chopin.tools.strings import match_strings
+
+
+def get_this_is_playlist(artist_name: str) -> PlaylistData | None:
+    """Get an artist "This Is ..." playlist.
+
+    !!! note
+        It is not search, but a strict match against the artist name.
+
+    Args:
+        artist_name: Name of the artist
+
+    Returns:
+        If found, the playlist data for "This Is {name}"
+    """
+    # NOTE : Strict match for 'This Is artist_name' !
+    response = _client.search(q=artist_name, limit=10, type="playlist")["playlists"]
+    items = response.get("items")
+    if not items:
+        raise ValueError(f"Couldn't retrieve playlists for query {artist_name}")
+    target_playlist = f"This is {artist_name}".lower()
+    playlist = [
+        playlist
+        for playlist in items
+        if playlist["owner"]["uri"] == constants.SPOTIFY_USER_URI and match_strings([playlist["name"], target_playlist])
+    ]
+    if playlist:
+        return PlaylistData(**playlist[0])
+
+
+def search_artist(artist_name: str) -> ArtistData | None:
+    """Search an artist.
+
+    Args:
+        artist_name: Name of the artist
+
+    Returns:
+        Artist data, if found.
+    """
+    response = _client.search(q=artist_name, limit=10, type="artist")["artists"]
+    items = response.get("items")
+    matched_artists = [artist for artist in items if match_strings([artist["name"], artist_name])]
+    if matched_artists:
+        return ArtistData(**matched_artists[0])
+
+
+def get_related_artists(artist: ArtistData, max_related_artists: int = 10) -> list[ArtistData]:
+    """Get a list of artists, related to the current artist.
+
+    Args:
+        artist: current artist.
+        max_related_artists: maximum number of artists to find.
+
+    Returns:
+        A list of artist data, closely related to the current artist.
+    """
+    response = _client.artist_related_artists(artist_id=artist.id)["artists"][:max_related_artists]
+    return [ArtistData(**related_artist) for related_artist in response]
+
+
+def get_artist_top_tracks(artist: ArtistData, max_tracks: int = 20) -> list[TrackData]:
+    """Get an artist top tracks.
+
+    Args:
+        artist: current artist.
+        max_tracks: maximum number of tracks to find.
+
+    Returns:
+        A list of track data.
+    """
+    response = _client.artist_top_tracks(artist_id=artist.id)
+    tracks = response["tracks"]
+    return [TrackData(**track) for track in random.sample(tracks, min(len(tracks), max_tracks))]

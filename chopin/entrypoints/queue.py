@@ -2,9 +2,7 @@
 import typer
 
 from chopin.constants import constants
-from chopin.managers.client import ClientManager
-from chopin.managers.playlist import PlaylistManager
-from chopin.managers.spotify_client import SpotifyClient
+from chopin.managers.playlist import create_playlist_from_queue
 from chopin.tools.logger import get_logger
 
 LOGGER = get_logger(__name__)
@@ -21,11 +19,8 @@ def queue(
     !!! warning     Due to Spotify API limits, the maximum number of
     songs you can use is 20.
     """
-    client = ClientManager(SpotifyClient().get_client())
-    playlist_manager = PlaylistManager(client)
-
     typer.echo("🔮 Queuing . . .")
-    playlist_manager.create_playlist_from_queue(name)
+    create_playlist_from_queue(name)
     typer.echo(f"Playlist '{name}' successfully created.")
 
 

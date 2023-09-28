@@ -1,16 +1,8 @@
 import pytest
-from spotipy.client import Spotify
 
-from chopin.managers.client import ClientManager
 from chopin.schemas.artist import ArtistData
 from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData, TrackFeaturesData
-
-
-@pytest.fixture
-def mock_client_manager():
-    mock_client = Spotify()
-    return ClientManager(mock_client)
 
 
 def track_data(id_: str = "id") -> TrackData:
@@ -184,6 +176,7 @@ def spotify_audio_feature():
     }
 
 
+@pytest.fixture
 def spotify_track():
     return {
         "album": {

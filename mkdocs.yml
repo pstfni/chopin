@@ -18,6 +18,7 @@ nav:
     - "reference/index.md"
     - "reference/entrypoints.md"
     - "reference/managers.md"
+    - "reference/client.md"
     - "reference/schemas.md"
     - "reference/tools.md"
 

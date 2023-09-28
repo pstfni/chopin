@@ -3,10 +3,9 @@ from pathlib import Path
 
 import typer
 
-from chopin.managers.client import ClientManager
-from chopin.managers.playlist import PlaylistManager
-from chopin.managers.spotify_client import SpotifyClient
-from chopin.managers.track import TrackManager
+from chopin.client.playlists import get_named_playlist, get_playlist_tracks, get_user_playlists
+from chopin.managers.playlist import dump
+from chopin.managers.track import set_audio_features
 from chopin.schemas.playlist import PlaylistSummary
 from chopin.tools.logger import get_logger
 
@@ -21,25 +20,21 @@ def describe(
 
     The playlist(s) (summarized as JSONs) will be written into files.
     """
-    client = ClientManager(SpotifyClient().get_client())
-    track_manager = TrackManager(client)
-    playlist_manager = PlaylistManager(client)
-
     typer.echo("📝 Describing . . .")
     if name:
-        target_playlists = [client.get_named_playlist(name)]
+        target_playlists = [get_named_playlist(name)]
     else:
-        target_playlists = client.get_user_playlists()
+        target_playlists = get_user_playlists()
 
     for target_playlist in target_playlists:
 
-        tracks = client.get_tracks(target_playlist.uri)
-        tracks = track_manager.set_audio_features(tracks)
+        tracks = get_playlist_tracks(target_playlist.uri)
+        tracks = set_audio_features(tracks)
         summarized_playlist = PlaylistSummary(playlist=target_playlist, tracks=tracks)
         if output:
             out_file = output / f"{target_playlist.name}.json"
             typer.echo(f"Wrote playlist {target_playlist.name} in {out_file}")
-            playlist_manager.dump(summarized_playlist, out_file)
+            dump(summarized_playlist, out_file)
         else:
             typer.echo(summarized_playlist)
 

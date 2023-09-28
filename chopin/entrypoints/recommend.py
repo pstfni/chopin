@@ -2,9 +2,7 @@
 import typer
 
 from chopin.constants import constants
-from chopin.managers.client import ClientManager
-from chopin.managers.playlist import PlaylistManager
-from chopin.managers.spotify_client import SpotifyClient
+from chopin.managers.playlist import create_playlist_from_recommendations
 
 
 def recommend(
@@ -12,10 +10,8 @@ def recommend(
     nb_songs: int = typer.Argument(100, min=0, max=100, help="Number of songs for the playlist"),
 ):
     """Create a playlist from recommendations."""
-    client = ClientManager(SpotifyClient().get_client())
-    playlist_manager = PlaylistManager(client)
     typer.echo("💡 Creating recommendations . . .")
-    playlist = playlist_manager.create_playlist_from_recommendations(name, nb_songs)
+    playlist = create_playlist_from_recommendations(name, nb_songs)
     typer.echo(f"Playlist {playlist.name} succesfully created")
 
 
