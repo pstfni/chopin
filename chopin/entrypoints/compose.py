@@ -12,7 +12,7 @@ from chopin.tools.logger import get_logger
 LOGGER = get_logger(__name__)
 
 
-def compose(
+def compose_playlist(
     nb_songs: int = typer.Argument(50, help="Number of songs for the playlist"),
     composition_config: Path = typer.Option(None, help="Path to a YAML file with composition for your playlists"),
 ):
@@ -45,4 +45,4 @@ def compose(
 
 
 def main():  # noqa: D103
-    typer.run(compose)
+    typer.run(compose_playlist)
