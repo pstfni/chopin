@@ -9,3 +9,5 @@
 ::: chopin.client.tracks
 
 ::: chopin.client.artists
+
+::: chopin.client.genres
