@@ -127,6 +127,19 @@ uris:
     - ...
 
 
+## Genres
+
+With genres, you can search for genre-specific playlists curated by Spotify, such as "Bossa Nova Mix", "New Wave Mix", 
+or "Singer Songwriter Mix" for example.
+
+```yaml title="Add songs from genre playlists"
+genres:
+  - name: "Bossa Nova"
+  - name: "80s"
+  - name: "Covers"
+```
+
+
 ## Putting all this together
 
 You can add as many items from as many sections as you'd like ! And create all kinds of playlists

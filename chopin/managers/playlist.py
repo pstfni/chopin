@@ -7,6 +7,7 @@ import spotipy
 from tqdm import tqdm
 
 from chopin.client.artists import get_artist_top_tracks, get_related_artists, get_this_is_playlist, search_artist
+from chopin.client.genres import get_genre_mix_playlist
 from chopin.client.playback import get_queue
 from chopin.client.playlists import (
     add_tracks_to_playlist,
@@ -244,6 +245,29 @@ def tracks_from_playlist_name(
     return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
 
 
+def tracks_from_genre(
+    genre: str,
+    nb_tracks: int,
+    release_range: ReleaseRange | None = None,
+) -> list[TrackData]:
+    """Find "mixes" based on the requested genre, and retrieve tracks from the "mix" playlist.
+
+    Args:
+        genre: A musical genre to find (eg: 'bossa nova', 'cold wave', 'folk', ...).
+        nb_tracks: Number of tracks to retrieve.
+        release_range: An optional datetime range for the tracks to fetch.
+
+    Returns:
+        A list of tracks in the found playlist, as track data.
+    """
+    playlist = get_genre_mix_playlist(genre)
+    if not playlist:
+        logger.warning(f"Couldn't find a playlist for genre {genre}")
+        return []
+    tracks = get_playlist_tracks(playlist_uri=playlist.uri, release_date_range=release_range)
+    return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
+
+
 def compose(composition_config: ComposerConfig, user_playlists: list[PlaylistData] | None = None) -> list[TrackData]:
     """From a composition configuration, compose a playlist.
 
@@ -288,6 +312,13 @@ def compose(composition_config: ComposerConfig, user_playlists: list[PlaylistDat
         tracks.extend(
             tracks_from_playlist_uri(
                 playlist_uri=uri.name, nb_tracks=uri.nb_songs, release_range=composition_config.release_range
+            )
+        )
+    for genre in composition_config.genres:
+        logger.info(f"Adding {genre.nb_songs} tracks from genre {genre.name}")
+        tracks.extend(
+            tracks_from_genre(
+                genre=genre.name, nb_tracks=genre.nb_songs, release_range=composition_config.release_range
             )
         )
     for feature in composition_config.features:

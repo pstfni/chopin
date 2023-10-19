@@ -95,6 +95,7 @@ class ComposerConfig(BaseModel):
         features: A list of features and their value, to add recommendations based on recent listening
         radios: A list of artists from which to pick related songs.
         uris: A list of spotify playlist URIs to pick from directly.
+        genres: A list of genres to retrieve tracks from.
     """
 
     name: str = "🤖 Robot Mix"
@@ -107,6 +108,7 @@ class ComposerConfig(BaseModel):
     history: Annotated[list[ComposerConfigListeningHistory], Field(max_length=3)] | None = []
     radios: list[ComposerConfigItem] | None = []
     uris: list[ComposerConfigItem] | None = []
+    genres: list[ComposerConfigItem] | None = []
 
     @field_validator("history")
     def history_field_ranges_must_be_unique(cls, v):
@@ -122,7 +124,7 @@ class ComposerConfig(BaseModel):
         Args:
             values: Attributes of the composer configuration model.
         """
-        categories = {"playlists", "artists", "features", "history", "radios", "uris"}
+        categories = {"playlists", "artists", "features", "history", "radios", "uris", "genres"}
         item_weights: list[float] = [item.weight for category in categories for item in getattr(values, category)]
         sum_of_weights: float = np.array(list(item_weights)).sum()
         total_nb_songs: int = 0
