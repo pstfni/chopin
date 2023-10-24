@@ -22,16 +22,12 @@ def get_this_is_playlist(artist_name: str) -> PlaylistData | None:
         If found, the playlist data for "This Is {name}"
     """
     # NOTE : Strict match for 'This Is artist_name' !
-    response = _client.search(q=artist_name, limit=10, type="playlist")["playlists"]
+    search = f"This Is {artist_name}"
+    response = _client.search(q=search, limit=10, type="playlist")["playlists"]
     items = response.get("items")
     if not items:
         raise ValueError(f"Couldn't retrieve playlists for query {artist_name}")
-    target_playlist = f"This is {artist_name}".lower()
-    playlist = [
-        playlist
-        for playlist in items
-        if playlist["owner"]["uri"] == constants.SPOTIFY_USER_URI and match_strings([playlist["name"], target_playlist])
-    ]
+    playlist = [playlist for playlist in items if playlist["owner"]["uri"] == constants.SPOTIFY_USER_URI]
     if playlist:
         return PlaylistData(**playlist[0])
 
