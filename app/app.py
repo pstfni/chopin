@@ -1,10 +1,9 @@
 """Chopin API."""
 from fastapi import FastAPI
 
-from chopin.client.playlists import get_named_playlist
 from chopin.client.user import get_current_user
 from chopin.constants import constants
-from chopin.managers.playlist import create_playlist_from_queue, create_playlist_from_recommendations
+from chopin.managers.playlist import create_playlist_from_queue, create_playlist_from_recommendations, shuffle_playlist
 from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.user import UserData
 
@@ -25,7 +24,7 @@ async def me() -> UserData:
     return get_current_user()
 
 
-@app.post("/playlists/recommend")
+@app.post("/recommend")
 async def recommend() -> PlaylistData:
     """Create a playlist with recommendations."""
     return create_playlist_from_recommendations(
@@ -35,13 +34,13 @@ async def recommend() -> PlaylistData:
     )
 
 
-@app.post("/playlists/queue")
+@app.post("/queue")
 async def queue() -> PlaylistData:
     """Create a playlist from the user's queue."""
     return create_playlist_from_queue(name=constants.QUEUED_MIX.name, description=constants.QUEUED_MIX.description)
 
 
-@app.get("playlists/{name}")
-async def get_playlist(name) -> PlaylistData:
-    """Retrieve a playlist data based on its name."""
-    return get_named_playlist(name)
+@app.post("/shuffle/{name}")
+async def shuffle(name: str) -> None:
+    """Shuffle a playlist."""
+    shuffle_playlist(name=name)

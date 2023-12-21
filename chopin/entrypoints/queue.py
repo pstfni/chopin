@@ -11,7 +11,7 @@ LOGGER = get_logger(__name__)
 def queue(
     name: str = typer.Argument(constants.QUEUED_MIX.name, help="Name for your playlist"),
 ):
-    """Create a playlist and shuffle it from the user's queue.
+    """Create a playlist and shuffle_playlist it from the user's queue.
 
     !!! warning     Due to Spotify API limits, you must be _playing_ a
     song on an active device for this to work.

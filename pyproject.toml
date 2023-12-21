@@ -32,17 +32,12 @@ mkdocstrings = "^0.20"
 mkdocstrings-python = "^1.2"
 mkdocs-material = "^9.1"
 
-[tool.poetry.group.ml]
-optional = true
-
-[tool.poetry.group.ml.dependencies]
-scikit-learn = "^1.2.1"
-
 [tool.poetry.group.api]
 optional = true
 
 [tool.poetry.group.api.dependencies]
 fastapi = "^0.100.0"
+uvicorn = ">=0.11.6"
 
 [tool.ruff]
 line-length = 120
@@ -61,7 +56,7 @@ convention = "google"
 compose = "chopin.entrypoints.compose:main"
 queue = "chopin.entrypoints.queue:main"
 describe = "chopin.entrypoints.describe:main"
-shuffle = "chopin.entrypoints.shuffle:main"
+shuffle_playlist = "chopin.entrypoints.shuffle_playlist:main"
 recommend = "chopin.entrypoints.recommend:main"
 
 [build-system]

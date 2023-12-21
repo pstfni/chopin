@@ -53,7 +53,7 @@ def shuffle_tracks(tracks: list[TrackData]) -> list[TrackData]:
     """Shuffle a list of tracks.
 
     Args:
-        tracks: Tracks to shuffle
+        tracks: Tracks to shuffle_playlist
 
     Returns:
         Updated list of tracks

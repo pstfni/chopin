@@ -13,7 +13,7 @@ nav:
     - "guide/queue.md"
     - "guide/describe.md"
     - "guide/recommend.md"
-    - "guide/shuffle.md"
+    - "guide/shuffle_playlist.md"
   - Reference:
     - "reference/index.md"
     - "reference/entrypoints.md"

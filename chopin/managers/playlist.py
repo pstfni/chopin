@@ -12,6 +12,7 @@ from chopin.client.playback import get_queue
 from chopin.client.playlists import (
     add_tracks_to_playlist,
     create_playlist,
+    get_named_playlist,
     get_playlist_tracks,
     get_user_playlists,
     replace_tracks_in_playlist,
@@ -19,7 +20,7 @@ from chopin.client.playlists import (
 from chopin.client.tracks import get_recommendations
 from chopin.client.user import get_top_artists, get_top_tracks
 from chopin.constants import constants
-from chopin.managers.track import find_seeds, set_audio_features
+from chopin.managers.track import find_seeds, set_audio_features, shuffle_tracks
 from chopin.schemas.composer import ComposerConfig
 from chopin.schemas.playlist import PlaylistData, PlaylistSummary
 from chopin.schemas.track import TrackData
@@ -65,6 +66,28 @@ def fill(uri: str, tracks: list[TrackData]):
     """
     track_ids = list(set([track.id for track in tracks]))
     add_tracks_to_playlist(uri, track_ids)
+
+
+def shuffle_playlist(name: str) -> PlaylistData:
+    """Fetch a playlist from its name and shuffle_playlist it.
+
+    Args:
+        name: playlist name.
+
+    Returns:
+        Shuffled playlist data.
+
+    Raises:
+        ValueError: If the playlist name was not found.
+    """
+    playlist = get_named_playlist(name)
+    if not playlist:
+        raise ValueError(f"Playlist {name} not found.")
+
+    tracks = get_playlist_tracks(playlist.uri)
+    tracks = shuffle_tracks(tracks)
+    replace_tracks_in_playlist(playlist.uri, track_ids=[track.id for track in tracks])
+    return playlist
 
 
 def create_playlist_from_queue(name: str, description: str = "Mix generated from queue") -> PlaylistData:
