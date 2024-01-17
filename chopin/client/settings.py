@@ -1,6 +1,6 @@
 """Configuration for the Spotify 'Spotipy' client."""
 import spotipy
-from pydantic import AnyHttpUrl, SecretStr
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from spotipy.oauth2 import SpotifyOAuth
 
@@ -13,7 +13,7 @@ class SpotifyConfig(BaseSettings):
     client_id: SecretStr
     client_secret: SecretStr
     scope: str = "user-library-read"
-    redirect_uri: AnyHttpUrl = "http://localhost:8888/callback"
+    redirect_uri: str = "http://localhost:8888/callback"
 
     requests_timeout: float = 20.0
 
