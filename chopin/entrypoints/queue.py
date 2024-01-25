@@ -10,7 +10,7 @@ LOGGER = get_logger(__name__)
 
 
 def queue(
-    name: str = typer.Argument(constants.QUEUED_MIX.name, help="Name for your playlist"),
+    name: Annotated[str, typer.Argument(..., help="Name for your playlist")] = constants.QUEUED_MIX.name,
 ):
     """Create a playlist and shuffle_playlist it from the user's queue.
 

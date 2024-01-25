@@ -1,6 +1,7 @@
 """Constant variables for Chopin."""
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import NamedTuple
 
 
@@ -20,6 +21,8 @@ class PlaylistNamedTuple(NamedTuple):
 
 @dataclass(frozen=True)
 class ConstantsNamespace:
+    DEFAULT_DATA_DIR = Path("data/")
+
     RECOMMENDED_MIX = PlaylistNamedTuple(
         name="💡 Musique Recommandée",
         description="Auto-generated playlist. Filled with recommendations",

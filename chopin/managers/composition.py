@@ -72,15 +72,16 @@ def _add_from_uris(
 def _add_from_genres(
     genres: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
 ) -> list[TrackData]:
-    return [
+    tracks = [
         tracks_from_genre(genre=genre.name, nb_tracks=genre.nb_songs, release_range=release_range) for genre in genres
     ]
+    return list(itertools.chain(*tracks))
 
 
 def _add_from_features(features: list[ComposerConfigItem], tracks: list[TrackData], **kwargs) -> list[TrackData]:
-    tracks = set_audio_features(tracks)
+    previous_tracks = set_audio_features(tracks.copy())
     for feature in features:
-        seed_tracks = find_seeds(tracks, feature.name, feature.value, feature.nb_songs)
+        seed_tracks = find_seeds(previous_tracks, feature.name, feature.value)
         tracks.extend(
             tracks_from_feature_name(
                 seeds=seed_tracks,

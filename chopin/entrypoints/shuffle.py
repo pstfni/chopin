@@ -18,4 +18,4 @@ def shuffle(
 
 
 def main():  # noqa: D103
-    typer.run(shuffle_playlist)
+    typer.run(shuffle)

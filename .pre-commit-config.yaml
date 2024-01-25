@@ -1,4 +1,3 @@
-exclude: '^$'
 repos:
 # Black for docstrings
 -   repo: https://github.com/asottile/blacken-docs

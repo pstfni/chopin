@@ -1,8 +1,10 @@
 """Pydantic schemas for playlists."""
 
 import numpy as np
+import pandas as pd
 from pydantic import BaseModel, model_serializer, model_validator
 
+from chopin import VERSION
 from chopin import VERSION
 from chopin.schemas.track import TrackData, TrackFeaturesData
 
@@ -78,3 +80,8 @@ class PlaylistSummary(BaseModel):
             "tracks": [track.model_dump() for track in self.tracks],
             "version": VERSION,
         }
+
+    def to_dataframe(self):
+        dataframe = pd.json_normalize(self.model_dump(), "tracks")
+        dataframe["artists"] = dataframe["artists"].apply(lambda x: x[0]["name"])
+        return dataframe

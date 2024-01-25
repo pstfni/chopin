@@ -7,8 +7,8 @@ from chopin.managers.playlist import create_playlist_from_recommendations
 
 
 def recommend(
-    name: str = typer.Argument(constants.RECOMMENDED_MIX.name, help="Name for your playlist"),
-    nb_songs: int = typer.Argument(100, min=0, max=100, help="Number of songs for the playlist"),
+    name: Annotated[str, typer.Argument(..., help="Name for your playlist")] = constants.RECOMMENDED_MIX.name,
+    nb_songs: Annotated[int, typer.Argument(..., min=0, max=100, help="Number of songs for the playlist")] = 100,
 ):
     """Create a playlist from recommendations."""
     typer.echo("💡 Creating recommendations . . .")

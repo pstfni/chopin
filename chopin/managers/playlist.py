@@ -94,6 +94,23 @@ def shuffle_playlist(name: str) -> PlaylistData:
     return playlist
 
 
+def summarize_playlist(playlist: PlaylistData) -> PlaylistSummary:
+    """From a given playlist, create its summary.
+
+    Summaries are useful to describe and backup playlists. They contain extensive information about tracks,
+    features, and can be serialized.
+
+    Args:
+        playlist: The playlist to summarize.
+
+    Returns:
+        A playlist summary, with extended informations about tracks and statistics.
+    """
+    tracks = get_playlist_tracks(playlist.uri)
+    tracks = set_audio_features(tracks)
+    return PlaylistSummary(playlist=playlist, tracks=tracks)
+
+
 def create_playlist_from_queue(name: str, description: str = "Mix generated from queue") -> PlaylistData:
     """Create a playlist from the user's queue.
 

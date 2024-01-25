@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 
 from chopin import VERSION
@@ -25,3 +26,11 @@ def test_playlist_summary_serialization(playlist_1, playlist_1_tracks):
     assert "version" in serialized
     assert serialized["version"] == VERSION
     assert PlaylistSummary.model_validate(serialized)
+
+
+def test_playlist_to_dataframe(playlist_1, playlist_1_tracks):
+    playlist_summary = PlaylistSummary(playlist=playlist_1, tracks=playlist_1_tracks)
+    df = playlist_summary.to_dataframe()
+    assert len(df) == 50
+    assert isinstance(df, pd.DataFrame)
+    assert df.loc[0, "artists"] == "test_artist_p_0"

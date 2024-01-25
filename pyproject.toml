@@ -21,7 +21,6 @@ typer = "*"
 [tool.poetry.dev-dependencies]
 pytest-sugar = "*"
 ruff = "*"
-pandas = "*"
 
 [tool.poetry.group.docs]
 optional = true
@@ -31,6 +30,14 @@ mkdocs = "*"
 mkdocstrings = "*"
 mkdocstrings-python = "*"
 mkdocs-material = "*"
+
+[tool.poetry.group.app]
+optional = true
+
+[tool.poetry.group.app.dependencies]
+pandas = "*"
+streamlit = "^1.30"
+
 
 [tool.ruff]
 line-length = 120
@@ -49,7 +56,7 @@ convention = "google"
 compose = "chopin.entrypoints.compose:main"
 queue = "chopin.entrypoints.queue:main"
 describe = "chopin.entrypoints.describe:main"
-shuffle_playlist = "chopin.entrypoints.shuffle_playlist:main"
+shuffle = "chopin.entrypoints.shuffle:main"
 recommend = "chopin.entrypoints.recommend:main"
 restore = "chopin.entrypoints.restore:main"
 
