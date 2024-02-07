@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, field_validator
-
+from chopin.tools.dates import parse_release_date
 
 class AlbumData(BaseModel):
     """Album data representation.
@@ -22,13 +22,7 @@ class AlbumData(BaseModel):
     release_date: datetime
 
     @field_validator("release_date", mode="before")
-    def parse_release_date(cls, v):
+    def release_date_validate(cls, v):
         """Format the release date based on the level of detail available."""
-        _format = "%Y"
         if isinstance(v, str):
-            if len(v) >= 7:
-                _format = "%Y-%m"
-            if len(v) >= 10:
-                _format = "%Y-%m-%d"
-
-        return datetime.strptime(v, _format)
+            return parse_release_date(v)

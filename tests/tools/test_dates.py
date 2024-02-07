@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
-from chopin.tools.dates import read_date
+from chopin.tools.dates import read_date, parse_release_date
+import pytest
 
 
 def test_read_date_with_valid_dates():
@@ -26,3 +27,32 @@ def test_read_date_left_open():
 def test_read_date_none():
     result = read_date(None)
     assert not result
+
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        ("1999-02", datetime(1999, 2, 1, 0, 0)),
+        ("1999-10-01", datetime(1999, 10, 1, 0, 0)),
+        ("1999", datetime(1999, 1, 1, 0, 0)),
+        ("1986-02-03T10:00:00", datetime(1986, 2, 3, 0, 10)),
+        (None, datetime(1970, 1, 1, 0, 0)),
+        ("", datetime(1970, 1, 1, 0, 0))
+    ],
+)
+def test_parse_release_date(input, expected):
+    assert expected == parse_release_date(input)
+
+
+@pytest.mark.parametrize(
+    "input",
+    [
+        "1999/01/01",
+        "23",
+        "1999-01/02",
+        "1999-01-02T00",
+    ],
+)
+def test_parse_release_date_invalid_date(input):
+    with pytest.raises(ValueError):
+        parse_release_date(input)
