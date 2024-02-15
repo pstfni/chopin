@@ -41,7 +41,7 @@ def test_read_date_none():
     ],
 )
 def test_parse_release_date(input, expected):
-    assert expected == parse_release_date(input)
+    assert expected.date() == parse_release_date(input)
 
 
 @pytest.mark.parametrize(

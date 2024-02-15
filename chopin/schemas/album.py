@@ -1,5 +1,5 @@
 """Pydantic schemas for albums."""
-from datetime import datetime
+from datetime import date
 
 from pydantic import BaseModel, ConfigDict, field_validator
 from chopin.tools.dates import parse_release_date
@@ -19,7 +19,7 @@ class AlbumData(BaseModel):
     name: str
     id: str
     uri: str
-    release_date: datetime
+    release_date: date | str
 
     @field_validator("release_date", mode="before")
     def release_date_validate(cls, v):
