@@ -22,8 +22,9 @@ Three entrypoints come with the chopin repository:
 |:------------|:-------------------------------------------------------|
 | `compose`   | 🤖 Create a playlist from various sources              |
 | `describe`  | 📝 Save a playlist' tracks, artists and audio features |
+| `restore`   | 🔝 Restore a playlist from a backup file               |
 | `recommend` | 💡 Recommend songs in a new playlist                   |
 | `queue`     | 🔮 Turn your Spotify queue into a playlist             |
-| `shuffle_playlist`   | 🔀 Shuffle tracks in an existing playlist              |
+| `shuffle_playlist`   | 🔀 Shuffle tracks in an existing playlist     |
 
 

@@ -2,6 +2,7 @@ import pytest
 
 from chopin.schemas.playlist import PlaylistSummary
 from chopin.schemas.track import TrackFeaturesData
+from chopin import VERSION
 
 
 def test_playlist_summary(playlist_1, playlist_1_tracks):
@@ -15,3 +16,12 @@ def test_playlist_summary(playlist_1, playlist_1_tracks):
     assert isinstance(playlist_summary._avg_features, TrackFeaturesData)
     pytest.approx(playlist_summary._avg_features.acousticness, 0.1, 1e-6)
     pytest.approx(playlist_summary._avg_features.liveness, 0.5, 1e-6)
+
+
+def test_playlist_summary_serialization(playlist_1, playlist_1_tracks):
+    playlist_summary = PlaylistSummary(playlist=playlist_1, tracks=playlist_1_tracks)
+    serialized = playlist_summary.model_dump()
+
+    assert "version" in serialized
+    assert serialized["version"] == VERSION
+    assert PlaylistSummary.model_validate(serialized)

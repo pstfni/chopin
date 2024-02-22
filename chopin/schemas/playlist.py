@@ -1,8 +1,9 @@
 """Pydantic schemas for playlists."""
 import numpy as np
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, model_serializer
 
 from chopin.schemas.track import TrackData, TrackFeaturesData
+from chopin import VERSION
 
 
 class PlaylistData(BaseModel):
@@ -67,3 +68,12 @@ class PlaylistSummary(BaseModel):
             f"\t{self._nb_artists} artists\n"
             f"\t{self._avg_features} average features\n"
         )
+
+    @model_serializer
+    def serialize_model(self):
+        """Serialize plalist summaries and add version information."""
+        return {
+            "playlist": self.playlist.model_dump(),
+            "tracks": [track.model_dump() for track in self.tracks],
+            "version": VERSION,
+        }

@@ -48,9 +48,13 @@ def create(name: str, description: str = "Randomly Generated Mix", overwrite: bo
     """
     user_playlists = get_user_playlists()
     target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(name)]
-    if target_playlist and overwrite:
-        replace_tracks_in_playlist(target_playlist[0].uri, [])
-        return target_playlist[0]
+    if target_playlist:
+        if overwrite:
+            replace_tracks_in_playlist(target_playlist[0].uri, [])
+            return target_playlist[0]
+        else:
+            raise ValueError(f"Trying to create a playlist {name} but there is already such a playlist."
+                             "Use `overwrite=True` if you want to erase the playlist.")
     return create_playlist(name=name, description=description)
 
 

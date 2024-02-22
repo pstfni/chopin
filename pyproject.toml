@@ -58,6 +58,7 @@ queue = "chopin.entrypoints.queue:main"
 describe = "chopin.entrypoints.describe:main"
 shuffle_playlist = "chopin.entrypoints.shuffle_playlist:main"
 recommend = "chopin.entrypoints.recommend:main"
+restore = "chopin.entrypoints.restore:main"
 
 [build-system]
 requires = ["poetry_core>=1.0.0"]

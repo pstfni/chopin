@@ -12,6 +12,7 @@ nav:
       - "guide/sources.md"
     - "guide/queue.md"
     - "guide/describe.md"
+    - "guide/restore.md"
     - "guide/recommend.md"
     - "guide/shuffle_playlist.md"
   - Reference:

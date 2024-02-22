@@ -5,6 +5,8 @@ compose, upload or classify playlists easily.
 
 ![](docs/img/demo.gif)
 
+Read the docs on the [chopin page](http://pstfni.github.io/chopin)
+
 ### Requirements
 
 #### Installation
@@ -54,8 +56,3 @@ You can make sure everything is installed properly by running:
 `make check`
 
 It should display your user names and your recent listening habits 🎧
-
-### Access the documentation
-
-Run `mkdocs serve` to build the documentation. A link to the created documentation will be written in your terminal.
-Everything about the project and how to use it will be explained there!
