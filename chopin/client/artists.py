@@ -23,7 +23,7 @@ def get_this_is_playlist(artist_name: str) -> PlaylistData | None:
     """
     # NOTE : Strict match for 'This Is artist_name' !
     search = f"This Is {artist_name}"
-    response = _client.search(q=search, limit=10, type="playlist")["playlists"]
+    response = _client.search(q=search, limit=10, type="playlist", market="fr")["playlists"]
     items = response.get("items")
     if not items:
         raise ValueError(f"Couldn't retrieve playlists for query {artist_name}")
@@ -41,7 +41,7 @@ def search_artist(artist_name: str) -> ArtistData | None:
     Returns:
         Artist data, if found.
     """
-    response = _client.search(q=artist_name, limit=10, type="artist")["artists"]
+    response = _client.search(q=artist_name, limit=10, type="artist", market="fr")["artists"]
     items = response.get("items")
     matched_artists = [artist for artist in items if match_strings([artist["name"], artist_name])]
     if matched_artists:

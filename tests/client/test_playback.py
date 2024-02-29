@@ -26,7 +26,9 @@ def test_get_queue_raise_error():
 
 def test_get_queue(spotify_track):
     response = Mock(json=Mock(return_value={"queue": [spotify_track]}), raise_for_status=Mock())
-    with patch("chopin.client.playback._client.current_playback", return_value={"is_playing": True}):
+    with patch(
+        "chopin.client.playback._client.current_playback", return_value={"is_playing": True}
+    ) as _playback, patch("chopin.client.playback._client.auth_manager.get_access_token", return_value=""):
         with patch("chopin.client.playback._client._session.request", return_value=response) as mock_request:
             _ = get_queue()
     mock_request.assert_called_once_with(

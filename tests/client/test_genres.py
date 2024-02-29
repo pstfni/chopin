@@ -11,4 +11,4 @@ def test_get_genre_mix_playlist(spotify_playlist):
     with patch("chopin.client.genres._client.search", return_value=search_result) as mock_search:
         playlist = get_genre_mix_playlist("genre")
     assert isinstance(playlist, PlaylistData)
-    mock_search.assert_called_once_with(q="genre mix", limit=10, type="playlist")
+    mock_search.assert_called_once_with(q="genre mix", limit=10, type="playlist", market="fr")
