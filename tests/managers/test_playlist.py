@@ -1,9 +1,9 @@
 from unittest.mock import patch
 
 import pytest
+from chopin.managers.composition import compose
 
 from chopin.managers.playlist import (
-    compose,
     create,
     dump,
     tracks_from_artist_name,

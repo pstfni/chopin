@@ -8,8 +8,9 @@ from chopin.constants import constants
 from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData
 from chopin.tools.strings import simplify_string
+from functools import lru_cache
 
-
+@lru_cache()
 def get_user_playlists() -> list[PlaylistData]:
     """Retrieve the playlists of the current user.
 

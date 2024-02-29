@@ -1,6 +1,13 @@
+"""Manage composition."""
+import random
+from datetime import date
+from typing import Iterable, Protocol
+
+from tqdm import tqdm
+
+from chopin.client.playlists import get_user_playlists
 from chopin.client.user import get_top_tracks
 from chopin.managers.playlist import (
-    logger,
     tracks_from_artist_name,
     tracks_from_feature_name,
     tracks_from_genre,
@@ -9,15 +16,91 @@ from chopin.managers.playlist import (
     tracks_from_radio,
 )
 from chopin.managers.track import find_seeds, set_audio_features
-from chopin.schemas.composer import ComposerConfig
+from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
 from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData
+from chopin.tools.logger import get_logger
+
+logger = get_logger(__name__)
 
 
-from tqdm import tqdm
+class Source(Protocol):
+    """Protocol for adding tracks from sources.
+
+    Methods:
+        add: Add tracks for the given source
+    """
+
+    def add(self, items: list[ComposerConfigItem]) -> list[TrackData]:
+        pass
+
+    def iter_items(self, items: list[ComposerConfig]) -> Iterable[ComposerConfigItem]:
+        return tqdm(items, total=len(items))  # todo find a way to customise tqdm to log the info ?
 
 
-import random
+class PlaylistSource:
+    """Add tracks from a given playlist."""
+
+    def add(self, items: list[ComposerConfigItem], release_range: tuple[date] | None = None) -> list[TrackData]:
+        return [
+            tracks_from_playlist_name(
+                playlist_name=playlist.name, nb_tracks=playlist.nb_songs, release_range=release_range
+            )
+            for playlist in self.iter_items(items)
+        ]
+
+
+class ArtistSource:
+    """Add tracks for a given artist."""
+
+    def add(self, items: list[ComposerConfigItem], release_range: tuple[date] | None = None) -> list[TrackData]:
+        return [
+            tracks_from_artist_name(artist_name=artist.name, nb_tracks=artist.nb_songs, release_range=release_range)
+            for artist in self.iter_items(items)
+        ]
+
+
+class HistorySource:
+    """Add tracks from the user history."""
+
+    def add(self, items: list[ComposerConfigItem]) -> list[TrackData]:
+        return [
+            get_top_tracks(time_range=history.time_range, limit=history.nb_songs) for history in self.iter_items(items)
+        ]
+
+
+class RadioSource:
+    """Take an artist and add tracks from related artists."""
+
+    def add(self, items: list[ComposerConfigItem]) -> list[TrackData]:
+        return [tracks_from_radio(artist_name=radio.name, nb_tracks=radio.nb_songs) for radio in self.iter_items(items)]
+
+
+class UriSource:
+    """Add tracks from a Spotify URL or URI."""
+
+    def add(self, items: list[ComposerConfigItem], release_range: tuple[date] | None = None) -> list[TrackData]:
+        return [
+            tracks_from_playlist_uri(playlist_uri=uri.name, nb_tracks=uri.nb_songs, release_range=release_range)
+            for uri in self.iter_items(items)
+        ]
+
+
+class MixSource:
+    """Add tracks from a Spotify 'mix'."""
+
+    def add(self, items: list[ComposerConfigItem], release_range: tuple[date] | None = None) -> list[TrackData]:
+        return [
+            tracks_from_genre(genre=genre.name, nb_tracks=genre.nb_songs, release_range=release_range)
+            for genre in self.iter_items(items)
+        ]
+    
+class FeatureSource:
+    """Add tracks from feature-based recommendations."""
+
+    def add(self, items: list[ComposerConfigItem], tracks: list[TrackData]) -> list[TrackData]:
+        tracks = set_audio_features(tracks)
+        seed_tracks = find_seeds(tracks, )
 
 
 def compose(composition_config: ComposerConfig, user_playlists: list[PlaylistData] | None = None) -> list[TrackData]:

@@ -4,8 +4,9 @@ from pathlib import Path
 import typer
 from ruamel import yaml
 from datetime import datetime, timedelta
+from chopin.managers.composition import compose
 
-from chopin.managers.playlist import compose, create, fill
+from chopin.managers.playlist import create, fill
 from chopin.schemas.composer import ComposerConfig
 from chopin.tools.logger import get_logger
 from typing import Annotated

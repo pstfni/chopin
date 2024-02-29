@@ -5,7 +5,8 @@ import typer
 from ruamel import yaml
 
 from chopin.client.playlists import get_user_playlists
-from chopin.managers.playlist import compose, create, fill
+from chopin.managers.composition import compose
+from chopin.managers.playlist import create, fill
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
 from chopin.tools.logger import get_logger
 
