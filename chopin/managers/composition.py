@@ -44,7 +44,10 @@ class PlaylistSource:
     def add(self, items: list[ComposerConfigItem], release_range: tuple[date] | None = None) -> list[TrackData]:
         return [
             tracks_from_playlist_name(
-                playlist_name=playlist.name, nb_tracks=playlist.nb_songs, release_range=release_range
+                playlist_name=playlist.name,
+                nb_tracks=playlist.nb_songs,
+                release_range=release_range,
+                user_playlists=get_user_playlists(),
             )
             for playlist in self.iter_items(items)
         ]
@@ -94,13 +97,24 @@ class MixSource:
             tracks_from_genre(genre=genre.name, nb_tracks=genre.nb_songs, release_range=release_range)
             for genre in self.iter_items(items)
         ]
-    
+
+
 class FeatureSource:
     """Add tracks from feature-based recommendations."""
 
     def add(self, items: list[ComposerConfigItem], tracks: list[TrackData]) -> list[TrackData]:
         tracks = set_audio_features(tracks)
-        seed_tracks = find_seeds(tracks, )
+        for feature in self.iter_items(items):
+            seed_tracks = find_seeds(tracks, feature.name, feature.value, feature.nb_songs)
+            tracks.extend(
+                tracks_from_feature_name(
+                    seeds=seed_tracks,
+                    feature_name=feature.name,
+                    feature_value=feature.value,
+                    nb_tracks=feature.nb_songs,
+                )
+            )
+        return tracks
 
 
 def compose(composition_config: ComposerConfig, user_playlists: list[PlaylistData] | None = None) -> list[TrackData]:
