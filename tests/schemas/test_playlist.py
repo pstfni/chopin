@@ -1,8 +1,8 @@
 import pytest
 
+from chopin import VERSION
 from chopin.schemas.playlist import PlaylistSummary
 from chopin.schemas.track import TrackFeaturesData
-from chopin import VERSION
 
 
 def test_playlist_summary(playlist_1, playlist_1_tracks):

@@ -27,7 +27,6 @@ def describe(
         target_playlists = get_user_playlists()
 
     for target_playlist in target_playlists:
-
         tracks = get_playlist_tracks(target_playlist.uri)
         tracks = set_audio_features(tracks)
         summarized_playlist = PlaylistSummary(playlist=target_playlist, tracks=tracks)

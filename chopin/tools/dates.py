@@ -1,5 +1,5 @@
 """Date range utilitaries."""
-from datetime import datetime, date
+from datetime import date, datetime
 from typing import TypeAlias
 
 ReleaseRange: TypeAlias = tuple[datetime, datetime]
@@ -52,6 +52,6 @@ def parse_release_date(date: str) -> date:
             _format = "%Y-%m-%d"
         case 19:
             _format = "%Y-%m-%dT%M:%S:%f"
-        case _ :
+        case _:
             raise ValueError(f"Bad release date format: {date}")
     return datetime.strptime(date, _format).date()

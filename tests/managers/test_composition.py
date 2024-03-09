@@ -1,9 +1,8 @@
+from unittest.mock import patch
+
 from chopin.managers.composition import compose
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
 from chopin.schemas.playlist import PlaylistData
-
-
-from unittest.mock import patch
 
 
 @patch("chopin.managers.playlist.get_this_is_playlist")
@@ -52,7 +51,9 @@ def test_playlist_compose_from_artists_with_different_weights(
 
 
 @patch("chopin.managers.playlist.get_playlist_tracks")
+@patch("chopin.managers.composition.get_user_playlists")
 def test_playlist_compose_from_playlists(
+    mock_get_playlists,
     mock_get_tracks,
     playlist_1,
     playlist_2,
@@ -62,15 +63,18 @@ def test_playlist_compose_from_playlists(
     configuration = ComposerConfig(
         nb_songs=20, playlists=[ComposerConfigItem(name="p", weight=1), ComposerConfigItem(name="q", weight=1)]
     )
+    mock_get_playlists.return_value = [playlist_1, playlist_2]
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
-    tracks = compose(composition_config=configuration, user_playlists=[playlist_1, playlist_2])
+    tracks = compose(composition_config=configuration)
     assert len(tracks) == 20
     assert len([t for t in tracks if t.id.startswith("p")]) == len([t for t in tracks if t.id.startswith("q")]) == 10
 
 
 @patch("chopin.managers.playlist.get_playlist_tracks")
+@patch("chopin.managers.composition.get_user_playlists")
 def test_playlist_compose_from_playlists_with_different_weights(
+    mock_get_playlists,
     mock_get_tracks,
     playlist_1,
     playlist_2,
@@ -80,9 +84,10 @@ def test_playlist_compose_from_playlists_with_different_weights(
     configuration = ComposerConfig(
         nb_songs=20, playlists=[ComposerConfigItem(name="p", weight=1), ComposerConfigItem(name="q", weight=0.2)]
     )
+    mock_get_playlists.return_value = [playlist_1, playlist_2]
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
-    tracks = compose(composition_config=configuration, user_playlists=[playlist_1, playlist_2])
+    tracks = compose(composition_config=configuration)
     assert len(tracks) == 21
     assert len([t for t in tracks if t.id.startswith("p")]) == 17
     assert len([t for t in tracks if t.id.startswith("q")]) == 4

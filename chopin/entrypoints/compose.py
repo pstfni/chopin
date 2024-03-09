@@ -38,7 +38,7 @@ def compose_playlist(
     else:
         config = ComposerConfig.model_validate(yaml.safe_load(open(composition_config)))
 
-    tracks = compose(composition_config=config, user_playlists=user_playlists)
+    tracks = compose(composition_config=config)
 
     playlist = create(name=config.name, description=config.description, overwrite=True)
     fill(uri=playlist.uri, tracks=tracks)

@@ -2,7 +2,9 @@
 from datetime import date
 
 from pydantic import BaseModel, ConfigDict, field_validator
+
 from chopin.tools.dates import parse_release_date
+
 
 class AlbumData(BaseModel):
     """Album data representation.

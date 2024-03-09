@@ -1,9 +1,9 @@
 """Pydantic schemas for playlists."""
 import numpy as np
-from pydantic import BaseModel, model_validator, model_serializer
+from pydantic import BaseModel, model_serializer, model_validator
 
-from chopin.schemas.track import TrackData, TrackFeaturesData
 from chopin import VERSION
+from chopin.schemas.track import TrackData, TrackFeaturesData
 
 
 class PlaylistData(BaseModel):

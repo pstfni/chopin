@@ -4,13 +4,14 @@ from enum import Enum
 from typing import Annotated, Literal
 
 import numpy as np
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, computed_field, field_validator, model_validator
 
 from chopin.tools.dates import read_date
 from chopin.tools.logger import get_logger
 from chopin.tools.strings import extract_uri_from_playlist_link
 
 logger = get_logger(__name__)
+SOURCES = ["playlists", "artists", "features", "history", "radios", "uris", "genres"]
 
 
 class TrackFeature(Enum):
@@ -124,13 +125,16 @@ class ComposerConfig(BaseModel):
         Args:
             values: Attributes of the composer configuration model.
         """
-        categories = {"playlists", "artists", "features", "history", "radios", "uris", "genres"}
-        item_weights: list[float] = [item.weight for category in categories for item in getattr(values, category)]
+        item_weights: list[float] = [item.weight for category in SOURCES for item in getattr(values, category)]
         sum_of_weights: float = np.array(list(item_weights)).sum()
         total_nb_songs: int = 0
-        for category in categories:
+        for category in SOURCES:
             for item in getattr(values, category):
                 item.nb_songs = math.ceil((item.weight / sum_of_weights) * values.nb_songs)
                 total_nb_songs += item.nb_songs
         logger.info(f"With the composer configuration parsed, {total_nb_songs} songs will be added.")
         return values
+
+    @computed_field
+    def items(self) -> list[list[ComposerConfigItem]]:
+        return {source: getattr(self, source) for source in SOURCES}.items()

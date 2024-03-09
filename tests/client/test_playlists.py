@@ -20,7 +20,8 @@ from chopin.schemas.playlist import PlaylistData
         ),
     ],
 )
-def test_get_user_playlists(spotify_user, user_playlists, expected_playlist_data):
+def test_get_user_playlists(user_playlists, expected_playlist_data):
+    get_user_playlists.cache_clear()
     with patch("chopin.client.playlists._client.current_user_playlists", return_value=user_playlists):
         playlists = get_user_playlists()
     assert playlists == expected_playlist_data

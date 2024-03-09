@@ -25,7 +25,7 @@ def new_releases(
     composition_config_path = composition_config_path or Path("confs/recent.yaml")
     config = ComposerConfig.model_validate(yaml.safe_load(open(composition_config_path)))
     config.release_range = ((datetime.now() - timedelta(days=15)).date(), datetime.now().date())
-    tracks = compose(composition_config=config, user_playlists=None)
+    tracks = compose(composition_config=config)
 
     playlist = create(name=config.name, description=config.description, overwrite=True)
     fill(uri=playlist.uri, tracks=tracks)
