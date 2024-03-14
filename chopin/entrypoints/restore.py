@@ -1,4 +1,5 @@
 """Restore entrypoint: create a playlist previously saved."""
+
 import json
 from pathlib import Path
 

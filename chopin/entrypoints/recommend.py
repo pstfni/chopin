@@ -1,4 +1,5 @@
 """Entrypoint to create a recommended playlist."""
+
 import typer
 
 from chopin.constants import constants

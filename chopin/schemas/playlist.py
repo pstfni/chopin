@@ -1,4 +1,5 @@
 """Pydantic schemas for playlists."""
+
 import numpy as np
 from pydantic import BaseModel, model_serializer, model_validator
 

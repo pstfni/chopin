@@ -1,4 +1,5 @@
 """Date range utilitaries."""
+
 from datetime import date, datetime
 from typing import TypeAlias
 

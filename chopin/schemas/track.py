@@ -1,4 +1,5 @@
 """Pydantic schemas for tracks."""
+
 from pydantic import BaseModel, ConfigDict
 
 from chopin.schemas.album import AlbumData

@@ -1,4 +1,5 @@
 """Pydantic schemas for albums."""
+
 from datetime import date
 
 from pydantic import BaseModel, ConfigDict, field_validator

@@ -1,4 +1,5 @@
 """Entrypoint to shuffle_playlist a playlist."""
+
 import typer
 
 from chopin.managers.playlist import shuffle_playlist

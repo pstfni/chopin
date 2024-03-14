@@ -1,4 +1,5 @@
 """Constant variables for Chopin."""
+
 from dataclasses import dataclass
 from typing import NamedTuple
 

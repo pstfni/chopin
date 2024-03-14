@@ -1,15 +1,16 @@
 """Compose a playlist with new releases."""
+
+from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Annotated
 
 import typer
 from ruamel import yaml
-from datetime import datetime, timedelta
-from chopin.managers.composition import compose
 
+from chopin.managers.composition import compose
 from chopin.managers.playlist import create, fill
 from chopin.schemas.composer import ComposerConfig
 from chopin.tools.logger import get_logger
-from typing import Annotated
 
 LOGGER = get_logger(__name__)
 
@@ -20,7 +21,6 @@ def new_releases(
     ] = None,
 ):
     """Create a new playlist with recent releases."""
-
     typer.echo("🆕 Composing with new releases")
     composition_config_path = composition_config_path or Path("confs/recent.yaml")
     config = ComposerConfig.model_validate(yaml.safe_load(open(composition_config_path)))

@@ -1,4 +1,5 @@
 """Configuration for the Spotify 'Spotipy' client."""
+
 import spotipy
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict

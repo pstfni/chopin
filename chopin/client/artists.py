@@ -1,4 +1,5 @@
 """Spotify artist related API calls."""
+
 import random
 
 from chopin.client.settings import _client

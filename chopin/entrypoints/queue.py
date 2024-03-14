@@ -1,4 +1,5 @@
 """Create a playlist from the queue entrypoint."""
+
 import typer
 
 from chopin.constants import constants

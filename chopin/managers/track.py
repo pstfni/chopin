@@ -1,4 +1,5 @@
 """Operations on spotify tracks."""
+
 import random
 
 import numpy as np

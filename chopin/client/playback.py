@@ -1,4 +1,5 @@
 """Spotify API calls for playback related features."""
+
 import requests
 import spotipy
 

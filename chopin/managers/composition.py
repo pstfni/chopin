@@ -1,4 +1,5 @@
 """Manage composition."""
+
 import itertools
 import random
 from datetime import date

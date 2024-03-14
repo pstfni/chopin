@@ -1,4 +1,5 @@
 """Schemas for the spotify client."""
+
 from pydantic import AnyHttpUrl, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 

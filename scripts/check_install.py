@@ -1,14 +1,10 @@
 """Check chopin is installed and has access to spotify."""
-import sys
 
 from chopin.client.user import get_current_user, get_top_tracks
-from chopin.managers.client import ClientManager
-from chopin.managers.spotify_client import SpotifyClient
 from chopin.schemas.track import TrackData
 from chopin.schemas.user import UserData
 
 if __name__ == "__main__":
-    client = ClientManager(SpotifyClient(env_path=sys.argv[1]).get_client())
     try:
         user: UserData = get_current_user()
         tracks: list[TrackData] = get_top_tracks(time_range="short_term", limit=5)

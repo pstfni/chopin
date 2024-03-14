@@ -1,4 +1,5 @@
 """Pydantc schemas for users."""
+
 from pydantic import BaseModel
 
 

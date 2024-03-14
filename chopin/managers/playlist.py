@@ -1,4 +1,5 @@
 """Operations on spotify playlists."""
+
 from pathlib import Path
 
 import numpy as np

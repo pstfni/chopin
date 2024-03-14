@@ -1,4 +1,5 @@
 """Spotify API calls to retrieve tracks related objects."""
+
 from typing import Any
 
 from chopin.client.settings import _client

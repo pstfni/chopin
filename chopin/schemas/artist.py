@@ -1,4 +1,5 @@
 """Pydantic schemas for artists."""
+
 from pydantic import BaseModel, ConfigDict
 
 

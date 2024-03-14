@@ -1,4 +1,5 @@
 """Compose a playlist entrypoint."""
+
 from pathlib import Path
 
 import typer

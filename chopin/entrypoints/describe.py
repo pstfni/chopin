@@ -1,4 +1,5 @@
 """Describer entrypoint."""
+
 from pathlib import Path
 
 import typer

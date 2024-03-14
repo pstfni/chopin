@@ -1,4 +1,5 @@
 """Chopin API."""
+
 from fastapi import FastAPI
 
 from chopin.client.user import get_current_user

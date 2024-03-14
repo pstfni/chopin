@@ -1,4 +1,5 @@
 """Spotify calls to retrieve playlist-related objects."""
+
 from datetime import datetime
 from functools import lru_cache
 from typing import Any

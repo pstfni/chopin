@@ -1,4 +1,5 @@
 """Schemas for playlist composition."""
+
 import math
 from enum import Enum
 from typing import Annotated, Literal

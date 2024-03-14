@@ -1,4 +1,5 @@
 """Utilites to help deal with strings."""
+
 import re
 import unicodedata
 
