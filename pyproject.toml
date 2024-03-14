@@ -6,17 +6,17 @@ authors = ["pstfni"]
 packages = [{include="chopin"}]
 
 [tool.poetry.dependencies]
-python = ">=3.10, <3.11"
-numpy = "^1.6.0"
-tqdm = "^4.64.0"
-emoji = "~1.6.3"
-"ruamel.yaml" = "^0.17"
-spotipy = "^2.22"
-pydantic = "^2.1"
-pydantic_settings = "^2.0"
-python-dotenv = "^0.21"
-coloredlogs = "^15.0"
-typer = "^0.6.1"
+python = ">=3.10"
+numpy = "*"
+tqdm = "*"
+emoji = "*"
+"ruamel.yaml" = "*"
+spotipy = "*"
+pydantic = "*"
+pydantic_settings = "*"
+python-dotenv = "*"
+coloredlogs = "*"
+typer = "*"
 
 [tool.poetry.dev-dependencies]
 pytest-sugar = "*"
@@ -27,17 +27,10 @@ pandas = "*"
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-mkdocs = "^1.5"
-mkdocstrings = "^0.20"
-mkdocstrings-python = "^1.2"
-mkdocs-material = "^9.1"
-
-[tool.poetry.group.api]
-optional = true
-
-[tool.poetry.group.api.dependencies]
-fastapi = "^0.100.0"
-uvicorn = ">=0.11.6"
+mkdocs = "*"
+mkdocstrings = "*"
+mkdocstrings-python = "*"
+mkdocs-material = "*"
 
 [tool.ruff]
 line-length = 120

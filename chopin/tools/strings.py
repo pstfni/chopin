@@ -7,7 +7,7 @@ import emoji
 
 def simplify_string(text: str) -> str:
     """Simplify a string: lowercase, and no emojis."""
-    text = emoji.get_emoji_regexp().sub("", text)
+    text = emoji.replace_emoji(text)
     text = text.lower()
     text = text.rstrip(" ")
     text = text.lstrip(" ")

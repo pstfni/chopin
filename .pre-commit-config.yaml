@@ -1,23 +1,18 @@
 exclude: '^$'
 repos:
-# Black: automated formatting
--   repo: https://github.com/psf/black
-    rev: 22.3.0
-    hooks:
-    -   id: black
-        args: [--line-length=120, --experimental-string-processing]
 # Black for docstrings
 -   repo: https://github.com/asottile/blacken-docs
     rev: 1.15.0
     hooks:
     -   id: blacken-docs
-# Ruff: flake8, pydocstyle & isort
-- repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: v0.0.278
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.1.4
   hooks:
+    # Run the linter.
     - id: ruff
-      args:
-        - --fix
+    # Run the formatter.
+    - id: ruff-format
 # Autoformat the doc
 - repo: https://github.com/myint/docformatter
   rev: v1.7.5
