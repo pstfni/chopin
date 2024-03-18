@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Annotated
 
 import typer
-from ruamel import yaml
+from ruamel.yaml import YAML
 
 from chopin.managers.composition import compose
 from chopin.managers.playlist import create, fill
@@ -23,7 +23,8 @@ def new_releases(
     """Create a new playlist with recent releases."""
     typer.echo("🆕 Composing with new releases")
     composition_config_path = composition_config_path or Path("confs/recent.yaml")
-    config = ComposerConfig.model_validate(yaml.safe_load(open(composition_config_path)))
+    yaml = YAML(typ="safe", pure=True)
+    config = ComposerConfig.model_validate(yaml.load(open(composition_config_path)))
     config.release_range = ((datetime.now() - timedelta(days=15)).date(), datetime.now().date())
     tracks = compose(composition_config=config)
 

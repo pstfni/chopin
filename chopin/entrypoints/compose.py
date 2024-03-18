@@ -3,7 +3,7 @@
 from pathlib import Path
 
 import typer
-from ruamel import yaml
+from ruamel.yaml import YAML
 
 from chopin.client.playlists import get_user_playlists
 from chopin.managers.composition import compose
@@ -37,7 +37,8 @@ def compose_playlist(
         )
 
     else:
-        config = ComposerConfig.model_validate(yaml.safe_load(open(composition_config)))
+        yaml = YAML(typ="safe", pure=True)
+        config = ComposerConfig.model_validate(yaml.load(open(composition_config)))
 
     tracks = compose(composition_config=config)
 
