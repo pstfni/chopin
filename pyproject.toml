@@ -8,6 +8,7 @@ packages = [{include="chopin"}]
 [tool.poetry.dependencies]
 python = ">=3.10"
 numpy = "*"
+pandas = "*"
 tqdm = "*"
 emoji = "*"
 "ruamel.yaml" = "*"
@@ -35,7 +36,6 @@ mkdocs-material = "*"
 optional = true
 
 [tool.poetry.group.app.dependencies]
-pandas = "*"
 streamlit = "^1.30"
 
 
