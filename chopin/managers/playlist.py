@@ -19,7 +19,7 @@ from chopin.client.playlists import (
 from chopin.client.tracks import get_recommendations
 from chopin.client.user import get_top_artists, get_top_tracks
 from chopin.constants import constants
-from chopin.managers.track import shuffle_tracks
+from chopin.managers.track import set_audio_features, shuffle_tracks
 from chopin.schemas.playlist import PlaylistData, PlaylistSummary
 from chopin.schemas.track import TrackData
 from chopin.tools.dates import ReleaseRange
