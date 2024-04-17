@@ -1,65 +1,25 @@
-[tool.poetry]
+[project]
 name = "chopin"
 version = "0.1.0-0"
-description = "chopin: Compose and play with Spotify playlists"
-authors = ["pstfni"]
-packages = [{include="chopin"}]
+description = "chopin: compose, download, and describe Spotify playlists"
+authors = [{name="pstfni", email="x@y.com"}]
+readme = "README.md"
 
-[tool.poetry.dependencies]
-python = ">=3.10"
-numpy = "*"
-pandas = "*"
-tqdm = "*"
-emoji = "*"
-"ruamel.yaml" = "*"
-spotipy = "*"
-pydantic = "*"
-pydantic_settings = "*"
-python-dotenv = "*"
-coloredlogs = "*"
-typer = "*"
+dependencies = [
+"numpy",
+"pandas",
+"tqdm",
+"emoji",
+"ruamel.yaml",
+"spotipy",
+"pydantic", 
+"pydantic_settings",
+"python-dotenv",
+"coloredlogs",
+"typer",
+]
 
-[tool.poetry.dev-dependencies]
-pytest-sugar = "*"
-ruff = "*"
-
-[tool.poetry.group.docs]
-optional = true
-
-[tool.poetry.group.docs.dependencies]
-mkdocs = "*"
-mkdocstrings = "*"
-mkdocstrings-python = "*"
-mkdocs-material = "*"
-
-[tool.poetry.group.app]
-optional = true
-
-[tool.poetry.group.app.dependencies]
-streamlit = "^1.30"
-
-
-[tool.ruff]
-line-length = 120
-exclude = ['.venv']
-ignore = ["D101", "D102", "D106", "D107", "N805"]
-select = ["F", "E", "W", "I", "N", "D", "UP", "TRY200", "PERF", "RUF"]
-
-[tool.ruff.per-file-ignores]
-"**/__init__.py" = ['F401']
-"**/tests/**" = ["S", "D", "N"]
-
-[tool.ruff.pydocstyle]
-convention = "google"
-
-[tool.poetry.scripts]
-compose = "chopin.entrypoints.compose:main"
-queue = "chopin.entrypoints.queue:main"
-describe = "chopin.entrypoints.describe:main"
-shuffle = "chopin.entrypoints.shuffle:main"
-recommend = "chopin.entrypoints.recommend:main"
-restore = "chopin.entrypoints.restore:main"
-
-[build-system]
-requires = ["poetry_core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[project.optional-dependencies]
+dev = ["pytest", "pytest-sugar", "ruff", "uv"]
+docs = ["mkdocs", "mkdocstrings", "mkdocstrings-python", "mkdocs-material"]
+app = ["streamlit<1.3"]
