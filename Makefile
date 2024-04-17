@@ -1,11 +1,16 @@
-setup:
-	## Install pipx and poetry
-	pip install pipx
-	pipx ensurepath
-	pipx install --force poetry==1.3.1
-	pipx install --force -e .
-	## Touch an .env file to receive user credentials
+
+download_uv:
+	pip install uv
+
+install:
+	uv pip compile pyproject.toml --all-extras -o requirements.txt
+	uv pip install -r requirements.txt
+	uv pip install .
+
+touch_env:
 	touch .env
+
+setup: download_uv install touch_env
 
 check:
 	python scripts/check_install.py "./.env"

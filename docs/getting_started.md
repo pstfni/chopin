@@ -4,13 +4,14 @@
 
 Clone the repository and setup.
 
+It is advised to create a virtual environment dedicated to Chopin.
+
 ```shell
 git clone git@github.com:pstfni/chopin.git
 cd chopin/
 make setup
 ```
 
-[Poetry](https://python-poetry.org/) will be installed and used to create a virtual environment for the repository.
 
 ### Spotify developer credentials
 

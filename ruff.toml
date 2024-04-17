@@ -1,0 +1,14 @@
+exclude = ['.venv']
+line-length = 120
+
+[lint]
+ignore = ["D101", "D102", "D106", "D107", "N805"]
+select = ["F", "E", "W", "I", "N", "D", "UP", "TRY200", "PERF", "RUF"]
+fixable = ["ALL"]
+
+[lint.per-file-ignores]
+"**/__init__.py" = ['F401']
+"**/tests/**" = ["S", "D", "N"]
+
+[lint.pydocstyle]
+convention = "google"
