@@ -6,17 +6,15 @@ Welcome to Chopin, the Spotify Playlist manager.
 
 A CLI to describe, compose, manage your Spotify playlists.
 
-[Get started](./getting_started.md){ .md-button .md-button--primary } to install Chopin.
+[:fontawesome-solid-rocket: Get started](./getting_started.md){ .md-button .md-button--primary }
 
-[Follow the guide](guide/compose.md){ .md-button .md-button} to use the Chopin commands.
+[:fontawesome-solid-book: Follow the guide](guide/compose.md){ .md-button .md-button}
 
-[Dive in the reference](reference/index.md){ .md-button .md-button} to see the developer documentation. 
+[:fontawesome-solid-code: Dive in the reference](reference/index.md){ .md-button .md-button}
 
 ### What features are available
 
-Three entrypoints come with the chopin repository: 
-
-
+Several entrypoints come with the chopin repository: 
 
 | Commands    | Description                                            |
 |:------------|:-------------------------------------------------------|

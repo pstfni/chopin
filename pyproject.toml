@@ -14,6 +14,7 @@ dependencies = [
 "spotipy",
 "pydantic", 
 "pydantic_settings",
+"pandas",
 "python-dotenv",
 "coloredlogs",
 "typer",
@@ -22,7 +23,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest", "pytest-sugar", "ruff", "uv"]
 docs = ["mkdocs", "mkdocstrings", "mkdocstrings-python", "mkdocs-material"]
-app = ["streamlit<1.3"]
+app = ["streamlit", "plotly"]
 
 [tool.setuptools.packages.find]
 include = ["chopin*"]

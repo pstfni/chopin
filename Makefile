@@ -1,4 +1,3 @@
-
 download_uv:
 	pip install uv
 
@@ -14,3 +13,6 @@ setup: download_uv install touch_env
 
 check:
 	python scripts/check_install.py "./.env"
+
+webapp:
+	python -m streamlit run app/home.py

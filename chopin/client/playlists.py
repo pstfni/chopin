@@ -69,7 +69,8 @@ def get_playlist_tracks(
             additional_types=["track"],
         )
         offset += len(response["items"])
-        response_tracks = [TrackData.model_validate(r["track"]) for r in response["items"]]
+        response_tracks = [TrackData.model_validate(r["track"]) for r in response["items"] if r["track"] is not None]
+
         if release_date_range:
             response_tracks = [
                 track
