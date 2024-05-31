@@ -42,7 +42,8 @@ class ConstantsNamespace:
     TRACK_FIELDS = (
         "total, items.track.id, items.track.name, items.track.uri, items.track.duration_ms, items.track.popularity,"
         "items.track.album.uri, items.track.album.name, items.track.album.release_date, items.track.album.id,"
-        "items.track.artists.uri, items.track.artists.name, items.track.artists.id, items.track.artists.genre"
+        "items.track.artists.uri, items.track.artists.name, items.track.artists.id, items.track.artists.genre,"
+        "items.added_at"
     )
 
 

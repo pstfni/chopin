@@ -1,10 +1,23 @@
 """Pydantic schemas for tracks."""
 
-from pydantic import BaseModel, ConfigDict
+from datetime import date, datetime
+from typing import Annotated
+
+from pydantic import AfterValidator, BaseModel, ConfigDict
 
 from chopin.schemas.album import AlbumData
 from chopin.schemas.artist import ArtistData
 from chopin.tools.dictionaries import flatten_dict
+
+
+def datetime_to_date(dt: datetime | date | None) -> date | None:
+    """Truncate a datetime object into its date object."""
+    if dt and isinstance(dt, datetime):
+        return dt.date()
+    return dt
+
+
+FormattedDate = Annotated[datetime | date | None, AfterValidator(datetime_to_date)]
 
 
 class TrackFeaturesData(BaseModel):
@@ -50,6 +63,7 @@ class TrackData(BaseModel):
         uri: Spotify URI for the track
         duration_ms: Duration of the track, in milliseconds
         popularity: A [0, 100] measure for the track popularity. 100 is most popular
+        added_at: A date, when available, for which the track was added in the playlist.
         album: The album data
         artists: The artists on the track
         features: Audio features of the track.
@@ -64,6 +78,7 @@ class TrackData(BaseModel):
     uri: str
     duration_ms: int
     popularity: int
+    added_at: FormattedDate | None = None
     album: AlbumData | None = None
     artists: list[ArtistData] | None = None
     features: TrackFeaturesData | None = None
