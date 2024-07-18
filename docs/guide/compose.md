@@ -90,6 +90,46 @@ Your new "Running" playlist will have 200 songs:
 - 67 songs by Queen
 - and 34 by Kraftwerk.
 
+## Choose how tracks are selected for your playlists
+
+By default, chopin will pick a _random_ subset of tracks from your sources. It is possible to change this behaviour with the `selection_method` attribute. 
+
+::: chopin.managers.selection
+    options: 
+      heading_level: 4
+      show_bases: False
+      members: []
+
+If we illustrate with the example above:
+
+
+```yaml title="A composition configuration, with weights and selection methods." hl_lines="9 12 15"
+name: "Running"
+description: "Playlist for working  out"
+nb_songs: 200
+playlists:
+  - name: rock
+    weight: 1
+  - name: electro
+    weight: 0.5
+    selection_method: latest
+artists:
+  - name: Queen
+    selection_method: popularity
+  - name: Kraftwerk
+    weight: 0.5
+    selection_method: original
+```
+
+Your new "Running" playlist will have 200 songs:
+
+- 67 from your 'rock' playlist
+- The 34 most recently released songs from your 'electro' playlist
+- 67 songs by Queen. These songs will be the most popular Queen songs on Spotify.
+- and the first 34 songs in the Kraftwerk 'source' [^1]
+
+[^1]: In this case, the source is the 'This is Kraftwerk' spotify playlist.
+
 ## Use `release_range` to filter tracks by their release date
 
 The `release_range` option let you configure a date range for the tracks you want in your playlist.

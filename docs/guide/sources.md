@@ -158,6 +158,7 @@ You can add as many items from as many sections as you'd like ! And create all k
     nb_songs: 100
     playlists:
         - name: chill
+          selection_method: latest
     artists:
         - name: Grandaddy
           weight: 0.5
@@ -182,6 +183,7 @@ You can add as many items from as many sections as you'd like ! And create all k
         - name: pop
     uris:
         - name: 37i9dQZF1DX9XIFQuFvzM4  # Feelin' Good by Spotify
+          selection_method: popularit
         - name: 37i9dQZF1DX9wC1KY45plY  # Classic Road Trip Songs by Spotify
     features:
         - name: valence

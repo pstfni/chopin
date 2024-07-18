@@ -1,8 +1,11 @@
-"""Methods and classes to select tracks from a track list.
+"""Selection rules for chopin sources.
 
-!!! note "todo"     Move the min(nb_tracks) logic to the main select
-function.     With this we should be able to replace the random and
-original functions with lambdas.
+Available rules:
+    - `random`: The default rule, songs are picked randomly from the source.
+    - `popularity`: songs are picked based on their
+            [popularity](https://developer.spotify.com/documentation/web-api/reference/get-track#popularity) score.
+    - `latest`: the most recently released songs will be picked first.
+    - `original`: no rule is applied, and the tracks are picked in the order they appear in the source.
 """
 
 from enum import Enum
@@ -13,7 +16,12 @@ from chopin.schemas.track import TrackData
 
 
 class SelectionMethod(str, Enum):
-    """Methods available for selection."""
+    """Methods available for selection.
+
+    !!! note "todo"     Move the min(nb_tracks) logic to the main select
+    function.     With this we should be able to replace the random and
+    original functions with lambdas.
+    """
 
     RANDOM = "random"
     POPULARITY = "popularity"
