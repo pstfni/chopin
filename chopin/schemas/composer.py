@@ -7,6 +7,7 @@ from typing import Annotated, Literal
 import numpy as np
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, computed_field, field_validator, model_validator
 
+from chopin.managers.selection import SelectionMethod
 from chopin.tools.dates import read_date
 from chopin.tools.logger import get_logger
 from chopin.tools.strings import extract_uri_from_playlist_link
@@ -41,6 +42,7 @@ class ComposerConfigItem(BaseModel):
     name: Annotated[str, extract_uri_from_playlist_link]
     weight: Annotated[float, Field(ge=0)] = 1.0
     nb_songs: int | None = 0
+    selection_method: SelectionMethod | None = SelectionMethod.RANDOM
 
     @field_validator("name", mode="before")
     def extract_uri_from_link(cls, v: str):
@@ -52,8 +54,14 @@ class ComposerConfigItem(BaseModel):
             return extract_uri_from_playlist_link(v)
         return v
 
+    @field_validator("selection_method", mode="before")
+    def lower_case_selection_method(cls, selection_method: str) -> SelectionMethod:
+        if selection_method:
+            return selection_method.lower()
+        return
 
-class ComposerConfigRecommendation(ComposerConfigItem):
+
+class ComposerConfigRecommendation(BaseModel):
     """Base schema for recommendation inputs in the composer configuration.
 
     Attributes:
@@ -62,6 +70,8 @@ class ComposerConfigRecommendation(ComposerConfigItem):
     """
 
     name: TrackFeature
+    weight: Annotated[float, Field(ge=0)] = 1
+    nb_songs: int | None = 0
     value: float  # relaxed constraint. todo: see if we can have constraint based on feature type (or add validators)
 
     model_config = ConfigDict()

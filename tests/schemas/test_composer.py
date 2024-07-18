@@ -1,6 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
+from chopin.managers.selection import SelectionMethod
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigRecommendation
 
 
@@ -84,18 +85,52 @@ def test_composer_config_recommendation_item(recommendation_item, expected_item)
     "uri_item, expected_item",
     [
         # Default case: uri
-        ({"name": "37i9dQZF1DWWv8B5EWK7bn"}, {"name": "37i9dQZF1DWWv8B5EWK7bn", "weight": 1, "nb_songs": 0}),
+        (
+            {"name": "37i9dQZF1DWWv8B5EWK7bn"},
+            {"name": "37i9dQZF1DWWv8B5EWK7bn", "weight": 1, "nb_songs": 0},
+        ),
         # Validated case: link becomes uri
         (
             {"name": "https://open.spotify.com/playlist/37i9dQZF1DWWv8B5EWK7bn?si=8d52c3fef8d74064"},
             {"name": "37i9dQZF1DWWv8B5EWK7bn", "weight": 1, "nb_songs": 0},
         ),
         # Bad input case: nothing happpens
-        ({"name": "d$fd5f_not_an^$$$uri"}, {"name": "d$fd5f_not_an^$$$uri", "weight": 1, "nb_songs": 0}),
+        (
+            {"name": "d$fd5f_not_an^$$$uri"},
+            {"name": "d$fd5f_not_an^$$$uri", "weight": 1, "nb_songs": 0},
+        ),
         # Empty input case
         ({"name": ""}, {"name": "", "weight": 1, "nb_songs": 0}),
     ],
 )
 def test_composer_config_uri_item(uri_item, expected_item):
     out = ComposerConfigItem(**uri_item)
-    assert out.model_dump() == expected_item
+    assert out.model_dump(exclude={"selection_method"}) == expected_item
+
+
+@pytest.mark.parametrize(
+    "selection_input, expected_output",
+    [
+        ("original", SelectionMethod.ORIGINAL),
+        ("popularity", SelectionMethod.POPULARITY),
+        ("PoPULARIty", SelectionMethod.POPULARITY),
+        ("Random", SelectionMethod.RANDOM),
+        ("Latest", SelectionMethod.LATEST),
+        ("latest", SelectionMethod.LATEST),
+    ],
+)
+def test_composer_config_item_selection_method(selection_input, expected_output):
+    item = ComposerConfigItem(
+        name="artist",
+        weight=2,
+        selection_method=selection_input,
+    )
+    assert item.selection_method == expected_output
+
+
+def test_composer_config_item_default_selection_method():
+    item = ComposerConfigItem(
+        name="name",
+        weight=1,
+    )
+    assert item.selection_method == SelectionMethod.RANDOM

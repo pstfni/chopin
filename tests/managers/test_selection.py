@@ -107,4 +107,4 @@ def test__select_original_tracks_empty_list():
 
 
 def test_all_methods_are_mapped():
-    assert list(SELECTION_MAPPER.keys()) == SelectionMethod._member_names_
+    assert [key.name for key in SELECTION_MAPPER.keys()] == SelectionMethod._member_names_

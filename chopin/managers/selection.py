@@ -5,20 +5,20 @@ function.     With this we should be able to replace the random and
 original functions with lambdas.
 """
 
-from enum import Enum, auto
+from enum import Enum
 
 import numpy as np
 
 from chopin.schemas.track import TrackData
 
 
-class SelectionMethod(Enum):
+class SelectionMethod(str, Enum):
     """Methods available for selection."""
 
-    RANDOM = auto()
-    POPULARITY = auto()
-    LATEST = auto()
-    ORIGINAL = auto()
+    RANDOM = "random"
+    POPULARITY = "popularity"
+    LATEST = "latest"
+    ORIGINAL = "original"
 
 
 def _select_random_tracks(tracks: list[TrackData], nb_tracks: int) -> list[TrackData]:
@@ -76,10 +76,10 @@ def _select_latest_tracks(tracks: list[TrackData], nb_tracks: int) -> list[Track
 
 
 SELECTION_MAPPER: dict[SelectionMethod, callable] = {
-    SelectionMethod.RANDOM.name: _select_random_tracks,
-    SelectionMethod.POPULARITY.name: _select_popular_tracks,
-    SelectionMethod.LATEST.name: _select_latest_tracks,
-    SelectionMethod.ORIGINAL.name: _select_original_tracks,
+    SelectionMethod.RANDOM: _select_random_tracks,
+    SelectionMethod.POPULARITY: _select_popular_tracks,
+    SelectionMethod.LATEST: _select_latest_tracks,
+    SelectionMethod.ORIGINAL: _select_original_tracks,
 }
 
 
@@ -99,5 +99,5 @@ def select_tracks(
         Selected tracks.
     """
     if not selection_method:
-        selection_method = SelectionMethod.RANDOM.name
+        selection_method = SelectionMethod.RANDOM
     return SELECTION_MAPPER[selection_method](tracks=tracks, nb_tracks=nb_tracks)

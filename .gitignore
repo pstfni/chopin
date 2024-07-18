@@ -137,6 +137,5 @@ dmypy.json
 cython_debug/
 
 # Personal stuff
-confs/
 data/
 extra/

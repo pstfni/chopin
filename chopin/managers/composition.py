@@ -33,6 +33,7 @@ def _add_from_playlists(
             nb_tracks=playlist.nb_songs,
             release_range=release_range,
             user_playlists=get_user_playlists(),
+            selection_method=playlist.selection_method,
         )
         for playlist in playlists
     ]
@@ -43,7 +44,12 @@ def _add_from_artists(
     artists: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
 ) -> list[TrackData]:
     tracks = [
-        tracks_from_artist_name(artist_name=artist.name, nb_tracks=artist.nb_songs, release_range=release_range)
+        tracks_from_artist_name(
+            artist_name=artist.name,
+            nb_tracks=artist.nb_songs,
+            release_range=release_range,
+            selection_method=artist.selection_method,
+        )
         for artist in artists
     ]
     return list(itertools.chain(*tracks))
@@ -55,7 +61,14 @@ def _add_from_history(history_ranges: list[ComposerConfigItem], **kwargs) -> lis
 
 
 def _add_from_radios(radios: list[ComposerConfigItem], **kwargs) -> list[TrackData]:
-    tracks = [tracks_from_radio(artist_name=radio.name, nb_tracks=radio.nb_songs) for radio in radios]
+    tracks = [
+        tracks_from_radio(
+            artist_name=radio.name,
+            nb_tracks=radio.nb_songs,
+            selection_method=radio.selection_method,
+        )
+        for radio in radios
+    ]
     return list(itertools.chain(*tracks))
 
 
@@ -63,7 +76,12 @@ def _add_from_uris(
     uris: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
 ) -> list[TrackData]:
     tracks = [
-        tracks_from_playlist_uri(playlist_uri=uri.name, nb_tracks=uri.nb_songs, release_range=release_range)
+        tracks_from_playlist_uri(
+            playlist_uri=uri.name,
+            nb_tracks=uri.nb_songs,
+            release_range=release_range,
+            selection_method=uri.selection_method,
+        )
         for uri in uris
     ]
     return list(itertools.chain(*tracks))
@@ -73,7 +91,13 @@ def _add_from_genres(
     genres: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
 ) -> list[TrackData]:
     tracks = [
-        tracks_from_genre(genre=genre.name, nb_tracks=genre.nb_songs, release_range=release_range) for genre in genres
+        tracks_from_genre(
+            genre=genre.name,
+            nb_tracks=genre.nb_songs,
+            release_range=release_range,
+            selection_method=genre.selection_method,
+        )
+        for genre in genres
     ]
     return list(itertools.chain(*tracks))
 
