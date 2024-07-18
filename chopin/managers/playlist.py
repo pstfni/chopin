@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-import numpy as np
 import spotipy
 
 from chopin.client.artists import get_artist_top_tracks, get_related_artists, get_this_is_playlist, search_artist
@@ -19,6 +18,7 @@ from chopin.client.playlists import (
 from chopin.client.tracks import get_recommendations
 from chopin.client.user import get_top_artists, get_top_tracks
 from chopin.constants import constants
+from chopin.managers.selection import SelectionMethod, select_tracks
 from chopin.managers.track import set_audio_features, shuffle_tracks
 from chopin.schemas.playlist import PlaylistData, PlaylistSummary
 from chopin.schemas.track import TrackData
@@ -166,7 +166,10 @@ def create_playlist_from_recommendations(
 
 
 def tracks_from_artist_name(
-    artist_name: str, nb_tracks: int, release_range: ReleaseRange | None = None
+    artist_name: str,
+    nb_tracks: int,
+    release_range: ReleaseRange | None = None,
+    selection_method: SelectionMethod | None = None,
 ) -> list[TrackData]:
     """Get a number of tracks from an artist or band.
 
@@ -177,6 +180,8 @@ def tracks_from_artist_name(
         artist_name: Name of the artist or band to fetch tracks from
         nb_tracks: Number of tracks to retrieve.
         release_range: An optional datetime range for the release date of the tracks.
+        selection_method: How tracks are chosen from the retrieved tracks.
+            See `SelectionMethod` for available methods. If no method is given, the choice will be random.
 
     Returns:
         A list of track data from the artists.
@@ -186,7 +191,7 @@ def tracks_from_artist_name(
         logger.warning(f"Couldn't retrieve tracks for artist {artist_name}")
         return []
     tracks = get_playlist_tracks(playlist_uri=playlist.uri, release_date_range=release_range)
-    return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
+    return select_tracks(tracks, nb_tracks, selection_method)
 
 
 def tracks_from_feature_name(
@@ -216,7 +221,9 @@ def tracks_from_feature_name(
     return tracks
 
 
-def tracks_from_radio(artist_name: str, nb_tracks: int) -> list[TrackData]:
+def tracks_from_radio(
+    artist_name: str, nb_tracks: int, selection_method: SelectionMethod | None = None
+) -> list[TrackData]:
     """Get tracks from an artist radio.
 
     !!! note
@@ -226,6 +233,8 @@ def tracks_from_radio(artist_name: str, nb_tracks: int) -> list[TrackData]:
     Args:
         artist_name: Name of the artist or band to fetch related tracks from
         nb_tracks: Number of tracks to retrieve.
+        selection_method: How tracks are chosen from the retrieved tracks.
+            See `SelectionMethod` for available methods. If no method is given, the choice will be random.
 
     Returns:
         A list of track data from the artist radio.
@@ -238,11 +247,14 @@ def tracks_from_radio(artist_name: str, nb_tracks: int) -> list[TrackData]:
     tracks = []
     for artist in [artist, *related_artists]:
         tracks.extend(get_artist_top_tracks(artist, constants.MAX_TOP_TRACKS_ARTISTS))
-    return np.random.choice(tracks, min(len(tracks), nb_tracks), replace=False)
+    return select_tracks(tracks, nb_tracks, selection_method)
 
 
 def tracks_from_playlist_uri(
-    playlist_uri: str, nb_tracks: int, release_range: ReleaseRange | None = None
+    playlist_uri: str,
+    nb_tracks: int,
+    release_range: ReleaseRange | None = None,
+    selection_method: SelectionMethod | None = None,
 ) -> list[TrackData]:
     """Get tracks from a playlist URI.
 
@@ -250,6 +262,8 @@ def tracks_from_playlist_uri(
         playlist_uri: Name of the artist or band to fetch related tracks from
         nb_tracks: Number of tracks to retrieve.
         release_range: An optional datetime range for the release date of the tracks.
+        selection_method: How tracks are chosen from the retrieved tracks.
+            See `SelectionMethod` for available methods. If no method is given, the choice will be random.
 
     Returns:
         A list of track data from the artist radio.
@@ -259,7 +273,7 @@ def tracks_from_playlist_uri(
     except spotipy.SpotifyException:
         logger.warning(f"Couldn't retrieve playlist URI {playlist_uri}")
         return []
-    return np.random.choice(tracks, min(len(tracks), nb_tracks), replace=False)
+    return select_tracks(tracks, nb_tracks, selection_method)
 
 
 def tracks_from_playlist_name(
@@ -267,6 +281,7 @@ def tracks_from_playlist_name(
     nb_tracks: int,
     user_playlists: list[PlaylistData],
     release_range: ReleaseRange | None = None,
+    selection_method: SelectionMethod | None = None,
 ) -> list[TrackData]:
     """Get a number of tracks from a playlist.
 
@@ -275,6 +290,8 @@ def tracks_from_playlist_name(
         nb_tracks: Number of tracks to retrieve
         user_playlists: List of existing user playlists. Used to map the name with the URI.
         release_range: An optional datetime range for the release date of the tracks.
+        selection_method: How tracks are chosen from the retrieved tracks.
+            See `SelectionMethod` for available methods. If no method is given, the choice will be random.
 
     Returns:
         A list of track data from the playlists
@@ -286,13 +303,14 @@ def tracks_from_playlist_name(
         logger.warning(f"Couldn't retrieve tracks for playlist {playlist_name}")
         return []
     tracks = get_playlist_tracks(playlist_uri=playlist[0].uri, release_date_range=release_range)
-    return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
+    return select_tracks(tracks, nb_tracks, selection_method)
 
 
 def tracks_from_genre(
     genre: str,
     nb_tracks: int,
     release_range: ReleaseRange | None = None,
+    selection_method: SelectionMethod | None = None,
 ) -> list[TrackData]:
     """Find "mixes" based on the requested genre, and retrieve tracks from the "mix" playlist.
 
@@ -300,6 +318,9 @@ def tracks_from_genre(
         genre: A musical genre to find (eg: 'bossa nova', 'cold wave', 'folk', ...).
         nb_tracks: Number of tracks to retrieve.
         release_range: An optional datetime range for the tracks to fetch.
+        selection_method: How tracks are chosen from the retrieved tracks.
+            See `SelectionMethod` for available methods. If no method is given, the choice will be random.
+
 
     Returns:
         A list of tracks in the found playlist, as track data.
@@ -309,7 +330,7 @@ def tracks_from_genre(
         logger.warning(f"Couldn't find a playlist for genre {genre}")
         return []
     tracks = get_playlist_tracks(playlist_uri=playlist.uri, release_date_range=release_range)
-    return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
+    return select_tracks(tracks, nb_tracks, selection_method)
 
 
 def dump(playlist: PlaylistSummary, filepath: Path):

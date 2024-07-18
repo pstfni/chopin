@@ -5,7 +5,6 @@ import pandas as pd
 from pydantic import BaseModel, model_serializer, model_validator
 
 from chopin import VERSION
-from chopin import VERSION
 from chopin.schemas.track import TrackData, TrackFeaturesData
 
 

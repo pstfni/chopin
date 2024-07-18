@@ -29,3 +29,4 @@ class AlbumData(BaseModel):
         """Format the release date based on the level of detail available."""
         if isinstance(v, str):
             return parse_release_date(v)
+        return v

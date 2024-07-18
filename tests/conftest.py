@@ -1,5 +1,6 @@
 import pytest
 
+from chopin.schemas.album import AlbumData
 from chopin.schemas.artist import ArtistData
 from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData, TrackFeaturesData
@@ -21,6 +22,7 @@ def track_data(id_: str = "id") -> TrackData:
         duration_ms=1000,
         popularity=50,
         artists=[artist_data(id_)],
+        album=album_data(id_),
         features=TrackFeaturesData(
             acousticness=0.1,
             danceability=0.2,
@@ -35,6 +37,23 @@ def track_data(id_: str = "id") -> TrackData:
             key=2,
             analysis_url="url",
         ),
+    )
+
+
+def album_data(id_: str = "id") -> AlbumData:
+    """Helper to create albums.
+
+    Args:
+        id_: Argument to generate the id. Useful to make sure unique albums can be created across a test.
+
+    Returns:
+        An album, schematized as a AlbumData
+    """
+    return AlbumData(
+        name=f"test_album_{id_}",
+        id=f"{id_}",
+        uri=f"spotify:album:{id_}",
+        release_date="1970",
     )
 
 

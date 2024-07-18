@@ -48,6 +48,8 @@ def test_get_playlist_tracks(spotify_track, added_at):
         playlist_tracks = get_playlist_tracks(playlist_uri="test", release_date_range=None)
     assert len(playlist_tracks) == 1
     assert isinstance(playlist_tracks[0], TrackData)
+    if added_at:
+        added_at = added_at.date()
     assert playlist_tracks[0].added_at == added_at
 
 
