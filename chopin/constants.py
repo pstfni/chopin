@@ -36,6 +36,7 @@ class ConstantsNamespace:
     SPOTIFY_USER_URI = "spotify:user:spotify"
     SPOTIFY_API_HISTORY_LIMIT = 50
     SPOTIFY_RECOMMENDATION_SEED_LIMIT = 5
+    MARKET = "fr"
     MAX_RELATED_ARTISTS = 10
     MAX_TOP_TRACKS_ARTISTS = 10
     MAX_SEEDS = 5
