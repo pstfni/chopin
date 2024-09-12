@@ -42,19 +42,19 @@ def composer_item_form_dataframe(source: str) -> pd.DataFrame:
     Returns:
         An editable dataframe, ready to be displayed in the Streamlit app.
     """
-    df = pd.DataFrame(columns=["name", "weight", "selection_method"])
+    df = pd.DataFrame(columns=["name", "selection_method", "weight"])
     # todo selectbox or textcolumn based on gethelp (see if not too complicated after that)
     df_config = {
         "name": st.column_config.TextColumn(
             f"{source} name", width="large", required=True, help="Pick songs from {source}"
         ),
-        "weight": st.column_config.NumberColumn("Weight", min_value=0.0, max_value=2.0, default=1.0),
         "selection_method": st.column_config.SelectboxColumn(
             "Selection Method",
             default=SelectionMethod.RANDOM.value,
             required=False,
             options=list(map(lambda x: x.value, SelectionMethod._member_map_.values())),
         ),
+        "weight": st.column_config.NumberColumn("Weight", min_value=0.0, max_value=2.0, default=1.0),
     }
     form = st.data_editor(df, column_config=df_config, num_rows="dynamic", use_container_width=True, hide_index=True)
     return form

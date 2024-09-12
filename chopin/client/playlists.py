@@ -4,12 +4,17 @@ from datetime import datetime
 from functools import lru_cache
 from typing import Any
 
+from pydantic import ValidationError
+
 from chopin.client.settings import _client
 from chopin.client.user import get_current_user
 from chopin.constants import constants
 from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData
+from chopin.tools.logger import get_logger
 from chopin.tools.strings import simplify_string
+
+logger = get_logger(__name__)
 
 
 @lru_cache
@@ -44,6 +49,32 @@ def get_named_playlist(name: str) -> PlaylistData:
     return playlists[index_]
 
 
+def _validate_single_track(track: dict[str, Any]) -> TrackData | None:
+    """Validate a single track, otherwise log an error.
+
+    Useful against non synced Spotify tracks, which can cause downstream errors.
+
+    Args:
+        track: A track, as received after the Spotify API call.
+
+    Returns:
+        The validated track if the track was well formatted.
+    """
+    if not track.get("track"):
+        return None
+    try:
+        validated_track = TrackData.model_validate(dict(added_at=track.get("added_at"), **track["track"]))
+        return validated_track
+    except ValidationError as exc:
+        logger.warning(f"Error in track validation, the track is ignored: {track} \n Exception raised: {exc}")
+
+
+def _validate_tracks(tracks: list[dict[str, Any]]) -> list[TrackData]:
+    """Read and validate track objects from the Spotify response."""
+    response_tracks = [_validate_single_track(track) for track in tracks]
+    return [track for track in response_tracks if track]
+
+
 def get_playlist_tracks(
     playlist_uri: str, release_date_range: tuple[datetime.date, datetime.date] | None = None
 ) -> list[TrackData]:
@@ -70,12 +101,7 @@ def get_playlist_tracks(
         )
         offset += len(response["items"])
 
-        response_tracks = [
-            TrackData.model_validate(dict(added_at=r.get("added_at"), **r["track"]))
-            for r in response["items"]
-            if r["track"] is not None
-        ]
-
+        response_tracks = _validate_tracks(response["items"])
         if release_date_range:
             response_tracks = [
                 track
