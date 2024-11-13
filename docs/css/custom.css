@@ -25,3 +25,8 @@ a.internal-link::after {
 :root > * {
   --md-code-hl-color: hsla(150, 90%, 44%, 0.15);
 }
+
+.admonition, .md-typeset .admonition, .md-typeset details {
+    border: lawngreen;
+    border-radius: 0;
+}

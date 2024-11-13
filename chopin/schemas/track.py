@@ -84,6 +84,7 @@ class TrackData(BaseModel):
     features: TrackFeaturesData | None = None
 
     def to_flatten_dict(self, **kwargs):
+        """Export the track data as a non-nested dictionary."""
         if isinstance(self.artists, list):
             self.artists = self.artists[0]
-        return flatten_dict(self.dict(**kwargs))
+        return flatten_dict(self.model_dump(**kwargs))

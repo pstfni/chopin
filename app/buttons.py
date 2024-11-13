@@ -1,4 +1,5 @@
 """Buttons related to the streamlit app."""
+
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
@@ -10,8 +11,10 @@ from chopin.entrypoints.recommend import recommend
 
 @dataclass
 class Entrypoint:
+    """Utility dataclass to describe an entrypoint in the app."""
+
     name: str
-    docstring: str  # todo: see if __doc__ or something is more suited ?
+    docstring: str
     on_click: Callable | None = None
     args: dict[str, Any] | None = None
 

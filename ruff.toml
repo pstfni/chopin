@@ -2,8 +2,8 @@ exclude = ['.venv']
 line-length = 120
 
 [lint]
-ignore = ["D101", "D102", "D106", "D107", "N805"]
-select = ["F", "E", "W", "I", "N", "D", "UP", "TRY200", "PERF", "RUF"]
+ignore = ["N805", "B008"]
+select = ["F", "E", "W", "I", "N", "D", "UP", "B", "PERF", "RUF"]
 fixable = ["ALL"]
 
 [lint.per-file-ignores]

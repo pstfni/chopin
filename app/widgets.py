@@ -1,4 +1,5 @@
 """Widgets for pages of the app."""
+
 from collections import Counter
 
 import numpy as np

@@ -1,4 +1,5 @@
 """Logic to convert streamlit form data to chopin configuration objects."""
+
 from typing import Literal
 
 import pandas as pd

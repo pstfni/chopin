@@ -56,6 +56,7 @@ class ComposerConfigItem(BaseModel):
 
     @field_validator("selection_method", mode="before")
     def lower_case_selection_method(cls, selection_method: str) -> SelectionMethod:
+        """Force the selection method to be lower case."""  # TODO address this with proper enum handling
         if selection_method:
             return selection_method.lower()
         return
@@ -78,6 +79,7 @@ class ComposerConfigRecommendation(BaseModel):
 
     @field_validator("name")
     def update_name_with_value(cls, v):
+        """Instantiate the name field with the enum value only."""  # TODO address this with proper enum handling
         return v.value
 
 
@@ -124,6 +126,7 @@ class ComposerConfig(BaseModel):
 
     @field_validator("history")
     def history_field_ranges_must_be_unique(cls, v):
+        """Check the history items are distinct."""
         ranges = [item.time_range for item in v]
         if len(set(ranges)) != len(ranges):
             raise ValueError("time_range items for history must be unique")
@@ -147,5 +150,5 @@ class ComposerConfig(BaseModel):
         return values
 
     @computed_field
-    def items(self) -> list[list[ComposerConfigItem]]:
+    def items(self) -> list[list[ComposerConfigItem]]:  # noqa: D102
         return {source: getattr(self, source) for source in SOURCES}.items()

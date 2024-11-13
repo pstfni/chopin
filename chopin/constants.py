@@ -21,6 +21,8 @@ class PlaylistNamedTuple(NamedTuple):
 
 @dataclass(frozen=True)
 class ConstantsNamespace:
+    """Constants namespace for chopin."""
+
     DEFAULT_DATA_DIR = Path("data/")
 
     RECOMMENDED_MIX = PlaylistNamedTuple(

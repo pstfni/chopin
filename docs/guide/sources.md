@@ -120,7 +120,7 @@ uris:
     For example: https://open.spotify.com/playlist/7oK3UXsHYmC3PYGQFY5IOb?si=eae4b209bee740f8 is a link for the 
     playlist URI `7oK3UXsHYmC3PYGQFY5IOb`.
 
-??? abstract "Some playlist URIs to cover your needs"
+??? tip "Some playlist URIs to cover your needs"
     
     - `7oK3UXsHYmC3PYGQFY5IOb` : Bob Dylan, the philosophy of modern song
     - `50FTlBiOVTyPgVtPYVUzdn` : Les Inrockuptibles, Trésors Cachés

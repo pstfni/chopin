@@ -1,4 +1,5 @@
 """Streamlit application."""
+
 from collections.abc import Iterable
 
 import streamlit as st

@@ -19,6 +19,15 @@ def get_currently_playing() -> TrackData | None:
     return TrackData.model_validate(response["item"])
 
 
+def add_to_queue(track: TrackData) -> None:
+    """Add a track to the user's queue.
+
+    Args:
+        track: Track to add
+    """
+    _client.add_to_queue(track.uri)
+
+
 def get_queue() -> list[TrackData]:
     """Get the current user's listening queue.
 

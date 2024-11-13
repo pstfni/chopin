@@ -80,7 +80,8 @@ class PlaylistSummary(BaseModel):
             "version": VERSION,
         }
 
-    def to_dataframe(self):
+    def to_dataframe(self) -> pd.DataFrame:
+        """Write the playlist summary as a dataframe."""
         dataframe = pd.json_normalize(self.model_dump(), "tracks")
         dataframe["artists"] = dataframe["artists"].apply(lambda x: x[0]["name"])
         return dataframe

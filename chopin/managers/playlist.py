@@ -245,8 +245,8 @@ def tracks_from_radio(
         return []
     related_artists = get_related_artists(artist, max_related_artists=constants.MAX_RELATED_ARTISTS)
     tracks = []
-    for artist in [artist, *related_artists]:
-        tracks.extend(get_artist_top_tracks(artist, constants.MAX_TOP_TRACKS_ARTISTS))
+    for related_artist in [artist, *related_artists]:
+        tracks.extend(get_artist_top_tracks(related_artist, constants.MAX_TOP_TRACKS_ARTISTS))
     return select_tracks(tracks, nb_tracks, selection_method)
 
 

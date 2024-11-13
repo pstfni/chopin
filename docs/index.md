@@ -12,17 +12,17 @@ A CLI to describe, compose, manage your Spotify playlists.
 
 [:fontawesome-solid-code: Dive in the reference](reference/index.md){ .md-button .md-button}
 
-### What features are available
+### Available features
 
 Several entrypoints come with the chopin repository: 
 
 | Commands    | Description                                            |
 |:------------|:-------------------------------------------------------|
-| `compose`   | 🤖 Create a playlist from various sources              |
-| `describe`  | 📝 Save a playlist' tracks, artists and audio features |
-| `restore`   | 🔝 Restore a playlist from a backup file               |
-| `recommend` | 💡 Recommend songs in a new playlist                   |
-| `queue`     | 🔮 Turn your Spotify queue into a playlist             |
-| `shuffle_playlist`   | 🔀 Shuffle tracks in an existing playlist     |
+| [compose](./guide/compose.md)   | 🤖 Create a playlist from various sources              |
+| [describe](./guide/describe.md)  | 📝 Save a playlist' tracks, artists and audio features |
+| [restore](./guide/restore.md)  | 🔝 Restore a playlist from a backup file               |
+| [recommend](./guide/recommend.md) | 💡 Recommend songs in a new playlist                   |
+| [queue](./guide/queue.md)     | 🔮 Turn your Spotify queue into a playlist             |
+| [shuffle](./guide/shuffle.md)   | 🔀 Shuffle tracks in an existing playlist     |
 
 
