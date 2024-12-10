@@ -8,13 +8,9 @@ from chopin.client.playlists import get_user_playlists
 from chopin.client.user import get_top_tracks
 from chopin.managers.playlist import (
     tracks_from_artist_name,
-    tracks_from_feature_name,
-    tracks_from_genre,
     tracks_from_playlist_name,
     tracks_from_playlist_uri,
-    tracks_from_radio,
 )
-from chopin.managers.track import find_seeds, set_audio_features
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
 from chopin.schemas.track import TrackData
 from chopin.tools.logger import get_logger
@@ -60,18 +56,6 @@ def _add_from_history(history_ranges: list[ComposerConfigItem], **kwargs) -> lis
     return list(itertools.chain(*tracks))
 
 
-def _add_from_radios(radios: list[ComposerConfigItem], **kwargs) -> list[TrackData]:
-    tracks = [
-        tracks_from_radio(
-            artist_name=radio.name,
-            nb_tracks=radio.nb_songs,
-            selection_method=radio.selection_method,
-        )
-        for radio in radios
-    ]
-    return list(itertools.chain(*tracks))
-
-
 def _add_from_uris(
     uris: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
 ) -> list[TrackData]:
@@ -87,43 +71,10 @@ def _add_from_uris(
     return list(itertools.chain(*tracks))
 
 
-def _add_from_genres(
-    genres: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
-) -> list[TrackData]:
-    tracks = [
-        tracks_from_genre(
-            genre=genre.name,
-            nb_tracks=genre.nb_songs,
-            release_range=release_range,
-            selection_method=genre.selection_method,
-        )
-        for genre in genres
-    ]
-    return list(itertools.chain(*tracks))
-
-
-def _add_from_features(features: list[ComposerConfigItem], tracks: list[TrackData], **kwargs) -> list[TrackData]:
-    previous_tracks = set_audio_features(tracks.copy())
-    for feature in features:
-        seed_tracks = find_seeds(previous_tracks, feature.name, feature.value)
-        tracks.extend(
-            tracks_from_feature_name(
-                seeds=seed_tracks,
-                feature_name=feature.name,
-                feature_value=feature.value,
-                nb_tracks=feature.nb_songs,
-            )
-        )
-    return tracks
-
-
 DISPATCHER: dict[str, callable] = {
     "playlists": _add_from_playlists,
     "artists": _add_from_artists,
-    "features": _add_from_features,
     "history": _add_from_history,
-    "genres": _add_from_genres,
-    "radios": _add_from_radios,
     "uris": _add_from_uris,
 }
 

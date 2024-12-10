@@ -1,11 +1,10 @@
 """Schemas for playlist composition."""
 
 import math
-from enum import Enum
 from typing import Annotated, Literal
 
 import numpy as np
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, computed_field, field_validator, model_validator
+from pydantic import AfterValidator, BaseModel, Field, computed_field, field_validator, model_validator
 
 from chopin.managers.selection import SelectionMethod
 from chopin.tools.dates import read_date
@@ -13,22 +12,12 @@ from chopin.tools.logger import get_logger
 from chopin.tools.strings import extract_uri_from_playlist_link
 
 logger = get_logger(__name__)
-SOURCES = ["playlists", "artists", "features", "history", "radios", "uris", "genres"]
-
-
-class TrackFeature(Enum):
-    """Enumeration for the available Spotify track feature."""
-
-    ACOUSTICNESS = "acousticness"
-    DANCEABILITY = "danceability"
-    ENERGY = "energy"
-    INSTRUMENTALNESS = "instrumentalness"
-    LIVENESS = "liveness"
-    LOUDNESS = "loudness"
-    SPEECHINESS = "speechiness"
-    TEMPO = "tempo"
-    POPULARITY = "popularity"
-    VALENCE = "valence"
+SOURCES = [
+    "playlists",
+    "artists",
+    "history",
+    "uris",
+]
 
 
 class ComposerConfigItem(BaseModel):
@@ -60,27 +49,6 @@ class ComposerConfigItem(BaseModel):
         if selection_method:
             return selection_method.lower()
         return
-
-
-class ComposerConfigRecommendation(BaseModel):
-    """Base schema for recommendation inputs in the composer configuration.
-
-    Attributes:
-        name: Name of the feature to recommend.
-        value: Target value to recommend
-    """
-
-    name: TrackFeature
-    weight: Annotated[float, Field(ge=0)] = 1
-    nb_songs: int | None = 0
-    value: float  # relaxed constraint. todo: see if we can have constraint based on feature type (or add validators)
-
-    model_config = ConfigDict()
-
-    @field_validator("name")
-    def update_name_with_value(cls, v):
-        """Instantiate the name field with the enum value only."""  # TODO address this with proper enum handling
-        return v.value
 
 
 class ComposerConfigListeningHistory(BaseModel):
@@ -118,11 +86,8 @@ class ComposerConfig(BaseModel):
     release_range: Annotated[tuple[str | None, str | None] | None, AfterValidator(read_date)] | None = None
     playlists: list[ComposerConfigItem] | None = []
     artists: list[ComposerConfigItem] | None = []
-    features: Annotated[list[ComposerConfigRecommendation], Field(max_length=5)] | None = []
     history: Annotated[list[ComposerConfigListeningHistory], Field(max_length=3)] | None = []
-    radios: list[ComposerConfigItem] | None = []
     uris: list[ComposerConfigItem] | None = []
-    genres: list[ComposerConfigItem] | None = []
 
     @field_validator("history")
     def history_field_ranges_must_be_unique(cls, v):

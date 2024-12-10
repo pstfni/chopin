@@ -5,7 +5,7 @@ import pandas as pd
 from pydantic import BaseModel, model_serializer, model_validator
 
 from chopin import VERSION
-from chopin.schemas.track import TrackData, TrackFeaturesData
+from chopin.schemas.track import TrackData
 
 
 class PlaylistData(BaseModel):
@@ -40,10 +40,7 @@ class PlaylistSummary(BaseModel):
     playlist: PlaylistData
     tracks: list[TrackData]
     _nb_tracks: int | None = None
-    _total_duration: float | None = None
     _nb_artists: int | None = None
-    _avg_features: TrackFeaturesData | None = None
-    _avg_popularity: float | None = None
 
     @model_validator(mode="after")
     def fill_fields(cls, values):
@@ -51,15 +48,6 @@ class PlaylistSummary(BaseModel):
         tracks = values.tracks
         values._nb_tracks = len(tracks)
         values._nb_artists = len(np.unique([track.artists[0].name for track in tracks]))
-        values._total_duration = sum([track.duration_ms for track in tracks])
-        values._avg_popularity = np.mean([track.popularity for track in tracks])
-
-        # yayks
-        attributes = list(TrackFeaturesData.model_fields.keys())
-        attributes.pop(-1)  # remove analysis_url
-        features = np.mean([[getattr(track.features, feat) for feat in attributes] for track in tracks], axis=0)
-        values._avg_features = TrackFeaturesData(**{attributes[i]: round(features[i], 3) for i in range(len(features))})
-        # skyay
         return values
 
     def __str__(self):
@@ -68,7 +56,6 @@ class PlaylistSummary(BaseModel):
             f"------ Playlist {self.playlist.name} ------\n"
             f"\t{self._nb_tracks} tracks\n"
             f"\t{self._nb_artists} artists\n"
-            f"\t{self._avg_features} average features\n"
         )
 
     @model_serializer

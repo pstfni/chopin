@@ -49,20 +49,6 @@ def search_artist(artist_name: str) -> ArtistData | None:
         return ArtistData(**matched_artists[0])
 
 
-def get_related_artists(artist: ArtistData, max_related_artists: int = 10) -> list[ArtistData]:
-    """Get a list of artists, related to the current artist.
-
-    Args:
-        artist: current artist.
-        max_related_artists: maximum number of artists to find.
-
-    Returns:
-        A list of artist data, closely related to the current artist.
-    """
-    response = _client.artist_related_artists(artist_id=artist.id)["artists"][:max_related_artists]
-    return [ArtistData(**related_artist) for related_artist in response]
-
-
 def get_artist_top_tracks(artist: ArtistData, max_tracks: int = 20) -> list[TrackData]:
     """Get an artist top tracks.
 
