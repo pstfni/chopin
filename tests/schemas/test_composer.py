@@ -2,7 +2,7 @@ import pytest
 from pydantic import ValidationError
 
 from chopin.managers.selection import SelectionMethod
-from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigRecommendation
+from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
 
 
 def test_fill_nb_songs():
@@ -17,7 +17,6 @@ def test_fill_nb_songs():
     assert out.playlists[1].nb_songs == 115
     assert out.artists[0].nb_songs == 29
     assert out.artists[1].nb_songs == 0
-    assert out.features == []
     assert out.description == "Randomly generated mix"
 
 
@@ -49,36 +48,6 @@ def test_fill_nb_songs_with_history():
     assert out.playlists[0].nb_songs == 50
     assert out.history[0].nb_songs == 50
     assert out.artists == []
-
-
-@pytest.mark.parametrize(
-    "recommendation_item, expected_item",
-    [
-        # Make sure enumeration with value works
-        (
-            {
-                "name": "acousticness",
-                "value": 0.8,
-                "weight": 0.1,
-            },
-            {
-                "name": "acousticness",
-                "value": 0.8,
-                "weight": 0.1,
-                "nb_songs": 0,
-            },
-        ),
-        # We dont accept weird stuff
-        (
-            pytest.param(
-                {"name": "blah", "value": 0.8, "weight": 0.1}, None, marks=pytest.mark.xfail(raises=ValidationError)
-            )
-        ),
-    ],
-)
-def test_composer_config_recommendation_item(recommendation_item, expected_item):
-    out = ComposerConfigRecommendation(**recommendation_item)
-    assert out.model_dump() == expected_item
 
 
 @pytest.mark.parametrize(

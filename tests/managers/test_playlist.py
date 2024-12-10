@@ -6,7 +6,6 @@ from chopin.managers.playlist import (
     create,
     dump,
     tracks_from_artist_name,
-    tracks_from_genre,
     tracks_from_playlist_name,
 )
 from chopin.schemas.playlist import PlaylistData, PlaylistSummary
@@ -61,38 +60,12 @@ def test_tracks_from_playlist_name(
     playlist_1,
     playlist_2,
     playlist_1_tracks,
-    playlist_2_tracks,
 ):
     mock_get_tracks.side_effect = [playlist_1_tracks]
     tracks = tracks_from_playlist_name(playlist_name="p", nb_tracks=10, user_playlists=[playlist_1, playlist_2])
 
     assert len(tracks) == 10
     assert all(t.name.startswith("test_track_p") for t in tracks)
-
-
-@patch("chopin.managers.playlist.get_genre_mix_playlist")
-@patch("chopin.managers.playlist.get_playlist_tracks")
-@pytest.mark.parametrize(
-    "nb_tracks, genre_side_effect, expected_nb_songs",
-    [
-        (10, PlaylistData(name="a", uri="uri"), 10),
-        (20, PlaylistData(name="a", uri="uri"), 20),
-        # No playlists found by the client: 0 tracks returned
-        (10, None, 0),
-    ],
-)
-def test_tracks_from_genre(
-    mock_get_tracks,
-    mock_get_genre_mix,
-    playlist_1_tracks,
-    nb_tracks,
-    genre_side_effect,
-    expected_nb_songs,
-):
-    mock_get_tracks.side_effect = [playlist_1_tracks]
-    mock_get_genre_mix.side_effect = [genre_side_effect]
-    tracks = tracks_from_genre(genre="test genre", nb_tracks=nb_tracks)
-    assert len(tracks) == expected_nb_songs
 
 
 def test_dump(tmp_path, playlist_1, playlist_1_tracks):

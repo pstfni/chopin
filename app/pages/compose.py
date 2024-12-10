@@ -11,7 +11,7 @@ from chopin.client.playlists import get_user_playlists
 from chopin.managers.composition import compose
 from chopin.managers.playlist import create, fill
 from chopin.managers.selection import SelectionMethod
-from chopin.schemas.composer import ComposerConfig, TrackFeature
+from chopin.schemas.composer import ComposerConfig
 
 MIN_DATE: date = date(1960, 1, 1)
 MAX_DATE: date = datetime.now().date()
@@ -99,52 +99,10 @@ with st.form("composition_form"):
     artist_config = composer_item_form_dataframe("artists")
 
     st.write(
-        "Add songs from radios: artist's top songs and related tracks.",
-    )
-    st.caption("_Enter the name of an artist, chopin will fetch related artists to pick songs._")
-    radios_config = composer_item_form_dataframe("radios")
-
-    st.write(
         "Add songs directly from Spotify playlists links",
     )
     st.caption("_Enter the URL of the Spotify playlist of interest. Chopin will randomly pick songs from it_")
     uri_config = composer_item_form_dataframe("uris")
-
-    st.write(
-        "Choose playlists from moods or genres",
-    )
-    st.caption(
-        "_chopin will search for 'Mix', personnalised Spotify playlists for moods and genres."
-        "For example, 'chill evening',or 'cold wave'._"
-    )
-    genres_config = composer_item_form_dataframe("genres")
-
-    st.write(
-        "Add targeted recommendations ? Choose a sound feature to pick songs with a similar vibe",
-    )
-    st.caption(
-        "_Features are computed by Spotify."
-        "See [track audio features](https://developer.spotify.com/documentation/web-api/reference/get-audio-features) "
-        "for a detailed explanation of what they are._"
-    )
-    df = pd.DataFrame(columns=["name", "value", "weight"])
-    features_config = st.data_editor(
-        df,
-        column_config={
-            "name": st.column_config.SelectboxColumn(
-                "Feature name",
-                help="Name of the acoustic feature to target recommendations",
-                width="medium",
-                options=list(map(lambda x: x.value, TrackFeature._member_map_.values())),
-                required=True,
-            ),
-            "value": st.column_config.NumberColumn("Value", min_value=0.0, max_value=1.0, default=0.4),
-            "weight": st.column_config.NumberColumn("Weight", min_value=0.0, max_value=2.0, default=1.0),
-        },
-        hide_index=True,
-        num_rows="dynamic",
-        use_container_width=True,
-    )
 
     st.write("Do you want to add songs from your listening history ?")
     history = st.multiselect(
@@ -173,9 +131,6 @@ if submitted:
             composer_config,
             playlist_config=playlist_config,
             artist_config=artist_config,
-            radio_config=radios_config,
-            genres_config=genres_config,
-            features_config=features_config,
             uri_config=uri_config,
             history_config=history,
         )

@@ -29,9 +29,3 @@ for index, column in enumerate(columns):
             type="primary",
             use_container_width=True,
         )
-
-st.subheader("Describe and analyze your playlists", divider="green")
-if st.button(
-    label="describe", key="describe", help="Visualize your playlists", type="primary", use_container_width=True
-):
-    st.switch_page("pages/describe.py")

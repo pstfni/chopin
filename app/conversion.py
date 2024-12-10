@@ -8,7 +8,6 @@ from chopin.schemas.composer import (
     ComposerConfig,
     ComposerConfigItem,
     ComposerConfigListeningHistory,
-    ComposerConfigRecommendation,
 )
 
 
@@ -22,10 +21,6 @@ def _convert_form_to_item(form: pd.DataFrame) -> list[ComposerConfigItem]:
         Items for the playlist composition.
     """
     return [ComposerConfigItem(**item) for item in form.to_dict(orient="records")]
-
-
-def _convert_feature_to_item(feature_form: pd.DataFrame) -> list[ComposerConfigRecommendation]:
-    return [ComposerConfigRecommendation(**item) for item in feature_form.to_dict(orient="records")]
 
 
 def _convert_history_to_item(
@@ -47,10 +42,7 @@ def convert_form_configuration(
     *,
     playlist_config: pd.DataFrame,
     artist_config: pd.DataFrame,
-    radio_config: pd.DataFrame,
     uri_config: pd.DataFrame,
-    genres_config: pd.DataFrame,
-    features_config: pd.DataFrame,
     history_config: ComposerConfigListeningHistory,
 ) -> ComposerConfig:
     """Take a composer configuration and fill its source attributes with configurations for each items.
@@ -59,10 +51,7 @@ def convert_form_configuration(
         composer_configuration: A composer configuration.
         playlist_config: A form configuration for the playlist sources.
         artist_config: A form configuration for the artist sources.
-        radio_config: A form configuration for the radio sources.
         uri_config: A form configuration for uri sources.
-        genres_config: A form configuration for the genres sources.
-        features_config: A form configuration for the features sources.
         history_config: A form configuration for the history sources.
 
     Returns:
@@ -74,9 +63,6 @@ def convert_form_configuration(
     composer_config = composer_configuration.model_copy()
     composer_config.playlists = _convert_form_to_item(playlist_config)
     composer_config.artists = _convert_form_to_item(artist_config)
-    composer_config.radios = _convert_form_to_item(radio_config)
     composer_config.uris = _convert_form_to_item(uri_config)
-    composer_config.genres = _convert_form_to_item(genres_config)
-    composer_config.features = _convert_feature_to_item(features_config)
     composer_config.history = _convert_history_to_item(history_config)
     return composer_config

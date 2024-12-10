@@ -3,7 +3,7 @@ import pytest
 from chopin.schemas.album import AlbumData
 from chopin.schemas.artist import ArtistData
 from chopin.schemas.playlist import PlaylistData
-from chopin.schemas.track import TrackData, TrackFeaturesData
+from chopin.schemas.track import TrackData
 
 
 def track_data(id_: str = "id") -> TrackData:
@@ -23,20 +23,6 @@ def track_data(id_: str = "id") -> TrackData:
         popularity=50,
         artists=[artist_data(id_)],
         album=album_data(id_),
-        features=TrackFeaturesData(
-            acousticness=0.1,
-            danceability=0.2,
-            energy=0.3,
-            instrumentalness=0.4,
-            liveness=0.5,
-            loudness=0.6,
-            speechiness=0.7,
-            valence=0.8,
-            tempo=0.9,
-            mode=1,
-            key=2,
-            analysis_url="url",
-        ),
     )
 
 
@@ -92,24 +78,6 @@ def playlist_1():
 @pytest.fixture
 def playlist_2():
     return PlaylistData(name="q", id="id_q", uri="spotify:playlist:id_q")
-
-
-@pytest.fixture
-def track_features_data():
-    return TrackFeaturesData(
-        acousticness=-1,
-        danceability=-0.8,
-        energy=-0.6,
-        instrumentalness=-0.4,
-        liveness=-0.2,
-        loudness=0.0,
-        speechiness=0.2,
-        valence=0.4,
-        tempo=0.6,
-        mode=1,
-        key=1,
-        analysis_url="url",
-    )
 
 
 # Fixtures for values expected to be returned by the Spotify API.

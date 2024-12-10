@@ -40,7 +40,9 @@ class PlaylistSummary(BaseModel):
     playlist: PlaylistData
     tracks: list[TrackData]
     _nb_tracks: int | None = None
+    _total_duration: float | None = None
     _nb_artists: int | None = None
+    _avg_popularity: float | None = None
 
     @model_validator(mode="after")
     def fill_fields(cls, values):
@@ -48,6 +50,9 @@ class PlaylistSummary(BaseModel):
         tracks = values.tracks
         values._nb_tracks = len(tracks)
         values._nb_artists = len(np.unique([track.artists[0].name for track in tracks]))
+        values._total_duration = sum([track.duration_ms for track in tracks])
+        values._avg_popularity = np.mean([track.popularity for track in tracks])
+
         return values
 
     def __str__(self):
