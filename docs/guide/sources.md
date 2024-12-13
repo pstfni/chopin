@@ -1,6 +1,6 @@
 # Available sources for playlist composition
 
-## Playlists
+### Playlists
 
 A list of one or more of the _current user_ playlists. 
 
@@ -24,7 +24,7 @@ playlists:
     python -c "from utils import simplify_string; print(simplify_string($playlist_name))"
     ```
 
-## Artists
+### Artists
 
 A list of artists to pick songs from. The `name` is used to query the Spotify API and retrieve
 songs from Spotify's _This is ..._ playlists.
@@ -39,54 +39,8 @@ artists:
     weight: 0.25
 ```
 
-## Radios
 
-A list of artist's radios to pick songs from. The term "radio" refers here to the 
-Spotify's _Artist Name Radio_ playlists. 
-
-Songs from radios will include a few songs from the artist, and tracks from related artists.
-
-```yaml hl_lines="3-8" title="Add songs from radios of artists"
-name: "New playlist"
-nb_songs: 50
-radios:
-  - name: Pulp
-  - name: Elvis Costello
-  - name: Elliott Smith
-    weight: 0.25
-```
-
-??? info "Radios and Spotify API"
-    The Spotify API do not let you easily access or find these _Artist Name Radio_ playlists.
-    
-    For this feature, their behaviour was reproduced by picking songs of the artist, fetching its 
-    related artists, and finally picking top songs of each related artists.
-
-## Features
-
-With features, you can add recommendations to your playlist. Based on the current playlist composition, and 
-the feature `value`, recommended songs will be added. Available features are described in the [API reference](../reference/schemas.md#base-schemas)
-
-Features come from [Spotify audio features analysis](https://developer.spotify.com/documentation/web-api/reference/#/operations/get-audio-features)
-
-```yaml hl_lines="4 5 6 7 8" title="Recommend songs based on track features"
-artists:
-  - name: David Bowie
-  - name: The Beatles
-features:
-  - name: acousticness
-    value: 0.6
-  - name: popularity
-    value: 80
-```
-
-The above composition configuration will:
-
-1. Add Bowie and Beatles songs to your playlists. 
-2. Based on these songs, it will recommend relatively acoustic new ones.
-3. Finally, it will recommend popular songs.
-
-## History
+### History
 
 `history` lets you add your favourite songs from the past! Three time ranges are available:
 
@@ -101,8 +55,10 @@ history:
     weight: 0.25
 ```
 
-## Uris
+### Uris
 
+!!! warning "Spotify removed access to custom playlists. Any Spotify playlist with the mention _made for you_ is unavailable"
+    
 With uris, you can use any kind of playlist in your composition. Simply add the Spotify playlist uri or url
 in your YAML.
 
@@ -126,21 +82,7 @@ uris:
     - `50FTlBiOVTyPgVtPYVUzdn` : Les Inrockuptibles, Trésors Cachés
     - ...
 
-
-## Genres
-
-With genres, you can search for genre-specific playlists curated by Spotify, such as "Bossa Nova Mix", "New Wave Mix", 
-or "Singer Songwriter Mix" for example.
-
-```yaml title="Add songs from genre playlists"
-genres:
-  - name: "Bossa Nova"
-  - name: "80s"
-  - name: "Covers"
-```
-
-
-## Putting all this together
+### Putting all this together
 
 You can add as many items from as many sections as you'd like ! And create all kinds of playlists
 
@@ -164,15 +106,9 @@ You can add as many items from as many sections as you'd like ! And create all k
           weight: 0.5
         - name: Elliott Smith
           weight: 0.5
-    radios:
-        - name: Richard Hawley
-          weight: 0.5
-        - name: Bon Iver
-          weight: 0.5
-    features:
-        - name: acousticness
-          value: 0.8
-          weight: 0.5
+    uris:
+        - name: https://open.spotify.com/playlist/6LSRWYpEoo8KiXenl2xHOP?si=e83a89df1dca4728  # Les inrocks, trésors cachés
+        - name: https://open.spotify.com/playlist/4nutUe1JAzhJSna4mwSIw1?si=71f802c91a04416e  # FIP, best-of du mois
     ```
 
 ???+ tip "A playlist to cheer you up"
@@ -181,14 +117,72 @@ You can add as many items from as many sections as you'd like ! And create all k
     nb_songs: 100
     playlists:
         - name: pop
-    uris:
-        - name: 37i9dQZF1DX9XIFQuFvzM4  # Feelin' Good by Spotify
-          selection_method: popularit
-        - name: 37i9dQZF1DX9wC1KY45plY  # Classic Road Trip Songs by Spotify
-    features:
-        - name: valence
-          value: 0.8
-        - name: danceability
-          value: 0.7
-          weight: 0.5
+    artists:
+        - name: Stevie Wonder
+        - name: Earth, Wind and Fire
+          method: popularity
+        - name: Vampire Weekend
+        - name: Vulfpeck
     ```
+
+## Deprecated sources
+
+### Radios
+
+!!! danger "Unavailable since Spotify removed access to the `related_artists` feature."
+
+A list of artist's radios to pick songs from. The term "radio" refers here to the 
+Spotify's _Artist Name Radio_ playlists. 
+
+Songs from radios will include a few songs from the artist, and tracks from related artists.
+
+```yaml hl_lines="3-8" title="Add songs from radios of artists"
+name: "New playlist"
+nb_songs: 50
+radios:
+  - name: Pulp
+  - name: Elvis Costello
+  - name: Elliott Smith
+    weight: 0.25
+```
+
+### Features
+
+!!! danger "Unavailable since Spotify removed access to the `audio_features` API routes."
+
+With features, you can add recommendations to your playlist. Based on the current playlist composition, and 
+the feature `value`, recommended songs will be added. Available features are described in the [API reference](../reference/schemas.md#base-schemas)
+
+Features come from [Spotify audio features analysis](https://developer.spotify.com/documentation/web-api/reference/#/operations/get-audio-features)
+
+```yaml hl_lines="4 5 6 7 8" title="Recommend songs based on track features"
+artists:
+  - name: David Bowie
+  - name: The Beatles
+features:
+  - name: acousticness
+    value: 0.6
+  - name: popularity
+    value: 80
+```
+
+The above composition configuration will:
+
+1. Add Bowie and Beatles songs to your playlists. 
+2. Based on these songs, it will recommend relatively acoustic new ones.
+3. Finally, it will recommend popular songs.
+
+### Genres
+
+!!! danger "Unavailable since Spotify removed access to Spotify-owned playlists."
+
+
+With genres, you can search for genre-specific playlists curated by Spotify, such as "Bossa Nova Mix", "New Wave Mix", 
+or "Singer Songwriter Mix" for example.
+
+```yaml title="Add songs from genre playlists"
+genres:
+  - name: "Bossa Nova"
+  - name: "80s"
+  - name: "Covers"
+```

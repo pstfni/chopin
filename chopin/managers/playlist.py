@@ -194,6 +194,22 @@ def tracks_from_playlist_name(
     return select_tracks(tracks, nb_tracks, selection_method)
 
 
+def summarize_playlist(playlist: PlaylistData) -> PlaylistSummary:
+    """From a given playlist, create its summary.
+
+    Summaries are useful to describe and backup playlists. They contain extensive information about tracks,
+    features, and can be serialized.
+
+    Args:
+        playlist: The playlist to summarize.
+
+    Returns:
+        A playlist summary, with extended informations about tracks and statistics.
+    """
+    tracks = get_playlist_tracks(playlist.uri)
+    return PlaylistSummary(playlist=playlist, tracks=tracks)
+
+
 def dump(playlist: PlaylistSummary, filepath: Path):
     """Dump a playlist in a JSON format.
 

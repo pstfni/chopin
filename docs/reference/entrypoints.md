@@ -4,10 +4,10 @@
     options:
         show_signature: false
 
-::: chopin.entrypoints.describe
+::: chopin.entrypoints.queue
     options:
         show_signature: false
 
-::: chopin.entrypoints.queue
+::: chopin.entrypoints.shuffle
     options:
         show_signature: false

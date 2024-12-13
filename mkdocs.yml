@@ -11,10 +11,8 @@ nav:
       - "guide/compose.md"
       - "guide/sources.md"
     - "guide/queue.md"
-    - "guide/describe.md"
-    - "guide/restore.md"
-    - "guide/recommend.md"
     - "guide/shuffle.md"
+    - "guide/backup_and_restore.md"
   - Reference:
     - "reference/index.md"
     - "reference/entrypoints.md"
@@ -25,6 +23,7 @@ nav:
 
 theme:
   name: "material"
+  custom_dir: .docs_theme/
   icon:
     logo: material/library
     repo: fontawesome/brands/github
@@ -85,11 +84,12 @@ watch:
   - chopin/managers/
   - chopin/schemas/
   - chopin/entrypoints/
+  - .docs_theme/assets/
 
 extra_css:
-  - css/termynal.css
-  - css/custom.css
+  - assets/stylesheets/custom.css
+  - assets/stylesheets/termynal.css
 
 extra_javascript:
-  - js/termynal.js
-  - js/custom.js
+  - assets/js/termynal.js
+  - assets/js/custom.js

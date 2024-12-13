@@ -22,11 +22,15 @@ a.internal-link::after {
     content: "\00A0↪";
 }
 
-:root > * {
-  --md-code-hl-color: hsla(150, 90%, 44%, 0.15);
+.md-typeset .admonition,
+.md-typeset details {
+  border-width: 0px;
+  border-left-width: 2px;
+  border-radius: 8px;
 }
 
-.admonition, .md-typeset .admonition, .md-typeset details {
-    border: lawngreen;
-    border-radius: 0;
-}
+
+:root > * {
+    --md-code-hl-color: hsla(150, 90%, 44%, 0.15);
+  }
+  
