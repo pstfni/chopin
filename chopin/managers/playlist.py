@@ -2,15 +2,14 @@
 
 from pathlib import Path
 
-import spotipy
-
-from chopin.client.artists import get_this_is_playlist
-from chopin.client.playback import get_queue
-from chopin.client.playlists import (
+from chopin.client.endpoints import (
     add_tracks_to_playlist,
-    create_playlist,
+    create_user_playlist,
+    get_current_user,
     get_named_playlist,
     get_playlist_tracks,
+    get_queue,
+    get_this_is_playlist,
     get_user_playlists,
     replace_tracks_in_playlist,
 )
@@ -23,6 +22,20 @@ from chopin.tools.logger import get_logger
 from chopin.tools.strings import simplify_string
 
 logger = get_logger(__name__)
+
+
+def create_playlist(name: str, description: str = "Playlist created with Chopin") -> PlaylistData:
+    """Create a playlist in the user library.
+
+    Args:
+        name: Name for the playlist
+        description: Optional description for the playlist
+
+    Returns:
+        Created playlist data.
+    """
+    user = get_current_user()
+    return create_user_playlist(user_id=user.id, name=name, description=description)
 
 
 def create(name: str, description: str = "Randomly Generated Mix", overwrite: bool = True) -> PlaylistData:
@@ -158,7 +171,7 @@ def tracks_from_playlist_uri(
     """
     try:
         tracks = get_playlist_tracks(playlist_uri=playlist_uri, release_date_range=release_range)
-    except spotipy.SpotifyException:
+    except Exception:
         logger.warning(f"Couldn't retrieve playlist URI {playlist_uri}")
         return []
     return select_tracks(tracks, nb_tracks, selection_method)

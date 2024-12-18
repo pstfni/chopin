@@ -7,7 +7,7 @@ import streamlit as st
 from conversion import convert_form_configuration
 from requests import ConnectionError, HTTPError
 
-from chopin.client.playlists import get_user_playlists
+from chopin.client.endpoints import get_user_playlists
 from chopin.managers.composition import compose
 from chopin.managers.playlist import create, fill
 from chopin.managers.selection import SelectionMethod

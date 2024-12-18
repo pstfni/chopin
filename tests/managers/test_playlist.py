@@ -4,6 +4,7 @@ import pytest
 
 from chopin.managers.playlist import (
     create,
+    create_playlist,
     dump,
     tracks_from_artist_name,
     tracks_from_playlist_name,
@@ -74,3 +75,16 @@ def test_dump(tmp_path, playlist_1, playlist_1_tracks):
     with open(outfile, "w"):
         dump(playlist_summary, outfile)
     assert outfile.exists()
+
+
+def test_create_playlist(spotify_playlist, spotify_user):
+    with (
+        patch("chopin.client.playlists._client.user_playlist_create", return_value=spotify_playlist),
+        patch("chopin.client.playlists._client.current_user", return_value=spotify_user),
+    ):
+        playlist = create_playlist(name="string", description="string")
+
+    assert isinstance(playlist, PlaylistData)
+    # from the fixture and not the `create_playlist` method arg
+    assert playlist.name == "string"
+    assert playlist.uri == "string"

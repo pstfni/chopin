@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from chopin.client.playlists import _validate_tracks, create_playlist, get_playlist_tracks, get_user_playlists
+from chopin.client.endpoints import _validate_tracks, get_playlist_tracks, get_user_playlists
 from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData
 
@@ -186,18 +186,6 @@ def test_get_user_playlists(user_playlists, expected_playlist_data):
     with patch("chopin.client.playlists._client.current_user_playlists", return_value=user_playlists):
         playlists = get_user_playlists()
     assert playlists == expected_playlist_data
-
-
-def test_create_playlist(spotify_playlist, spotify_user):
-    with patch("chopin.client.playlists._client.user_playlist_create", return_value=spotify_playlist), patch(
-        "chopin.client.playlists._client.current_user", return_value=spotify_user
-    ):
-        playlist = create_playlist(name="string", description="string")
-
-    assert isinstance(playlist, PlaylistData)
-    # from the fixture and not the `create_playlist` method arg
-    assert playlist.name == "string"
-    assert playlist.uri == "string"
 
 
 @pytest.mark.parametrize("added_at", [None, datetime(2023, 12, 12, 0, 0, 0)])

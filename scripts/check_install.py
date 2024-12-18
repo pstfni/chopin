@@ -1,6 +1,6 @@
 """Check chopin is installed and has access to spotify."""
 
-from chopin.client.user import get_current_user, get_top_tracks
+from chopin.client.endpoints import get_current_user, get_top_tracks
 from chopin.schemas.track import TrackData
 from chopin.schemas.user import UserData
 

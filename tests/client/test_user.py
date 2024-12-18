@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from chopin.client.user import get_likes
+from chopin.client.endpoints import get_likes
 from chopin.schemas.track import TrackData
 
 

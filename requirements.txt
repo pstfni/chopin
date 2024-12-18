@@ -2,8 +2,6 @@
 #    uv pip compile --extra dev --extra docs pyproject.toml
 annotated-types==0.7.0
     # via pydantic
-async-timeout==5.0.1
-    # via redis
 babel==2.16.0
     # via mkdocs-material
 certifi==2024.8.30
@@ -23,8 +21,6 @@ coloredlogs==15.0.1
     # via chopin (pyproject.toml)
 emoji==2.14.0
     # via chopin (pyproject.toml)
-exceptiongroup==1.2.2
-    # via pytest
 ghp-import==2.1.0
     # via mkdocs
 griffe==1.5.1
@@ -110,7 +106,7 @@ pydantic==2.10.3
     #   pydantic-settings
 pydantic-core==2.27.1
     # via pydantic
-pydantic-settings==2.6.1
+pydantic-settings==2.7.0
     # via chopin (pyproject.toml)
 pygments==2.18.0
     # via
@@ -158,7 +154,7 @@ ruamel-yaml==0.18.6
     # via chopin (pyproject.toml)
 ruamel-yaml-clib==0.2.12
     # via ruamel-yaml
-ruff==0.8.2
+ruff==0.8.3
     # via chopin (pyproject.toml)
 shellingham==1.5.4
     # via typer
@@ -168,8 +164,6 @@ spotipy==2.24.0
     # via chopin (pyproject.toml)
 termcolor==2.5.0
     # via pytest-sugar
-tomli==2.2.1
-    # via pytest
 tqdm==4.67.1
     # via chopin (pyproject.toml)
 typer==0.15.1
@@ -178,7 +172,6 @@ typing-extensions==4.12.2
     # via
     #   pydantic
     #   pydantic-core
-    #   rich
     #   typer
 tzdata==2024.2
     # via pandas
@@ -186,7 +179,7 @@ urllib3==2.2.3
     # via
     #   requests
     #   spotipy
-uv==0.5.7
+uv==0.5.8
     # via chopin (pyproject.toml)
 watchdog==6.0.0
     # via mkdocs

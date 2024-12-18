@@ -4,7 +4,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from chopin.entrypoints.queue import queue
+from chopin.cli.queue import queue
 
 
 @dataclass

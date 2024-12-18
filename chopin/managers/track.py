@@ -2,7 +2,7 @@
 
 import random
 
-from chopin.client.tracks import like_tracks
+from chopin.client.endpoints import like_tracks
 from chopin.schemas.track import TrackData
 from chopin.tools.logger import get_logger
 

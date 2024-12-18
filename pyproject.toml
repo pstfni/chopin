@@ -4,6 +4,8 @@ version = "0.1.0-0"
 description = "chopin: compose, download, and describe Spotify playlists"
 authors = [{name="pstfni", email="x@y.com"}]
 readme = "README.md"
+requires-python = ">= 3.10"
+classifiers = ["Private :: Do Not Upload"]
 
 dependencies = [
 "numpy",
@@ -30,9 +32,5 @@ include = ["chopin*"]
 namespaces = false
 
 [project.scripts]
-compose = "chopin.entrypoints.compose:main"
-describe = "chopin.entrypoints.describe:main"
-queue = "chopin.entrypoints.queue:main"
-recommend = "chopin.entrypoints.recommend:main"
-restore = "chopin.entrypoints.restore:main"
-shuffle = "chopin.entrypoints.shuffle:main"
+chopin = "chopin.cli:app"
+

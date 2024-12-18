@@ -2,7 +2,7 @@ from unittest.mock import ANY, Mock, patch
 
 import pytest
 
-from chopin.client.playback import get_currently_playing, get_queue
+from chopin.client.endpoints import get_currently_playing, get_queue
 from chopin.schemas.track import TrackData
 
 

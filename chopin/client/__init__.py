@@ -1,1 +1,1 @@
-"""Spotify client settings."""
+"""Configuration for the Spotify 'Spotipy' client."""

@@ -5,7 +5,7 @@ from pathlib import Path
 import typer
 from ruamel.yaml import YAML
 
-from chopin.client.playlists import get_user_playlists
+from chopin.client.endpoints import get_user_playlists
 from chopin.managers.composition import compose
 from chopin.managers.playlist import create, fill
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem

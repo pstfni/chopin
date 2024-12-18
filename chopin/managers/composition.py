@@ -4,8 +4,7 @@ import itertools
 import random
 from datetime import date
 
-from chopin.client.playlists import get_user_playlists
-from chopin.client.user import get_top_tracks
+from chopin.client.endpoints import get_top_tracks, get_user_playlists
 from chopin.managers.playlist import (
     tracks_from_artist_name,
     tracks_from_playlist_name,

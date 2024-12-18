@@ -4,14 +4,16 @@ from pathlib import Path
 
 import typer
 
-from chopin.client.playlists import get_named_playlist, get_user_playlists
+from chopin.client.endpoints import get_named_playlist, get_user_playlists
 from chopin.managers.playlist import dump, summarize_playlist
 from chopin.tools.logger import get_logger
 
 logger = get_logger(__name__)
+backup_app = typer.Typer()
 
 
-def describe(
+@backup_app.command()
+def backup(
     output: Path = typer.Option(None, help="Output directory"),
     name: str = typer.Option(None, help="Specific name of a playlist to fetch. If none, all playlists are fetched"),
 ):
@@ -30,7 +32,3 @@ def describe(
         out_file = output / f"{target_playlist.name}.json"
         typer.echo(f"Wrote playlist {target_playlist.name} in {out_file}")
         dump(summarized_playlist, out_file)
-
-
-def main():  # noqa: D103
-    typer.run(describe)
