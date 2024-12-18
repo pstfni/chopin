@@ -2,6 +2,7 @@
 
 import click
 
+from chopin.cli.app import app as webapp
 from chopin.cli.backup import backup
 from chopin.cli.compose import compose
 from chopin.cli.from_queue import from_queue
@@ -23,6 +24,7 @@ app.add_command(compose)
 app.add_command(from_queue)
 app.add_command(restore)
 app.add_command(shuffle)
+app.add_command(webapp)
 
 if __name__ == "__main__":
     app()
