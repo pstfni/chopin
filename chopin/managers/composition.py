@@ -78,7 +78,7 @@ DISPATCHER: dict[str, callable] = {
 }
 
 
-def compose(composition_config: ComposerConfig) -> list[TrackData]:
+def compose_playlist(composition_config: ComposerConfig) -> list[TrackData]:
     """From a composition configuration, compose a playlist.
 
     Args:

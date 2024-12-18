@@ -2,26 +2,24 @@
 
 from pathlib import Path
 
-import typer
+import click
 
 from chopin.client.endpoints import get_named_playlist, get_user_playlists
 from chopin.managers.playlist import dump, summarize_playlist
 from chopin.tools.logger import get_logger
 
 logger = get_logger(__name__)
-backup_app = typer.Typer()
 
 
-@backup_app.command()
+@click.command()
+@click.argument("output", type=click.Path(exists=True, path_type=Path))
+@click.argument("name", type=str)
 def backup(
-    output: Path = typer.Option(None, help="Output directory"),
-    name: str = typer.Option(None, help="Specific name of a playlist to fetch. If none, all playlists are fetched"),
+    output: Path,
+    name: str,
 ):
-    """Retrieve data from a playlist and describe it.
-
-    The playlist(s) (summarized as JSONs) will be written into files.
-    """
-    typer.echo("📝 Describing . . .")
+    """Retrieve data from a playlist `name` and save its serialized summary in a file under `output/`."""
+    click.echo("📝 Describing . . .")
     if name:
         target_playlists = [get_named_playlist(name)]
     else:
@@ -30,5 +28,5 @@ def backup(
     for target_playlist in target_playlists:
         summarized_playlist = summarize_playlist(playlist=target_playlist)
         out_file = output / f"{target_playlist.name}.json"
-        typer.echo(f"Wrote playlist {target_playlist.name} in {out_file}")
+        click.echo(f"Wrote playlist {target_playlist.name} in {out_file}")
         dump(summarized_playlist, out_file)

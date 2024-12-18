@@ -25,7 +25,7 @@ a.internal-link::after {
 .md-typeset .admonition,
 .md-typeset details {
   border-width: 0px;
-  border-left-width: 2px;
+  border-left-width: 5px;
   border-radius: 8px;
 }
 

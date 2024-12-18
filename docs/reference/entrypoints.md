@@ -1,13 +1,13 @@
-# Entrypoints
+# Commands
 
-::: chopin.entrypoints.compose
+::: chopin.cli.compose
     options:
         show_signature: false
 
-::: chopin.entrypoints.queue
+::: chopin.cli.from_queue
     options:
         show_signature: false
 
-::: chopin.entrypoints.shuffle
+::: chopin.cli.shuffle
     options:
         show_signature: false

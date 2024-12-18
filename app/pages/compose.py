@@ -8,7 +8,7 @@ from conversion import convert_form_configuration
 from requests import ConnectionError, HTTPError
 
 from chopin.client.endpoints import get_user_playlists
-from chopin.managers.composition import compose
+from chopin.managers.composition import compose_playlist
 from chopin.managers.playlist import create, fill
 from chopin.managers.selection import SelectionMethod
 from chopin.schemas.composer import ComposerConfig
@@ -135,7 +135,7 @@ if submitted:
             history_config=history,
         )
         composer_config = ComposerConfig.model_validate(composer_config)
-        tracks = compose(composer_config)
+        tracks = compose_playlist(composer_config)
         playlist = create(name=composer_config.name, description=composer_config.description, overwrite=True)
         fill(uri=playlist.uri, tracks=tracks)
         st.success(f"Playlist {composer_config.name} succesfully created! {len(tracks)} tracks added")

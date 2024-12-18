@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from chopin.managers.composition import compose
+from chopin.managers.composition import compose_playlist
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
 from chopin.schemas.playlist import PlaylistData
 
@@ -20,7 +20,7 @@ def test_playlist_compose_from_artists(
     ]
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
-    tracks = compose(composition_config=configuration)
+    tracks = compose_playlist(composition_config=configuration)
     assert len(tracks) == 20
     assert len([t for t in tracks if t.id.startswith("p")]) == len([t for t in tracks if t.id.startswith("q")]) == 10
 
@@ -43,7 +43,7 @@ def test_playlist_compose_from_artists_with_different_weights(
     ]
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
-    tracks = compose(composition_config=configuration)
+    tracks = compose_playlist(composition_config=configuration)
     # 21 because of the ceil() when computing actual nb songs
     assert len(tracks) == 21
     assert len([t for t in tracks if t.id.startswith("p")]) == 14
@@ -66,7 +66,7 @@ def test_playlist_compose_from_playlists(
     mock_get_playlists.return_value = [playlist_1, playlist_2]
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
-    tracks = compose(composition_config=configuration)
+    tracks = compose_playlist(composition_config=configuration)
     assert len(tracks) == 20
     assert len([t for t in tracks if t.id.startswith("p")]) == len([t for t in tracks if t.id.startswith("q")]) == 10
 
@@ -87,7 +87,7 @@ def test_playlist_compose_from_playlists_with_different_weights(
     mock_get_playlists.return_value = [playlist_1, playlist_2]
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
-    tracks = compose(composition_config=configuration)
+    tracks = compose_playlist(composition_config=configuration)
     assert len(tracks) == 21
     assert len([t for t in tracks if t.id.startswith("p")]) == 17
     assert len([t for t in tracks if t.id.startswith("q")]) == 4
@@ -103,12 +103,12 @@ def test_playlist_compose_from_history(
     )
     mock_get_history_tracks.side_effect = [playlist_1_tracks]
 
-    tracks = compose(composition_config=configuration)
+    tracks = compose_playlist(composition_config=configuration)
     assert mock_get_history_tracks.call_args[1]["limit"] == 20
     assert all([t.id.startswith("p") for t in tracks])
 
 
 def test_playlist_compose_with_empty_playlists():
     configuration = ComposerConfig(nb_songs=20, playlists=[])
-    tracks = compose(configuration)
+    tracks = compose_playlist(configuration)
     assert len(tracks) == 0

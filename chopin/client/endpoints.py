@@ -7,10 +7,9 @@ from typing import Any, Literal
 
 import requests
 import spotipy
-from pydantic import SecretStr, ValidationError
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from spotipy.oauth2 import SpotifyOAuth
+from pydantic import ValidationError
 
+from chopin.client.settings import _client
 from chopin.constants import constants
 from chopin.schemas.artist import ArtistData
 from chopin.schemas.playlist import PlaylistData
@@ -20,37 +19,6 @@ from chopin.tools.logger import get_logger
 from chopin.tools.strings import match_strings, simplify_string
 
 logger = get_logger(__name__)
-
-
-class SpotifyConfig(BaseSettings):
-    """Spotify API settings."""
-
-    model_config = SettingsConfigDict(env_file=".env")
-
-    client_id: SecretStr
-    client_secret: SecretStr
-    scope: str = "user-library-read"
-    redirect_uri: str = "http://localhost:8888/callback"
-
-    requests_timeout: float = 20.0
-
-
-class Settings(BaseSettings):
-    """Valohai library settings pydantic model."""
-
-    config: SpotifyConfig = SpotifyConfig()
-    client: spotipy.Spotify = spotipy.Spotify(
-        auth_manager=SpotifyOAuth(
-            client_id=config.client_id.get_secret_value(),
-            client_secret=config.client_secret.get_secret_value(),
-            redirect_uri=config.redirect_uri,
-            scope=config.scope,
-        )
-    )
-
-
-spotify_settings = Settings()
-_client = spotify_settings.client
 
 
 def get_this_is_playlist(artist_name: str) -> PlaylistData | None:

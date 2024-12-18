@@ -19,7 +19,7 @@ dependencies = [
 "pandas",
 "python-dotenv",
 "coloredlogs",
-"typer",
+"click",
 ]
 
 [project.optional-dependencies]

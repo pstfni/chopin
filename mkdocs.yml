@@ -83,7 +83,7 @@ plugins:
 watch:
   - chopin/managers/
   - chopin/schemas/
-  - chopin/entrypoints/
+  - chopin/cli/
   - .docs_theme/assets/
 
 extra_css:

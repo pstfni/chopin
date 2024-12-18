@@ -2,50 +2,34 @@
 
 from pathlib import Path
 
-import typer
+import click
 from ruamel.yaml import YAML
 
-from chopin.client.endpoints import get_user_playlists
-from chopin.managers.composition import compose
+from chopin.managers.composition import compose_playlist
 from chopin.managers.playlist import create, fill
-from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
+from chopin.schemas.composer import ComposerConfig
 from chopin.tools.logger import get_logger
 
 LOGGER = get_logger(__name__)
 
 
-def compose_playlist(
-    nb_songs: int = typer.Argument(50, help="Number of songs for the playlist"),
-    composition_config: Path = typer.Option(None, help="Path to a YAML file with composition for your playlists"),
+@click.command()
+@click.argument("configuration", type=click.Path(exists=True, path_type=Path))
+def compose(
+    configuration: Path,
 ):
-    """Compose a playlist from existing ones.
+    """Compose a from a composition configuration.
 
-    You can use a YAML file to specify playlists and artists
-    should be used, and weigh them.
-
-    todo: write an how to documentation
+    You can use a YAML file to specify playlists and artists should be
+    used, and weigh them.
     """
-    user_playlists = get_user_playlists()
+    click.echo("🤖 Composing . . .")
 
-    typer.echo("🤖 Composing . . .")
+    yaml = YAML(typ="safe", pure=True)
+    config = ComposerConfig.model_validate(yaml.load(open(configuration)))
 
-    if not composition_config:
-        # The user didn't give a config to compose its playlist, we create one from its playlists
-        config = ComposerConfig(
-            nb_songs=nb_songs,
-            playlists=[ComposerConfigItem(name=playlist.name, weight=1) for playlist in user_playlists],
-        )
-
-    else:
-        yaml = YAML(typ="safe", pure=True)
-        config = ComposerConfig.model_validate(yaml.load(open(composition_config)))
-
-    tracks = compose(composition_config=config)
+    tracks = compose_playlist(composition_config=config)
 
     playlist = create(name=config.name, description=config.description, overwrite=True)
     fill(uri=playlist.uri, tracks=tracks)
-    typer.echo(f"Playlist '{playlist.name}' successfully created.")
-
-
-def main():  # noqa: D103
-    typer.run(compose_playlist)
+    click.echo(f"Playlist '{playlist.name}' successfully created.")

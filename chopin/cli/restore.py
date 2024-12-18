@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-import typer
+import click
 
 from chopin import VERSION
 from chopin.managers.playlist import create, fill
@@ -13,14 +13,21 @@ from chopin.tools.logger import get_logger
 logger = get_logger(__name__)
 
 
+@click.command()
+@click.argument("path", type=click.Path(exists=True, path_type=Path))
+@click.argument("new-name", type=str)
 def restore(
-    path: Path = typer.Argument(..., help="Path to the summary of the playlist to restore."),
-    name: str = typer.Option(None, help="Override the name of the playlist to restore"),
+    path: Path,
+    new_name: str,
 ):
-    """Create a playlist based on its summary. Essentially, use this entrypoint to restore a playlist from a backup.
+    """Create a playlist based on its serialized version, found in `path`.
+
+    Essentially, use this entrypoint to restore a playlist from a backup.
+
+    The filename will be used for the playlist name. You can give it a new name with the `new-name` parameter.
 
     !!! Note
-        Backups can be created with the `describe` entrypoint.
+        Backups can be created with the `backup` entrypoint.
     """
     json_summary = json.load(open(path))
     summary = PlaylistSummary.model_validate(json_summary)
@@ -31,13 +38,9 @@ def restore(
             f"You can checkout: `git checkout {json_summary.get('version')}"
         )
 
-    if name:
-        summary.playlist.name = name
+    if new_name:
+        summary.playlist.name = new_name
 
-    typer.echo("🔝 Restoring")
+    click.echo("🔝 Restoring")
     playlist = create(name=summary.playlist.name, description=summary.playlist.description, overwrite=False)
     playlist = fill(playlist.uri, tracks=summary.tracks)
-
-
-def main():  # noqa: D103
-    typer.run(restore)

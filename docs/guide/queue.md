@@ -1,13 +1,13 @@
 # 🔮 Queue
 
-You cannot shuffle_playlist through songs in your queue, so let's create a playlist to do so !
+You cannot shuffle songs in your queue, so let's create a playlist to do so !
 
-The `queue` entrypoint create a playlist from the songs in your queue.
+The `from-queue` command create a playlist from the songs in your queue.
 
 <div class="termy">
 
 ```console
-$ queue 
+$ chopin from-queue 
 
 🔮 Queuing . . .
 Playlist '🔮 Queued Mix' successfully created.

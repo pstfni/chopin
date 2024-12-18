@@ -1,27 +1,6 @@
 # Compose
 
-Compose playlists from scratch in a few seconds with the `composer` entrypoint.
-
-
-<div class="termy">
-
-```console
-$ compose --nb-songs 50 
-
-🤖 Composing . . .
-
-<font color="#6ed47d">
-With the composer configuration parsed, 52 songs will be added.
-0%  |   |  0/4 
-25% |█   | Adding 13 tracks from playlist pop
-50% |██  | Adding 13 tracks from playlist rock
-75% |███ | Adding 13 tracks from playlist soul
-100%|████| Adding 13 tracks from playlist dance
-</font>
-Playlist '🤖 Robot Mix' successfully created.
-```
-</div>
-
+Compose playlists from scratch in a few seconds with the `compose` command.
 
 ## How to compose your playlist
 
@@ -44,7 +23,7 @@ Give your YAML configuration to the entrypoint:
 
 <div class="termy">
 ```console
-$ compose --composition-config playlist_composition.yaml
+$ compose --configuration playlist_composition.yaml
 ```
 </div>
 

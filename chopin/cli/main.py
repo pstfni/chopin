@@ -1,16 +1,28 @@
 """Main and common entrypoint for the chopin cli."""
 
-import typer
+import click
 
 from chopin.cli.backup import backup
 from chopin.cli.compose import compose
-from chopin.cli.queue import queue
+from chopin.cli.from_queue import from_queue
 from chopin.cli.restore import restore
 from chopin.cli.shuffle import shuffle
 
-app = typer.Typer(rich_markup_mode="rich", pretty_exceptions_short=True)
-app.add_typer(backup)
-app.add_typer(compose)
-app.add_typer(queue)
-app.add_typer(restore)
-app.add_typer(shuffle)
+
+@click.group(name="chopin")
+def app():
+    """Manage and compose playlists.
+
+    [bold red] ah [/bold red] [dim]
+    """
+    pass
+
+
+app.add_command(backup)
+app.add_command(compose)
+app.add_command(from_queue)
+app.add_command(restore)
+app.add_command(shuffle)
+
+if __name__ == "__main__":
+    app()

@@ -4,7 +4,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from chopin.cli.queue import queue
+from chopin.cli.from_queue import from_queue
 
 
 @dataclass
@@ -18,5 +18,5 @@ class Entrypoint:
 
 
 ENTRYPOINTS: list[Entrypoint] = [
-    Entrypoint(name="queue", on_click=queue, docstring="Create a playlist from the user queue"),
+    Entrypoint(name="queue", on_click=from_queue, docstring="Create a playlist from the user queue"),
 ]
