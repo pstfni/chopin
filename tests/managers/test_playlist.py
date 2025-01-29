@@ -79,8 +79,8 @@ def test_dump(tmp_path, playlist_1, playlist_1_tracks):
 
 def test_create_playlist(spotify_playlist, spotify_user):
     with (
-        patch("chopin.client.playlists._client.user_playlist_create", return_value=spotify_playlist),
-        patch("chopin.client.playlists._client.current_user", return_value=spotify_user),
+        patch("chopin.client.endpoints._client.user_playlist_create", return_value=spotify_playlist),
+        patch("chopin.client.endpoints._client.current_user", return_value=spotify_user),
     ):
         playlist = create_playlist(name="string", description="string")
 

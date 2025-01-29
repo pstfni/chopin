@@ -5,6 +5,8 @@ import unicodedata
 
 import emoji
 
+BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 
 def simplify_string(text: str) -> str:
     """Simplify a string: lowercase, and no emojis."""
@@ -56,3 +58,40 @@ def extract_uri_from_playlist_link(playlist_link: str) -> str:
     if match:
         return match.group(1)
     return ""
+
+
+def decode(encoded_string, alphabet=BASE62) -> str:
+    """Decode a Base X encoded string into the number.
+
+    Args:
+        encoded_string: The encoded string
+        alphabet: Alphabet to use for decoding
+
+    Returns:
+        The decoded string
+    """
+    base = len(alphabet)
+    strlen = len(encoded_string)
+    num = 0
+
+    idx = 0
+    for char in encoded_string:
+        power = strlen - (idx + 1)
+        num += alphabet.index(char) * (base**power)
+        idx += 1
+
+    decoded = "".join(chr((num >> 8 * (len(BASE62) - byte - 1)) & 0xFF) for byte in range(len(BASE62)))
+    return decoded
+
+
+def owner_is_spotify(uri: str) -> bool:
+    """Test if the given URI is owned by spotify.
+
+    Args:
+        uri: URI to test
+
+    Returns:
+        True if 'spotify' is the owner of the URI item.
+    """
+    decoded = "".join([char for char in decode(uri) if char.isalnum()])
+    return decoded.startswith("format")

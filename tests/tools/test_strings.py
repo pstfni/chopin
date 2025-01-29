@@ -1,6 +1,6 @@
 import pytest
 
-from chopin.tools.strings import extract_uri_from_playlist_link, match_strings, simplify_string
+from chopin.tools.strings import extract_uri_from_playlist_link, match_strings, owner_is_spotify, simplify_string
 
 
 @pytest.mark.parametrize(
@@ -56,3 +56,15 @@ def test_match_strings(input_strings, expected_result):
 )
 def test_extract_uri_from_playlist_link(input_link: str, expected_uri: str):
     assert extract_uri_from_playlist_link(input_link) == expected_uri
+
+
+@pytest.mark.parametrize(
+    "uri, expected_result",
+    [
+        ("5oXFlMFTmq3LvXXQCrpMB6", False),
+        ("3x0CugroW1F8VavVeBMFlZ", False),
+        ("37i9dQZF1DZ06evO1S7maQ", True),
+    ],
+)
+def test_owner_is_spotify(uri, expected_result):
+    assert owner_is_spotify(uri) == expected_result

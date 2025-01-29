@@ -183,7 +183,7 @@ def valid_track():
 )
 def test_get_user_playlists(user_playlists, expected_playlist_data):
     get_user_playlists.cache_clear()
-    with patch("chopin.client.playlists._client.current_user_playlists", return_value=user_playlists):
+    with patch("chopin.client.endpoints._client.current_user_playlists", return_value=user_playlists):
         playlists = get_user_playlists()
     assert playlists == expected_playlist_data
 
@@ -191,7 +191,7 @@ def test_get_user_playlists(user_playlists, expected_playlist_data):
 @pytest.mark.parametrize("added_at", [None, datetime(2023, 12, 12, 0, 0, 0)])
 def test_get_playlist_tracks(spotify_track, added_at):
     response = {"items": [dict(added_at=added_at, track=spotify_track)]}
-    with patch("chopin.client.playlists._client.playlist_items", side_effect=[response, {"items": []}]):
+    with patch("chopin.client.endpoints._client.playlist_items", side_effect=[response, {"items": []}]):
         playlist_tracks = get_playlist_tracks(playlist_uri="test", release_date_range=None)
     assert len(playlist_tracks) == 1
     assert isinstance(playlist_tracks[0], TrackData)
@@ -211,7 +211,7 @@ def test_get_playlist_tracks(spotify_track, added_at):
 def test_get_playlist_tracks_with_release_date_range(spotify_track, release_date_range, expected_nb_tracks):
     # hint: fixture release date is (1981, 12, 1)
     response = {"items": [dict(added_at=None, track=spotify_track)]}
-    with patch("chopin.client.playlists._client.playlist_items", side_effect=[response, {"items": []}]):
+    with patch("chopin.client.endpoints._client.playlist_items", side_effect=[response, {"items": []}]):
         playlist_tracks = get_playlist_tracks(playlist_uri="test", release_date_range=release_date_range)
     assert len(playlist_tracks) == expected_nb_tracks
 

@@ -5,18 +5,16 @@ from datetime import datetime
 from functools import lru_cache
 from typing import Any, Literal
 
-import requests
-import spotipy
 from pydantic import ValidationError
 
-from chopin.client.settings import _client
+from chopin.client.settings import _anon_client, _client
 from chopin.constants import constants
 from chopin.schemas.artist import ArtistData
 from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData
 from chopin.schemas.user import UserData
 from chopin.tools.logger import get_logger
-from chopin.tools.strings import match_strings, simplify_string
+from chopin.tools.strings import match_strings, owner_is_spotify, simplify_string
 
 logger = get_logger(__name__)
 
@@ -35,7 +33,7 @@ def get_this_is_playlist(artist_name: str) -> PlaylistData | None:
     """
     # NOTE : Strict match for 'This Is artist_name' !
     search = f"This Is {artist_name}"
-    response = _client.search(q=search, limit=10, type="playlist", market="fr")["playlists"]
+    response = _anon_client.search(q=search, limit=10, type="playlist", market="fr")["playlists"]
     items = response.get("items")
     if not items:
         raise ValueError(f"Couldn't retrieve playlists for query {artist_name}")
@@ -113,29 +111,8 @@ def get_queue() -> list[TrackData]:
             "Spotify should be active on a device and the playback should be on for the get_queue endpoint to work."
         )
 
-    headers = {
-        "Authorization": f"Bearer {_client.auth_manager.get_access_token(as_dict=False)}",
-        "Content-Type": "application/json",
-    }
-    route = "https://api.spotify.com/v1/me/player/queue"
-    try:
-        response = _client._session.request(
-            method="GET",
-            url=route,
-            headers=headers,
-            timeout=5,
-            proxies=None,
-        )
-        response.raise_for_status()
-        results = response.json()
-    except requests.exceptions.HTTPError as http_error:
-        error_response = http_error.response
-        raise spotipy.SpotifyException(
-            error_response.status_code, -1, f"{route}\n{error_response}", headers=error_response.headers
-        ) from http_error
-    except ValueError:
-        results = None
-    return [TrackData(**track) for track in results.get("queue")]
+    response = _client.queue()
+    return [TrackData(**track) for track in response.get("queue")]
 
 
 @lru_cache
@@ -209,12 +186,14 @@ def get_playlist_tracks(
     Returns:
         A list of track uuids.
     """
+    valid_client = _anon_client if owner_is_spotify(playlist_uri) else _client
+
     offset: int = 0
     tracks: list[TrackData] = []
     response: dict[str, Any] = {"response": []}
 
     while response:
-        response = _client.playlist_items(
+        response = valid_client.playlist_items(
             playlist_uri,
             offset=offset,
             fields=constants.TRACK_FIELDS,
