@@ -123,7 +123,7 @@ def get_user_playlists() -> list[PlaylistData]:
         A list of playlist data.
     """
     playlists = _client.current_user_playlists().get("items", [])
-    return [PlaylistData(name=simplify_string(p["name"]), uri=p["uri"]) for p in playlists]
+    return [PlaylistData(name=simplify_string(p["name"]), uri=p["uri"], id=p["id"]) for p in playlists]
 
 
 def get_named_playlist(name: str) -> PlaylistData:
@@ -174,19 +174,19 @@ def _validate_tracks(tracks: list[dict[str, Any]]) -> list[TrackData]:
 
 
 def get_playlist_tracks(
-    playlist_uri: str, release_date_range: tuple[datetime.date, datetime.date] | None = None
+    playlist_id: str, release_date_range: tuple[datetime.date, datetime.date] | None = None
 ) -> list[TrackData]:
     """Get tracks of a given playlist.
 
     Args:
-        playlist_uri: The uri of the playlist.
+        playlist_id: The uri of the playlist.
         release_date_range: A date range; tracks to retrieve must have been released in this range.
 
 
     Returns:
         A list of track uuids.
     """
-    valid_client = _anon_client if owner_is_spotify(playlist_uri) else _client
+    valid_client = _anon_client if owner_is_spotify(playlist_id) else _client
 
     offset: int = 0
     tracks: list[TrackData] = []
@@ -194,7 +194,7 @@ def get_playlist_tracks(
 
     while response:
         response = valid_client.playlist_items(
-            playlist_uri,
+            playlist_id,
             offset=offset,
             fields=constants.TRACK_FIELDS,
             additional_types=["track"],
@@ -227,34 +227,34 @@ def create_user_playlist(user_id: str, name: str, description: str = "Playlist c
         Created playlist data.
     """
     playlist = _client.user_playlist_create(user=user_id, name=name, description=description)
-    return PlaylistData(name=playlist["name"], uri=playlist["uri"])
+    return PlaylistData(name=playlist["name"], uri=playlist["uri"], id=playlist["id"])
 
 
-def add_tracks_to_playlist(playlist_uri: str, track_ids: list[str]) -> None:
+def add_tracks_to_playlist(playlist_id: str, track_ids: list[str]) -> None:
     """Add tracks to a user playlist.
 
     Args:
-        playlist_uri: URI of the target playlist
+        playlist_id: URI of the target playlist
         track_ids: IDs for the tracks.
     """
     paginated_tracks = [track_ids[i : i + 99] for i in range(0, len(track_ids), 99)]
     for page_tracks in paginated_tracks:
-        _client.playlist_add_items(playlist_uri, page_tracks)
+        _client.playlist_add_items(playlist_id, page_tracks)
 
 
-def replace_tracks_in_playlist(playlist_uri: str, track_ids: list[str]) -> None:
+def replace_tracks_in_playlist(playlist_id: str, track_ids: list[str]) -> None:
     """Replace tracks in a given playlist.
 
     Args:
-        playlist_uri: URI of the target playlist. All of its tracks will be removed!
+        playlist_id: URI of the target playlist. All of its tracks will be removed!
         track_ids: New tracks to add in the playlist.
     """
-    tracks_to_remove = get_playlist_tracks(playlist_uri)
+    tracks_to_remove = get_playlist_tracks(playlist_id)
     tracks_to_remove_ids = [track.id for track in tracks_to_remove]
     paginated_tracks = [tracks_to_remove_ids[i : i + 99] for i in range(0, len(tracks_to_remove_ids), 99)]
     for page_tracks in paginated_tracks:
-        _client.playlist_remove_all_occurrences_of_items(playlist_uri, page_tracks)
-    add_tracks_to_playlist(playlist_uri, track_ids)
+        _client.playlist_remove_all_occurrences_of_items(playlist_id, page_tracks)
+    add_tracks_to_playlist(playlist_id, track_ids)
 
 
 def like_tracks(track_uris: list[str]) -> None:

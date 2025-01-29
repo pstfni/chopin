@@ -60,7 +60,7 @@ def _add_from_uris(
 ) -> list[TrackData]:
     tracks = [
         tracks_from_playlist_uri(
-            playlist_uri=uri.name,
+            playlist_id=uri.name,
             nb_tracks=uri.nb_songs,
             release_range=release_range,
             selection_method=uri.selection_method,

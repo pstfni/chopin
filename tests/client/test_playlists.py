@@ -192,7 +192,7 @@ def test_get_user_playlists(user_playlists, expected_playlist_data):
 def test_get_playlist_tracks(spotify_track, added_at):
     response = {"items": [dict(added_at=added_at, track=spotify_track)]}
     with patch("chopin.client.endpoints._client.playlist_items", side_effect=[response, {"items": []}]):
-        playlist_tracks = get_playlist_tracks(playlist_uri="test", release_date_range=None)
+        playlist_tracks = get_playlist_tracks(playlist_id="test", release_date_range=None)
     assert len(playlist_tracks) == 1
     assert isinstance(playlist_tracks[0], TrackData)
     if added_at:
@@ -212,7 +212,7 @@ def test_get_playlist_tracks_with_release_date_range(spotify_track, release_date
     # hint: fixture release date is (1981, 12, 1)
     response = {"items": [dict(added_at=None, track=spotify_track)]}
     with patch("chopin.client.endpoints._client.playlist_items", side_effect=[response, {"items": []}]):
-        playlist_tracks = get_playlist_tracks(playlist_uri="test", release_date_range=release_date_range)
+        playlist_tracks = get_playlist_tracks(playlist_id="test", release_date_range=release_date_range)
     assert len(playlist_tracks) == expected_nb_tracks
 
 

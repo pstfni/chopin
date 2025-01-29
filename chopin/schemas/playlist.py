@@ -18,6 +18,7 @@ class PlaylistData(BaseModel):
 
     name: str
     uri: str
+    id: str
     description: str = ""
 
 

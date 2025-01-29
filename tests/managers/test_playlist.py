@@ -18,9 +18,9 @@ from chopin.schemas.playlist import PlaylistData, PlaylistSummary
 @pytest.mark.parametrize("name", ["new_playlist", "playlist_1"])
 def test_create(mock_replace_tracks_in_playlist, mock_create_playlist, mock_get_user_playlists, name):
     mock_get_user_playlists.return_value = [
-        PlaylistData(name="playlist_1", uri="uri"),
+        PlaylistData(name="playlist_1", uri="uri", id="uri"),
     ]
-    mock_create_playlist.return_value = PlaylistData(name=name, uri="uri")
+    mock_create_playlist.return_value = PlaylistData(name=name, uri="uri", id="uri")
     mock_replace_tracks_in_playlist.return_value = 200
 
     playlist = create(name, "a description", overwrite=True)
@@ -35,8 +35,8 @@ def test_create(mock_replace_tracks_in_playlist, mock_create_playlist, mock_get_
 @pytest.mark.parametrize(
     "nb_tracks, this_is_side_effect, expected_nb_songs",
     [
-        (10, PlaylistData(name="a", uri="uri"), 10),
-        (20, PlaylistData(name="a", uri="uri"), 20),
+        (10, PlaylistData(name="a", uri="uri", id="uri"), 10),
+        (20, PlaylistData(name="a", uri="uri", id="uri"), 20),
         # No playlists found by the client: 0 tracks returned
         (10, None, 0),
     ],

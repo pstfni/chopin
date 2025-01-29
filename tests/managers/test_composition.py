@@ -15,8 +15,8 @@ def test_playlist_compose_from_artists(
         artists=[ComposerConfigItem(name="Artist", weight=1), ComposerConfigItem(name="Artist_2", weight=1)],
     )
     mock_get_this_is_playlist.side_effect = [
-        PlaylistData(name="Artist", uri="uri"),
-        PlaylistData(name="Artist_2", uri="uri_2"),
+        PlaylistData(name="Artist", uri="uri", id="uri"),
+        PlaylistData(name="Artist_2", uri="uri_2", id="uri_2"),
     ]
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
@@ -38,8 +38,12 @@ def test_playlist_compose_from_artists_with_different_weights(
         artists=[ComposerConfigItem(name="Artist", weight=1), ComposerConfigItem(name="Artist_2", weight=0.5)],
     )
     mock_get_this_is_playlist.side_effect = [
-        PlaylistData(name="Artist", uri="uri"),
-        PlaylistData(name="Artist_2", uri="uri_2"),
+        PlaylistData(
+            name="Artist",
+            uri="uri",
+            id="uri",
+        ),
+        PlaylistData(name="Artist_2", uri="uri_2", id="uri2"),
     ]
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 

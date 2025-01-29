@@ -56,9 +56,7 @@ history:
 ```
 
 ### Uris
-
-!!! warning "Spotify removed access to custom playlists. Any Spotify playlist with the mention _made for you_ is unavailable"
-    
+ 
 With uris, you can use any kind of playlist in your composition. Simply add the Spotify playlist uri or url
 in your YAML.
 

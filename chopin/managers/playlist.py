@@ -57,7 +57,7 @@ def create(name: str, description: str = "Randomly Generated Mix", overwrite: bo
     target_playlist = [playlist for playlist in user_playlists if playlist.name == simplify_string(name)]
     if target_playlist:
         if overwrite:
-            replace_tracks_in_playlist(target_playlist[0].uri, [])
+            replace_tracks_in_playlist(target_playlist[0].id, [])
             return target_playlist[0]
         else:
             raise ValueError(
@@ -97,9 +97,9 @@ def shuffle_playlist(name: str) -> PlaylistData:
     if not playlist:
         raise ValueError(f"Playlist {name} not found.")
 
-    tracks = get_playlist_tracks(playlist.uri)
+    tracks = get_playlist_tracks(playlist.id)
     tracks = shuffle_tracks(tracks)
-    replace_tracks_in_playlist(playlist.uri, track_ids=[track.id for track in tracks])
+    replace_tracks_in_playlist(playlist.id, track_ids=[track.id for track in tracks])
     return playlist
 
 
@@ -147,7 +147,7 @@ def tracks_from_artist_name(
     if not playlist:
         logger.warning(f"Couldn't retrieve tracks for artist {artist_name}")
         return []
-    tracks = get_playlist_tracks(playlist_uri=playlist.uri, release_date_range=release_range)
+    tracks = get_playlist_tracks(playlist_id=playlist.id, release_date_range=release_range)
     return select_tracks(tracks, nb_tracks, selection_method)
 
 
@@ -170,7 +170,7 @@ def tracks_from_playlist_uri(
         A list of track data from the artist radio.
     """
     try:
-        tracks = get_playlist_tracks(playlist_uri=playlist_uri, release_date_range=release_range)
+        tracks = get_playlist_tracks(playlist_id=playlist_uri, release_date_range=release_range)
     except Exception:
         logger.warning(f"Couldn't retrieve playlist URI {playlist_uri}")
         return []
@@ -203,7 +203,7 @@ def tracks_from_playlist_name(
     if not playlist:
         logger.warning(f"Couldn't retrieve tracks for playlist {playlist_name}")
         return []
-    tracks = get_playlist_tracks(playlist_uri=playlist[0].uri, release_date_range=release_range)
+    tracks = get_playlist_tracks(playlist_id=playlist[0].id, release_date_range=release_range)
     return select_tracks(tracks, nb_tracks, selection_method)
 
 
@@ -219,7 +219,7 @@ def summarize_playlist(playlist: PlaylistData) -> PlaylistSummary:
     Returns:
         A playlist summary, with extended informations about tracks and statistics.
     """
-    tracks = get_playlist_tracks(playlist.uri)
+    tracks = get_playlist_tracks(playlist.id)
     return PlaylistSummary(playlist=playlist, tracks=tracks)
 
 
