@@ -9,6 +9,7 @@ from chopin.managers.playlist import (
     tracks_from_artist_name,
     tracks_from_playlist_name,
     tracks_from_playlist_uri,
+    tracks_from_radio,
 )
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
 from chopin.schemas.track import TrackData
@@ -70,11 +71,24 @@ def _add_from_uris(
     return list(itertools.chain(*tracks))
 
 
+def _add_from_radios(radios: list[ComposerConfigItem], **kwargs) -> list[TrackData]:
+    tracks = [
+        tracks_from_radio(
+            artist_name=radio.name,
+            nb_tracks=radio.nb_songs,
+            selection_method=radio.selection_method,
+        )
+        for radio in radios
+    ]
+    return list(itertools.chain(*tracks))
+
+
 DISPATCHER: dict[str, callable] = {
     "playlists": _add_from_playlists,
     "artists": _add_from_artists,
     "history": _add_from_history,
     "uris": _add_from_uris,
+    "radios": _add_from_radios,
 }
 
 

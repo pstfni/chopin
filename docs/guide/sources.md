@@ -40,6 +40,24 @@ artists:
 ```
 
 
+### Radios
+
+A list of artist's radios to pick songs from. The term "radio" refers here to the 
+Spotify's _Artist Name Radio_ playlists. 
+
+Songs from radios will include a few songs from the artist, and tracks from related artists.
+
+```yaml hl_lines="3-8" title="Add songs from radios of artists"
+name: "New playlist"
+nb_songs: 50
+radios:
+  - name: Pulp
+  - name: Elvis Costello
+  - name: Elliott Smith
+    weight: 0.25
+```
+
+
 ### History
 
 `history` lets you add your favourite songs from the past! Three time ranges are available:
@@ -124,25 +142,6 @@ You can add as many items from as many sections as you'd like ! And create all k
     ```
 
 ## Deprecated sources
-
-### Radios
-
-!!! danger "Unavailable since Spotify removed access to the `related_artists` feature."
-
-A list of artist's radios to pick songs from. The term "radio" refers here to the 
-Spotify's _Artist Name Radio_ playlists. 
-
-Songs from radios will include a few songs from the artist, and tracks from related artists.
-
-```yaml hl_lines="3-8" title="Add songs from radios of artists"
-name: "New playlist"
-nb_songs: 50
-radios:
-  - name: Pulp
-  - name: Elvis Costello
-  - name: Elliott Smith
-    weight: 0.25
-```
 
 ### Features
 

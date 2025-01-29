@@ -17,6 +17,7 @@ SOURCES = [
     "artists",
     "history",
     "uris",
+    "radios",
 ]
 
 
@@ -86,6 +87,7 @@ class ComposerConfig(BaseModel):
     release_range: Annotated[tuple[str | None, str | None] | None, AfterValidator(read_date)] | None = None
     playlists: list[ComposerConfigItem] | None = []
     artists: list[ComposerConfigItem] | None = []
+    radios: list[ComposerConfigItem] | None = []
     history: Annotated[list[ComposerConfigListeningHistory], Field(max_length=3)] | None = []
     uris: list[ComposerConfigItem] | None = []
 

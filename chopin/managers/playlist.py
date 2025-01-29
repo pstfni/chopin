@@ -5,14 +5,18 @@ from pathlib import Path
 from chopin.client.endpoints import (
     add_tracks_to_playlist,
     create_user_playlist,
+    get_artist_top_tracks,
     get_current_user,
     get_named_playlist,
     get_playlist_tracks,
     get_queue,
+    get_related_artists,
     get_this_is_playlist,
     get_user_playlists,
     replace_tracks_in_playlist,
+    search_artist,
 )
+from chopin.constants import constants
 from chopin.managers.selection import SelectionMethod, select_tracks
 from chopin.managers.track import shuffle_tracks
 from chopin.schemas.playlist import PlaylistData, PlaylistSummary
@@ -204,6 +208,35 @@ def tracks_from_playlist_name(
         logger.warning(f"Couldn't retrieve tracks for playlist {playlist_name}")
         return []
     tracks = get_playlist_tracks(playlist_id=playlist[0].id, release_date_range=release_range)
+    return select_tracks(tracks, nb_tracks, selection_method)
+
+
+def tracks_from_radio(
+    artist_name: str, nb_tracks: int, selection_method: SelectionMethod | None = None
+) -> list[TrackData]:
+    """Get tracks from an artist radio.
+
+    !!! note
+        Unfortunately an artist radio isn't easily available in the Spotify API.
+        A "radio" of related tracks is created by picking top tracks of the artist and its related artists.
+
+    Args:
+        artist_name: Name of the artist or band to fetch related tracks from
+        nb_tracks: Number of tracks to retrieve.
+        selection_method: How tracks are chosen from the retrieved tracks.
+            See `SelectionMethod` for available methods. If no method is given, the choice will be random.
+
+    Returns:
+        A list of track data from the artist radio.
+    """
+    artist = search_artist(artist_name)
+    if not artist:
+        logger.warning(f"Couldn't retrieve artist for search {artist_name}")
+        return []
+    related_artists = get_related_artists(artist, max_related_artists=constants.MAX_RELATED_ARTISTS)
+    tracks = []
+    for related_artist in [artist, *related_artists]:
+        tracks.extend(get_artist_top_tracks(related_artist, constants.MAX_TOP_TRACKS_ARTISTS))
     return select_tracks(tracks, nb_tracks, selection_method)
 
 

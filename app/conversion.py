@@ -42,6 +42,7 @@ def convert_form_configuration(
     *,
     playlist_config: pd.DataFrame,
     artist_config: pd.DataFrame,
+    radios_config: pd.DataFrame,
     uri_config: pd.DataFrame,
     history_config: ComposerConfigListeningHistory,
 ) -> ComposerConfig:
@@ -51,6 +52,7 @@ def convert_form_configuration(
         composer_configuration: A composer configuration.
         playlist_config: A form configuration for the playlist sources.
         artist_config: A form configuration for the artist sources.
+        radios_config: A form configuration for the radios sources.
         uri_config: A form configuration for uri sources.
         history_config: A form configuration for the history sources.
 
@@ -63,6 +65,7 @@ def convert_form_configuration(
     composer_config = composer_configuration.model_copy()
     composer_config.playlists = _convert_form_to_item(playlist_config)
     composer_config.artists = _convert_form_to_item(artist_config)
+    composer_config.radios = _convert_form_to_item(radios_config)
     composer_config.uris = _convert_form_to_item(uri_config)
     composer_config.history = _convert_history_to_item(history_config)
     return composer_config

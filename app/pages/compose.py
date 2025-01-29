@@ -99,6 +99,12 @@ with st.form("composition_form"):
     artist_config = composer_item_form_dataframe("artists")
 
     st.write(
+        "Add songs from artist radios (an artist and its related artists) ?",
+    )
+    st.caption("_Write the name of the seed artist. For example, 'Marvin Gaye'_")
+    radios_config = composer_item_form_dataframe("radios")
+
+    st.write(
         "Add songs directly from Spotify playlists links",
     )
     st.caption("_Enter the URL of the Spotify playlist of interest. Chopin will randomly pick songs from it_")
@@ -131,10 +137,14 @@ if submitted:
             composer_config,
             playlist_config=playlist_config,
             artist_config=artist_config,
+            radios_config=radios_config,
             uri_config=uri_config,
             history_config=history,
         )
         composer_config = ComposerConfig.model_validate(composer_config)
+        import ipdb
+
+        ipdb.set_trace()
         tracks = compose_playlist(composer_config)
         playlist = create(name=composer_config.name, description=composer_config.description, overwrite=True)
         fill(uri=playlist.uri, tracks=tracks)

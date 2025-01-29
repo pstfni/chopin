@@ -336,3 +336,17 @@ def get_top_artists(time_range: Literal["short_term", "medium_term", "long_term"
     """
     response = _client.current_user_top_artists(limit=limit, time_range=time_range)["items"]
     return [ArtistData(**artist) for artist in response]
+
+
+def get_related_artists(artist: ArtistData, max_related_artists: int = 10) -> list[ArtistData]:
+    """Get a list of artists, related to the current artist.
+
+    Args:
+        artist: current artist.
+        max_related_artists: maximum number of artists to find.
+
+    Returns:
+        A list of artist data, closely related to the current artist.
+    """
+    response = _anon_client.artist_related_artists(artist_id=artist.id)["artists"][:max_related_artists]
+    return [ArtistData(**related_artist) for related_artist in response]
