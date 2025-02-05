@@ -10,6 +10,8 @@ repos:
   hooks:
     # Run the linter.
     - id: ruff
+      args: 
+        - --fix
     # Run the formatter.
     - id: ruff-format
 # Autoformat the doc
