@@ -7,6 +7,7 @@ from datetime import date
 from chopin.client.endpoints import get_top_tracks, get_user_playlists
 from chopin.managers.playlist import (
     tracks_from_artist_name,
+    tracks_from_mix,
     tracks_from_playlist_name,
     tracks_from_playlist_uri,
     tracks_from_radio,
@@ -83,12 +84,28 @@ def _add_from_radios(radios: list[ComposerConfigItem], **kwargs) -> list[TrackDa
     return list(itertools.chain(*tracks))
 
 
+def _add_from_mixes(
+    mixes: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
+) -> list[TrackData]:
+    tracks = [
+        tracks_from_mix(
+            mix=mix.name,
+            nb_tracks=mix.nb_songs,
+            release_range=release_range,
+            selection_method=mix.selection_method,
+        )
+        for mix in mixes
+    ]
+    return list(itertools.chain(*tracks))
+
+
 DISPATCHER: dict[str, callable] = {
     "playlists": _add_from_playlists,
     "artists": _add_from_artists,
     "history": _add_from_history,
     "uris": _add_from_uris,
     "radios": _add_from_radios,
+    "mixes": _add_from_mixes,
 }
 
 

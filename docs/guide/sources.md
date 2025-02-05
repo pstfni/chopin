@@ -58,6 +58,22 @@ radios:
 ```
 
 
+### Mixes
+
+With mixes, you can search for genre-specific playlists curated by Spotify, such as "Bossa Nova Mix", "New Wave Mix", 
+or "Singer Songwriter Mix" for example.
+
+```yaml title="Add songs from genre playlists"
+mixes:
+  - name: "Bossa Nova"
+  - name: "80s"
+  - name: "Covers"
+```
+
+!!! warning ""
+  These mixes will not be personalised, due to Spotify's API limitation.
+
+
 ### History
 
 `history` lets you add your favourite songs from the past! Three time ranges are available:
@@ -169,17 +185,3 @@ The above composition configuration will:
 2. Based on these songs, it will recommend relatively acoustic new ones.
 3. Finally, it will recommend popular songs.
 
-### Genres
-
-!!! danger "Unavailable since Spotify removed access to Spotify-owned playlists."
-
-
-With genres, you can search for genre-specific playlists curated by Spotify, such as "Bossa Nova Mix", "New Wave Mix", 
-or "Singer Songwriter Mix" for example.
-
-```yaml title="Add songs from genre playlists"
-genres:
-  - name: "Bossa Nova"
-  - name: "80s"
-  - name: "Covers"
-```

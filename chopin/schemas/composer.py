@@ -18,6 +18,7 @@ SOURCES = [
     "history",
     "uris",
     "radios",
+    "mixes",
 ]
 
 
@@ -88,6 +89,7 @@ class ComposerConfig(BaseModel):
     playlists: list[ComposerConfigItem] | None = []
     artists: list[ComposerConfigItem] | None = []
     radios: list[ComposerConfigItem] | None = []
+    mixes: list[ComposerConfigItem] | None = []
     history: Annotated[list[ComposerConfigListeningHistory], Field(max_length=3)] | None = []
     uris: list[ComposerConfigItem] | None = []
 

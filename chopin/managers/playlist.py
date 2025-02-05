@@ -7,6 +7,7 @@ from chopin.client.endpoints import (
     create_user_playlist,
     get_artist_top_tracks,
     get_current_user,
+    get_genre_mix_playlist,
     get_named_playlist,
     get_playlist_tracks,
     get_queue,
@@ -237,6 +238,36 @@ def tracks_from_radio(
     tracks = []
     for related_artist in [artist, *related_artists]:
         tracks.extend(get_artist_top_tracks(related_artist, constants.MAX_TOP_TRACKS_ARTISTS))
+    return select_tracks(tracks, nb_tracks, selection_method)
+
+
+def tracks_from_mix(
+    mix: str,
+    nb_tracks: int,
+    release_range: ReleaseRange | None = None,
+    selection_method: SelectionMethod | None = None,
+) -> list[TrackData]:
+    """Find "mixes" based on the requested genre, and retrieve tracks from the "mix" playlist.
+
+    Args:
+        mix: A musical genre to find (eg: 'bossa nova', 'cold wave', 'folk', ...).
+        nb_tracks: Number of tracks to retrieve.
+        release_range: An optional datetime range for the tracks to fetch.
+        selection_method: How tracks are chosen from the retrieved tracks.
+            See `SelectionMethod` for available methods. If no method is given, the choice will be random.
+
+
+    Returns:
+        A list of tracks in the found playlist, as track data.
+    """
+    playlist = get_genre_mix_playlist(mix)
+    if not playlist:
+        logger.warning(f"Couldn't find a playlist for genre {mix}")
+        return []
+    tracks = get_playlist_tracks(playlist_id=playlist.id, release_date_range=release_range)
+    import ipdb
+
+    ipdb.set_trace()
     return select_tracks(tracks, nb_tracks, selection_method)
 
 

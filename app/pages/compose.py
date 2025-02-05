@@ -110,6 +110,12 @@ with st.form("composition_form"):
     st.caption("_Enter the URL of the Spotify playlist of interest. Chopin will randomly pick songs from it_")
     uri_config = composer_item_form_dataframe("uris")
 
+    st.write(
+        "Pick songs from genres or moods, using Spotify 'mixes'.",
+    )
+    st.caption("_Write a genre or a mood such as 'bossa nova', 'chill evening' or 'dance'_")
+    mix_config = composer_item_form_dataframe("mixes")
+
     st.write("Do you want to add songs from your listening history ?")
     history = st.multiselect(
         "How far back should we go ?",
@@ -139,12 +145,11 @@ if submitted:
             artist_config=artist_config,
             radios_config=radios_config,
             uri_config=uri_config,
+            mix_config=mix_config,
             history_config=history,
         )
         composer_config = ComposerConfig.model_validate(composer_config)
-        import ipdb
 
-        ipdb.set_trace()
         tracks = compose_playlist(composer_config)
         playlist = create(name=composer_config.name, description=composer_config.description, overwrite=True)
         fill(uri=playlist.uri, tracks=tracks)

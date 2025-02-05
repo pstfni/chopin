@@ -42,6 +42,26 @@ def get_this_is_playlist(artist_name: str) -> PlaylistData | None:
         return PlaylistData(**playlist[0])
 
 
+def get_genre_mix_playlist(genre: str) -> PlaylistData | None:
+    """From a given `genre`, search for a Spotify "mix" playlist and retrieve it.
+
+    Examples:
+        >>> get_genre_mix_playlist(genre="bossa nova").name
+        "Bossa Nova Mix"
+
+    Args:
+        genre: A string to search for
+
+    Returns:
+        If found, the retrieved playlist.
+    """
+    response = _anon_client.search(q=f"{genre} mix", limit=10, type="playlist", market=constants.MARKET)["playlists"]
+    items = response.get("items")
+    playlist = [playlist for playlist in items if playlist["owner"]["uri"] == constants.SPOTIFY_USER_URI]
+    if playlist:
+        return PlaylistData(**playlist[0])
+
+
 def search_artist(artist_name: str) -> ArtistData | None:
     """Search an artist.
 
