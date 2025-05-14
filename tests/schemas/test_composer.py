@@ -10,13 +10,10 @@ def test_fill_nb_songs():
         "name": "test_playlist",
         "nb_songs": 200,
         "playlists": [{"name": "rock", "weight": 1}, {"name": "folk", "weight": 2}],
-        "artists": [{"name": "Bruce Springsteen", "weight": 0.5}, {"name": "Soprano", "weight": 0}],
     }
     out = ComposerConfig.model_validate(composer_config)
-    assert out.playlists[0].nb_songs == 58
-    assert out.playlists[1].nb_songs == 115
-    assert out.artists[0].nb_songs == 29
-    assert out.artists[1].nb_songs == 0
+    assert out.playlists[0].nb_songs == 67
+    assert out.playlists[1].nb_songs == 134
     assert out.description == "Randomly generated mix"
 
 
@@ -47,7 +44,7 @@ def test_fill_nb_songs_with_history():
     out = ComposerConfig.model_validate(composer_config)
     assert out.playlists[0].nb_songs == 50
     assert out.history[0].nb_songs == 50
-    assert out.artists == []
+    assert out.uris == []
 
 
 @pytest.mark.parametrize(
@@ -90,7 +87,7 @@ def test_composer_config_uri_item(uri_item, expected_item):
 )
 def test_composer_config_item_selection_method(selection_input, expected_output):
     item = ComposerConfigItem(
-        name="artist",
+        name="playlist",
         weight=2,
         selection_method=selection_input,
     )

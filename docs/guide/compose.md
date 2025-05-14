@@ -14,9 +14,6 @@ nb_songs: 16
 playlists:
   - name: rock
   - name: electro
-artists:
-  - name: Queen
-  - name: Kraftwerk
 ```
 
 Give your YAML configuration to the entrypoint:
@@ -29,10 +26,8 @@ $ compose --configuration playlist_composition.yaml
 
 A playlist titled "Energy" will be added to your Spotify library. It will have 16 songs:
 
-- 4 from one of your playlist named 'rock'
-- 4 from another one of your playlist, 'electro'
-- 4 songs by Queen
-- and 4 Kraftwerk songs.
+- 8 from one of your playlist named 'rock'
+- 8 from another one of your playlist, 'electro'
 
 <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4eOSdWiCJQeMmLAdC479UV?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 
@@ -50,24 +45,18 @@ songs per item in your final playlist.
 ```yaml title="A composition configuration, with weights"
 name: "Running"
 description: "Playlist for working  out"
-nb_songs: 200
+nb_songs: 100
 playlists:
   - name: rock
     weight: 1
   - name: electro
     weight: 0.5
-artists:
-  - name: Queen
-  - name: Kraftwerk
-    weight: 0.5
 ```
 
 Your new "Running" playlist will have 200 songs:
 
-- 67 from your 'rock' playlist
+- 66 from your 'rock' playlist
 - 34 from 'electro'
-- 67 songs by Queen
-- and 34 by Kraftwerk.
 
 ## Choose how tracks are selected for your playlists
 
@@ -84,30 +73,24 @@ If we illustrate with the example above:
 
 ```yaml title="A composition configuration, with weights and selection methods." hl_lines="9 12 15"
 name: "Running"
-description: "Playlist for working  out"
-nb_songs: 200
+description: "Playlist for jogging"
+nb_songs: 100
 playlists:
   - name: rock
     weight: 1
   - name: electro
     weight: 0.5
     selection_method: latest
-artists:
-  - name: Queen
+uris:
+  - name: 4nutUe1JAzhJSna4mwSIw1  # FIP, best-of du mois
     selection_method: popularity
-  - name: Kraftwerk
-    weight: 0.5
-    selection_method: original
 ```
 
 Your new "Running" playlist will have 200 songs:
 
-- 67 from your 'rock' playlist
-- The 34 most recently released songs from your 'electro' playlist
-- 67 songs by Queen. These songs will be the most popular Queen songs on Spotify.
-- and the first 34 songs in the Kraftwerk 'source' [^1]
-
-[^1]: In this case, the source is the 'This is Kraftwerk' spotify playlist.
+- 40 from your 'rock' playlist
+- The 20 most recently released songs from your 'electro' playlist
+- 40 songs from the "FIP, Best of du mois" playlist. These songs will be the most popular (on Spotify) songs from said playlist.
 
 ## Use `release_range` to filter tracks by their release date
 
@@ -119,9 +102,6 @@ nb_songs: 100
 playlists:
   - name: pop
   - name: rock
-artists:
-  - name: Bleachers
-  - name: Fontaines D.C.
 release_range: ["01/01/2023", ]
 ```
 

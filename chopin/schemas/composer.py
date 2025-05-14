@@ -14,11 +14,8 @@ from chopin.tools.strings import extract_uri_from_playlist_link
 logger = get_logger(__name__)
 SOURCES = [
     "playlists",
-    "artists",
     "history",
     "uris",
-    "radios",
-    "mixes",
 ]
 
 
@@ -74,12 +71,9 @@ class ComposerConfig(BaseModel):
         name: Name of the playlist you wish to create
         description: Description for your playlist
         nb_songs: Target number of songs for the playlist.
-        playlists: A list of playlist names and their weight
-        artists: A list of artists from which to pick songs, and their weight in the final composition
-        features: A list of features and their value, to add recommendations based on recent listening
-        radios: A list of artists from which to pick related songs.
+        playlists: A list of playlist names and their weight.
         uris: A list of spotify playlist URIs to pick from directly.
-        genres: A list of genres to retrieve tracks from.
+        history: Include past listening habits and most listened songs.
     """
 
     name: str = "🤖 Robot Mix"
@@ -87,9 +81,6 @@ class ComposerConfig(BaseModel):
     nb_songs: Annotated[int, Field(gt=0)]
     release_range: Annotated[tuple[str | None, str | None] | None, AfterValidator(read_date)] | None = None
     playlists: list[ComposerConfigItem] | None = []
-    artists: list[ComposerConfigItem] | None = []
-    radios: list[ComposerConfigItem] | None = []
-    mixes: list[ComposerConfigItem] | None = []
     history: Annotated[list[ComposerConfigListeningHistory], Field(max_length=3)] | None = []
     uris: list[ComposerConfigItem] | None = []
 

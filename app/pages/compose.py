@@ -93,28 +93,10 @@ with st.form("composition_form"):
     playlist_config = composer_item_form_dataframe("playlists")
 
     st.write(
-        "Add songs from your favourite artists ?",
-    )
-    st.caption("_Write the name of the artists. For example, 'Bruce Springsteen'_")
-    artist_config = composer_item_form_dataframe("artists")
-
-    st.write(
-        "Add songs from artist radios (an artist and its related artists) ?",
-    )
-    st.caption("_Write the name of the seed artist. For example, 'Marvin Gaye'_")
-    radios_config = composer_item_form_dataframe("radios")
-
-    st.write(
         "Add songs directly from Spotify playlists links",
     )
     st.caption("_Enter the URL of the Spotify playlist of interest. Chopin will randomly pick songs from it_")
     uri_config = composer_item_form_dataframe("uris")
-
-    st.write(
-        "Pick songs from genres or moods, using Spotify 'mixes'.",
-    )
-    st.caption("_Write a genre or a mood such as 'bossa nova', 'chill evening' or 'dance'_")
-    mix_config = composer_item_form_dataframe("mixes")
 
     st.write("Do you want to add songs from your listening history ?")
     history = st.multiselect(
@@ -142,10 +124,7 @@ if submitted:
         composer_config = convert_form_configuration(
             composer_config,
             playlist_config=playlist_config,
-            artist_config=artist_config,
-            radios_config=radios_config,
             uri_config=uri_config,
-            mix_config=mix_config,
             history_config=history,
         )
         composer_config = ComposerConfig.model_validate(composer_config)

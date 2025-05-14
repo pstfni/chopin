@@ -24,56 +24,6 @@ playlists:
     python -c "from utils import simplify_string; print(simplify_string($playlist_name))"
     ```
 
-### Artists
-
-A list of artists to pick songs from. The `name` is used to query the Spotify API and retrieve
-songs from Spotify's _This is ..._ playlists.
-
-```yaml hl_lines="3-8" title="Add songs from artists"
-name: "New playlist"
-nb_songs: 20
-artists:
-  - name: David Bowie
-  - name: The Beatles
-  - name: Johnny Cash
-    weight: 0.25
-```
-
-
-### Radios
-
-A list of artist's radios to pick songs from. The term "radio" refers here to the 
-Spotify's _Artist Name Radio_ playlists. 
-
-Songs from radios will include a few songs from the artist, and tracks from related artists.
-
-```yaml hl_lines="3-8" title="Add songs from radios of artists"
-name: "New playlist"
-nb_songs: 50
-radios:
-  - name: Pulp
-  - name: Elvis Costello
-  - name: Elliott Smith
-    weight: 0.25
-```
-
-
-### Mixes
-
-With mixes, you can search for genre-specific playlists curated by Spotify, such as "Bossa Nova Mix", "New Wave Mix", 
-or "Singer Songwriter Mix" for example.
-
-```yaml title="Add songs from genre playlists"
-mixes:
-  - name: "Bossa Nova"
-  - name: "80s"
-  - name: "Covers"
-```
-
-!!! warning ""
-  These mixes will not be personalised, due to Spotify's API limitation.
-
-
 ### History
 
 `history` lets you add your favourite songs from the past! Three time ranges are available:
@@ -93,6 +43,9 @@ history:
  
 With uris, you can use any kind of playlist in your composition. Simply add the Spotify playlist uri or url
 in your YAML.
+
+!!! warning 
+  Spotify-owned playlists are not supported, their content is not accessible through the API. 
 
 ```yaml title="Add songs from any Spotify public playlist"
 uris:
@@ -133,31 +86,16 @@ You can add as many items from as many sections as you'd like ! And create all k
     playlists:
         - name: chill
           selection_method: latest
-    artists:
-        - name: Grandaddy
-          weight: 0.5
-        - name: Elliott Smith
-          weight: 0.5
     uris:
         - name: https://open.spotify.com/playlist/6LSRWYpEoo8KiXenl2xHOP?si=e83a89df1dca4728  # Les inrocks, trésors cachés
         - name: https://open.spotify.com/playlist/4nutUe1JAzhJSna4mwSIw1?si=71f802c91a04416e  # FIP, best-of du mois
     ```
 
-???+ tip "A playlist to cheer you up"
-    ```yaml
-    name: "🌈 Uplifting tunes"
-    nb_songs: 100
-    playlists:
-        - name: pop
-    artists:
-        - name: Stevie Wonder
-        - name: Earth, Wind and Fire
-          method: popularity
-        - name: Vampire Weekend
-        - name: Vulfpeck
-    ```
+----------
 
 ## Deprecated sources
+
+In November 2024 and without warning, Spotify deprecated several entrypoints from their public API, removed features and access on others. Some Chopin features are no longer available, but might come back one day.
 
 ### Features
 
@@ -185,3 +123,48 @@ The above composition configuration will:
 2. Based on these songs, it will recommend relatively acoustic new ones.
 3. Finally, it will recommend popular songs.
 
+
+### Artists
+
+A list of artists to pick songs from. The `name` is used to query the Spotify API and retrieve
+songs from Spotify's _This is ..._ playlists.
+
+```yaml hl_lines="3-8" title="Add songs from artists"
+name: "New playlist"
+nb_songs: 20
+artists:
+  - name: David Bowie
+  - name: The Beatles
+  - name: Johnny Cash
+    weight: 0.25
+```
+
+### Radios
+
+A list of artist's radios to pick songs from. The term "radio" refers here to the 
+Spotify's _Artist Name Radio_ playlists. 
+
+Songs from radios will include a few songs from the artist, and tracks from related artists.
+
+```yaml hl_lines="3-8" title="Add songs from radios of artists"
+name: "New playlist"
+nb_songs: 50
+radios:
+  - name: Pulp
+  - name: Elvis Costello
+  - name: Elliott Smith
+    weight: 0.25
+```
+
+
+### Mixes
+
+With mixes, you can search for genre-specific playlists curated by Spotify, such as "Bossa Nova Mix", "New Wave Mix", 
+or "Singer Songwriter Mix" for example.
+
+```yaml title="Add songs from genre playlists"
+mixes:
+  - name: "Bossa Nova"
+  - name: "80s"
+  - name: "Covers"
+```

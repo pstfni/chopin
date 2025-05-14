@@ -19,49 +19,6 @@ from chopin.tools.strings import match_strings, owner_is_spotify, simplify_strin
 logger = get_logger(__name__)
 
 
-def get_this_is_playlist(artist_name: str) -> PlaylistData | None:
-    """Get an artist "This Is ..." playlist.
-
-    !!! note
-        It is not search, but a strict match against the artist name.
-
-    Args:
-        artist_name: Name of the artist
-
-    Returns:
-        If found, the playlist data for "This Is {name}"
-    """
-    # NOTE : Strict match for 'This Is artist_name' !
-    search = f"This Is {artist_name}"
-    response = _anon_client.search(q=search, limit=10, type="playlist", market="fr")["playlists"]
-    items = response.get("items")
-    if not items:
-        raise ValueError(f"Couldn't retrieve playlists for query {artist_name}")
-    playlist = [playlist for playlist in items if playlist["owner"]["uri"] == constants.SPOTIFY_USER_URI]
-    if playlist:
-        return PlaylistData(**playlist[0])
-
-
-def get_genre_mix_playlist(genre: str) -> PlaylistData | None:
-    """From a given `genre`, search for a Spotify "mix" playlist and retrieve it.
-
-    Examples:
-        >>> get_genre_mix_playlist(genre="bossa nova").name
-        "Bossa Nova Mix"
-
-    Args:
-        genre: A string to search for
-
-    Returns:
-        If found, the retrieved playlist.
-    """
-    response = _anon_client.search(q=f"{genre} mix", limit=10, type="playlist", market=constants.MARKET)["playlists"]
-    items = response.get("items")
-    playlist = [playlist for playlist in items if playlist["owner"]["uri"] == constants.SPOTIFY_USER_URI]
-    if playlist:
-        return PlaylistData(**playlist[0])
-
-
 def search_artist(artist_name: str) -> ArtistData | None:
     """Search an artist.
 
@@ -356,17 +313,3 @@ def get_top_artists(time_range: Literal["short_term", "medium_term", "long_term"
     """
     response = _client.current_user_top_artists(limit=limit, time_range=time_range)["items"]
     return [ArtistData(**artist) for artist in response]
-
-
-def get_related_artists(artist: ArtistData, max_related_artists: int = 10) -> list[ArtistData]:
-    """Get a list of artists, related to the current artist.
-
-    Args:
-        artist: current artist.
-        max_related_artists: maximum number of artists to find.
-
-    Returns:
-        A list of artist data, closely related to the current artist.
-    """
-    response = _anon_client.artist_related_artists(artist_id=artist.id)["artists"][:max_related_artists]
-    return [ArtistData(**related_artist) for related_artist in response]

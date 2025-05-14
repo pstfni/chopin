@@ -2,56 +2,6 @@ from unittest.mock import patch
 
 from chopin.managers.composition import compose_playlist
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
-from chopin.schemas.playlist import PlaylistData
-
-
-@patch("chopin.managers.playlist.get_this_is_playlist")
-@patch("chopin.managers.playlist.get_playlist_tracks")
-def test_playlist_compose_from_artists(
-    mock_get_tracks, mock_get_this_is_playlist, playlist_1_tracks, playlist_2_tracks
-):
-    configuration = ComposerConfig(
-        nb_songs=20,
-        artists=[ComposerConfigItem(name="Artist", weight=1), ComposerConfigItem(name="Artist_2", weight=1)],
-    )
-    mock_get_this_is_playlist.side_effect = [
-        PlaylistData(name="Artist", uri="uri", id="uri"),
-        PlaylistData(name="Artist_2", uri="uri_2", id="uri_2"),
-    ]
-    mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
-
-    tracks = compose_playlist(composition_config=configuration)
-    assert len(tracks) == 20
-    assert len([t for t in tracks if t.id.startswith("p")]) == len([t for t in tracks if t.id.startswith("q")]) == 10
-
-
-@patch("chopin.managers.playlist.get_this_is_playlist")
-@patch("chopin.managers.playlist.get_playlist_tracks")
-def test_playlist_compose_from_artists_with_different_weights(
-    mock_get_tracks,
-    mock_get_this_is_playlist,
-    playlist_1_tracks,
-    playlist_2_tracks,
-):
-    configuration = ComposerConfig(
-        nb_songs=20,
-        artists=[ComposerConfigItem(name="Artist", weight=1), ComposerConfigItem(name="Artist_2", weight=0.5)],
-    )
-    mock_get_this_is_playlist.side_effect = [
-        PlaylistData(
-            name="Artist",
-            uri="uri",
-            id="uri",
-        ),
-        PlaylistData(name="Artist_2", uri="uri_2", id="uri2"),
-    ]
-    mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
-
-    tracks = compose_playlist(composition_config=configuration)
-    # 21 because of the ceil() when computing actual nb songs
-    assert len(tracks) == 21
-    assert len([t for t in tracks if t.id.startswith("p")]) == 14
-    assert len([t for t in tracks if t.id.startswith("q")]) == 7
 
 
 @patch("chopin.managers.playlist.get_playlist_tracks")

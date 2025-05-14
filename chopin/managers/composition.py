@@ -6,11 +6,8 @@ from datetime import date
 
 from chopin.client.endpoints import get_top_tracks, get_user_playlists
 from chopin.managers.playlist import (
-    tracks_from_artist_name,
-    tracks_from_mix,
     tracks_from_playlist_name,
     tracks_from_playlist_uri,
-    tracks_from_radio,
 )
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
 from chopin.schemas.track import TrackData
@@ -37,21 +34,6 @@ def _add_from_playlists(
     return list(itertools.chain(*tracks))
 
 
-def _add_from_artists(
-    artists: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
-) -> list[TrackData]:
-    tracks = [
-        tracks_from_artist_name(
-            artist_name=artist.name,
-            nb_tracks=artist.nb_songs,
-            release_range=release_range,
-            selection_method=artist.selection_method,
-        )
-        for artist in artists
-    ]
-    return list(itertools.chain(*tracks))
-
-
 def _add_from_history(history_ranges: list[ComposerConfigItem], **kwargs) -> list[TrackData]:
     tracks = [get_top_tracks(time_range=history.time_range, limit=history.nb_songs) for history in history_ranges]
     return list(itertools.chain(*tracks))
@@ -72,40 +54,10 @@ def _add_from_uris(
     return list(itertools.chain(*tracks))
 
 
-def _add_from_radios(radios: list[ComposerConfigItem], **kwargs) -> list[TrackData]:
-    tracks = [
-        tracks_from_radio(
-            artist_name=radio.name,
-            nb_tracks=radio.nb_songs,
-            selection_method=radio.selection_method,
-        )
-        for radio in radios
-    ]
-    return list(itertools.chain(*tracks))
-
-
-def _add_from_mixes(
-    mixes: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
-) -> list[TrackData]:
-    tracks = [
-        tracks_from_mix(
-            mix=mix.name,
-            nb_tracks=mix.nb_songs,
-            release_range=release_range,
-            selection_method=mix.selection_method,
-        )
-        for mix in mixes
-    ]
-    return list(itertools.chain(*tracks))
-
-
 DISPATCHER: dict[str, callable] = {
     "playlists": _add_from_playlists,
-    "artists": _add_from_artists,
     "history": _add_from_history,
     "uris": _add_from_uris,
-    "radios": _add_from_radios,
-    "mixes": _add_from_mixes,
 }
 
 
