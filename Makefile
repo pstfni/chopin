@@ -1,5 +1,5 @@
 download_uv:
-	pip install uv
+	curl -LsSf https://astral.sh/uv/install.sh | sh
 
 install:
 	uv pip compile pyproject.toml --all-extras -o requirements.txt
