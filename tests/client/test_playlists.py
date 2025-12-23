@@ -204,8 +204,8 @@ def test_get_playlist_tracks(spotify_track, added_at):
     "release_date_range, expected_nb_tracks",
     [
         (None, 1),
-        ((datetime(2023, 12, 12).date(), datetime.now().date()), 0),
-        ((datetime(1980, 1, 1).date(), datetime(1990, 1, 1).date()), 1),
+        ((datetime(2023, 12, 12), datetime.now()), 0),
+        ((datetime(1980, 1, 1), datetime(1990, 1, 1)), 1),
     ],
 )
 def test_get_playlist_tracks_with_release_date_range(spotify_track, release_date_range, expected_nb_tracks):

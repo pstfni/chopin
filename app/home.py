@@ -1,4 +1,18 @@
-"""Streamlit application."""
+"""Streamlit application.
+
+TODOS ideas:
+ Protected playlists
+ Queue ---> Show the # of songs in the queue (~10sec refresh)
+        --> Button is forbidden if itsn't playing (~10sec refresh)
+ Shuffle --> Multiselect (without protected playlists)
+ Compose --> Dedicated page (or not ??)
+ Compose (with preselected configurations) :
+    - new releases
+    - recently added to playlists.
+    - feeling lucky :sparkles:
+"""
+
+
 
 from collections.abc import Iterable
 

@@ -4,10 +4,6 @@ import spotipy
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from spotipy.oauth2 import SpotifyOAuth
-from spotipy_anon import SpotifyAnon
-
-sp = spotipy.Spotify(auth_manager=SpotifyAnon())
-
 
 class SpotifyConfig(BaseSettings):
     """Spotify API settings."""
@@ -38,4 +34,3 @@ class Settings(BaseSettings):
 
 spotify_settings = Settings()
 _client = spotify_settings.client
-_anon_client = spotipy.Spotify(auth_manager=SpotifyAnon())

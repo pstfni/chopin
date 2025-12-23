@@ -1,7 +1,10 @@
 """Schemas for playlist composition."""
 
 import math
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Self
+from pathlib import Path
+
+from ruamel.yaml import YAML
 
 import numpy as np
 from pydantic import AfterValidator, BaseModel, Field, computed_field, field_validator, model_validator
@@ -112,3 +115,18 @@ class ComposerConfig(BaseModel):
     @computed_field
     def items(self) -> list[list[ComposerConfigItem]]:  # noqa: D102
         return {source: getattr(self, source) for source in SOURCES}.items()
+
+    @classmethod
+    def parse_yaml(cls, file_path: Path) -> Self:
+        """Read a composer configuration from a YAML file.
+
+        Args:
+            file_path: The YAML file path.
+
+        Returns:
+            A valid composer configuration model.
+        """
+        yaml = YAML(typ="safe", pure=True)
+        with open(file_path) as f:
+            data = yaml.load(f)
+        return cls.model_validate(data)

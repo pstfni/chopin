@@ -8,18 +8,18 @@ requires-python = ">= 3.10"
 classifiers = ["Private :: Do Not Upload"]
 
 dependencies = [
-"numpy",
-"pandas",
-"tqdm",
-"emoji",
-"ruamel.yaml",
-"spotipy",
-"pydantic", 
-"pydantic_settings",
-"pandas",
-"python-dotenv",
-"coloredlogs",
-"click",
+    "numpy",
+    "pandas",
+    "tqdm",
+    "emoji",
+    "ruamel.yaml",
+    "spotipy",
+    "pydantic",
+    "pydantic_settings",
+    "pandas",
+    "python-dotenv",
+    "coloredlogs",
+    "click",
 ]
 
 [project.optional-dependencies]

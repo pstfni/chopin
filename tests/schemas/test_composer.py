@@ -1,5 +1,6 @@
 import pytest
 from pydantic import ValidationError
+from pathlib import Path
 
 from chopin.managers.selection import SelectionMethod
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
@@ -100,3 +101,10 @@ def test_composer_config_item_default_selection_method():
         weight=1,
     )
     assert item.selection_method == SelectionMethod.RANDOM
+
+
+def test_composer_config_parse_yaml():
+    path = Path("confs/musique_automatique.yaml")
+    config = ComposerConfig.parse_yaml(path)
+    assert config.name == "🤖 Musique Automatique"
+    assert config.nb_songs == 160

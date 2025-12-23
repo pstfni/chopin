@@ -7,7 +7,7 @@ from typing import Any, Literal
 
 from pydantic import ValidationError
 
-from chopin.client.settings import _anon_client, _client
+from chopin.client.settings import _client
 from chopin.constants import constants
 from chopin.schemas.artist import ArtistData
 from chopin.schemas.playlist import PlaylistData
@@ -83,7 +83,8 @@ def get_queue() -> list[TrackData]:
     Note:
         API Call has to be custom made, waiting for its implementation in Spotipy.
     """
-    if not _client.current_playback().get("is_playing"):
+    current_playback = _client.current_playback()
+    if not current_playback or not current_playback.get("is_playing"):
         raise ValueError(
             "Spotify should be active on a device and the playback should be on for the get_queue endpoint to work."
         )
@@ -163,14 +164,12 @@ def get_playlist_tracks(
     Returns:
         A list of track uuids.
     """
-    valid_client = _anon_client if owner_is_spotify(playlist_id) else _client
-
     offset: int = 0
     tracks: list[TrackData] = []
     response: dict[str, Any] = {"response": []}
 
     while response:
-        response = valid_client.playlist_items(
+        response = _client.playlist_items(
             playlist_id,
             offset=offset,
             fields=constants.TRACK_FIELDS,
@@ -313,3 +312,16 @@ def get_top_artists(time_range: Literal["short_term", "medium_term", "long_term"
     """
     response = _client.current_user_top_artists(limit=limit, time_range=time_range)["items"]
     return [ArtistData(**artist) for artist in response]
+
+
+def get_album_tracks(album_id: str) -> list[TrackData]:
+    """Get album tracks for the given album.
+
+    Args:
+        album_id: The id of the album.
+
+    Returns:
+        A list of tracks from said album.
+    """
+    response = _client.album_tracks(album_id=album_id)["items"]
+    return [TrackData(**track) for track in response]

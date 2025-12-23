@@ -4,12 +4,13 @@ import itertools
 import random
 from datetime import date
 
-from chopin.client.endpoints import get_top_tracks, get_user_playlists
+from chopin.client.endpoints import get_top_tracks, get_user_playlists, get_playlist_tracks, get_artist_top_tracks, get_album_tracks
 from chopin.managers.playlist import (
     tracks_from_playlist_name,
     tracks_from_playlist_uri,
 )
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
+from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData
 from chopin.tools.logger import get_logger
 
@@ -44,7 +45,7 @@ def _add_from_uris(
 ) -> list[TrackData]:
     tracks = [
         tracks_from_playlist_uri(
-            playlist_id=uri.name,
+            playlist_uri=uri.name,
             nb_tracks=uri.nb_songs,
             release_range=release_range,
             selection_method=uri.selection_method,
@@ -83,3 +84,15 @@ def compose_playlist(composition_config: ComposerConfig) -> list[TrackData]:
         tracks.extend(source_tracks)
 
     return random.sample(tracks, len(tracks))
+
+def doppelganger(playlist: PlaylistData) -> list[TrackData]:
+    """From an original playlist, create a doppelganger: a playlist with different tracks but stemming from the same
+    artists or albums.
+
+    Args:
+        playlist: The original playlist.
+
+    Returns:
+        The new playlist.
+    """
+    tracks = get
