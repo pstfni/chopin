@@ -55,6 +55,9 @@ __pypackages__/
 # Environments
 .venv
 
+# Pycharm
+.idea/
+
 # Secrets
 
 # mkdocs documentation
