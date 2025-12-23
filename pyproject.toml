@@ -27,6 +27,9 @@ dev = ["pytest", "pytest-sugar", "ruff", "uv"]
 docs = ["mkdocs", "mkdocstrings", "mkdocstrings-python", "mkdocs-material"]
 app = ["streamlit", "plotly"]
 
+[tool.uv]
+package = true
+
 [tool.setuptools.packages.find]
 include = ["chopin*"]
 namespaces = false

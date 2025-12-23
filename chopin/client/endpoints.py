@@ -183,7 +183,7 @@ def get_playlist_tracks(
             response_tracks = [
                 track
                 for track in response_tracks
-                if release_date_range[0] <= track.album.release_date <= release_date_range[1]
+                if release_date_range[0].date() <= track.album.release_date <= release_date_range[1].date()
             ]
         tracks.extend(response_tracks)
 
