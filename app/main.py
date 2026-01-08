@@ -1,8 +1,10 @@
 """Homepage for the chopin app."""
 import streamlit as st
+from pandas.tseries.holiday import before_nearest_workday
+
 from chopin.client.endpoints import get_queue, get_user_playlists
 from chopin.cli.from_queue import from_queue
-from chopin.managers.playlist import shuffle_playlist, create, fill
+from chopin.managers.playlist import shuffle_playlist, create, fill, doppelganger_playlist
 from chopin.constants import  constants
 from chopin.managers.selection import SelectionMethod
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
@@ -17,6 +19,11 @@ def queue_length() -> int:
     except ValueError as exc:
         return 0
     return len(queue)
+
+def spacing(nb_lines: int = 5):
+    """Add space - as streamlit blank lines,  between elements."""
+    for _ in range(nb_lines):
+        st.write("")
 
 def _compose(composer_config: ComposerConfig):
     tracks = compose_playlist(composer_config)
@@ -43,23 +50,24 @@ protected_playlists = [playlist for playlist in user_playlists if playlist.id in
 protected_playlists_name = [playlist.name for playlist in protected_playlists]
 unprotected_playlists = [playlist for playlist in user_playlists if playlist.id not in constants.PROTECTED_PLAYLISTS_ID]
 
-queue_col, shuffle_col = st.columns(2)
+queue_col, doppel_col, shuffle_col = st.columns(3)
 
 with queue_col:
     songs_in_queue = queue_length()
     st.subheader("🔮 Queue", divider="green", help=f"{songs_in_queue} songs in queue")
-    button_column, badge_column = st.columns(2)
-    with button_column:
-        queue_button = st.button(
-            key="queue",
-            label="Create playlist from queue",
-            help="Create a playlist from the user's queue. Note that Spotify must be active for this to work.",
-            type="primary",
-            width="stretch",
-            disabled=songs_in_queue == 0,
-        )
-    with badge_column:
-        st.badge(f"{songs_in_queue} songs in queue", icon="📜")
+
+    st.badge(f"{songs_in_queue} songs in queue", icon="📜")
+    st.write("")
+
+    queue_button = st.button(
+        key="queue",
+        label="Create playlist from queue",
+        help="Create a playlist from the user's queue. Note that Spotify must be active for this to work.",
+        type="primary",
+        width="stretch",
+        disabled=songs_in_queue == 0,
+    )
+
     if queue_button:
         try:
             from_queue()
@@ -67,17 +75,49 @@ with queue_col:
         except Exception as exc:
             st.error(f"There was an unexpected error: {exc}")
 
-with shuffle_col:
-    st.subheader("🔀 Shuffle", divider="green", help="Choose a playlist to shuffle. Some playlists can be protected by the user and won't appear here.")
-    select_column, button_column = st.columns(2)
-    with select_column:
+with doppel_col:
+    st.subheader("👬 Doppelganger", divider="green", help="Create a similar playlist from an existing one.")
+    original_column, new_column = st.columns(2)
+    with original_column:
         selected_playlist = st.selectbox(
             label="Select a playlist to shuffle",
-            options=[playlist.name for playlist in unprotected_playlists],
+            options=[playlist.name for playlist in user_playlists],
             label_visibility="collapsed",
         )
-    with button_column:
-        shuffle_button = st.button(
+    with new_column:
+        new_playlist_name = st.text_input(
+            label="Name for the new playlist.",
+            value=constants.RECOMMENDED_MIX.name,
+            label_visibility="collapsed",
+            icon="✏",
+        )
+
+    doppel_button = st.button(
+        key="doppel",
+        label=f"Create {new_playlist_name}, a doppelganger for {selected_playlist}",
+        help="Create a doppelganger playlist from an existing one.",
+        type="primary",
+        width="stretch",
+    )
+
+    if doppel_button:
+        if new_playlist_name in protected_playlists:
+            st.error(f"{new_playlist_name} is a protected playlist name, you cannot overwrite it.")
+        try:
+            doppelganger_playlist(selected_playlist, new_playlist_name)
+            st.success("Playlist successfully created.")
+        except Exception as exc:
+            st.error(f"There was an unexpected error: {exc}")
+
+
+with shuffle_col:
+    st.subheader("🔀 Shuffle", divider="green", help="Choose a playlist to shuffle. Some playlists can be protected by the user and won't appear here.")
+    selected_playlist = st.selectbox(
+        label="Select a playlist to shuffle",
+        options=[playlist.name for playlist in unprotected_playlists],
+        label_visibility="collapsed",
+    )
+    shuffle_button = st.button(
             key="shuffle",
             label=f"Shuffle {selected_playlist}",
             help="Shuffle the selected playlist.",
@@ -92,8 +132,7 @@ if shuffle_button:
     except Exception as exc:
         st.error(f"There was an unexpected error: {exc}")
 
-st.write("")
-st.write("")
+spacing(8)
 
 st.subheader("🎼 Compose with selected presets", divider="green")
 container = st.container(key=f"compose-presets", border=False, horizontal=True, horizontal_alignment="center")
@@ -129,10 +168,7 @@ container.button(
 )
 
 
-
-
-st.write("")
-st.write("")
+spacing(8)
 
 st.subheader("🎶 Compose your own playlist", divider="green")
 # Hint: no validation is performed as we populate the object.

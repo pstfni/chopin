@@ -1,10 +1,12 @@
 """Operations on spotify playlists."""
 
+import random
 from pathlib import Path
 
 from chopin.client.endpoints import (
     add_tracks_to_playlist,
     create_user_playlist,
+    get_album_tracks,
     get_current_user,
     get_named_playlist,
     get_playlist_tracks,
@@ -206,3 +208,31 @@ def dump(playlist: PlaylistSummary, filepath: Path):
     json_str = playlist.model_dump_json()
     with open(filepath, "w") as f:
         f.write(json_str)
+
+
+def doppelganger_playlist(source_playlist: str, new_playlist: str) -> PlaylistData:
+    """Create a "doppelganger", a similar playlist from an existing one.
+
+    Args:
+        source_playlist: The name of the playlist to copy.
+        new_playlist: The name of the new playlist.
+
+    Returns:
+        The created playlist.
+    """
+    playlist = get_named_playlist(source_playlist)
+    tracks = get_playlist_tracks(playlist.id)
+
+    albums_tracks: dict[str, list[TrackData]] = {}
+    new_tracks: list[TrackData] = []
+    for track in tracks:
+        album_id = track.album.id
+        if album_id not in albums_tracks:
+            albums_tracks[album_id] = get_album_tracks(album_id)
+        new_tracks.append(random.choice(albums_tracks[album_id]))
+
+    if new_tracks:
+        doppelganger_playlist = create(new_playlist, overwrite=True)
+        fill(doppelganger_playlist.id, tracks=new_tracks)
+        return doppelganger_playlist
+    logger.info(f"No tracks could be generated from playlist {source_playlist}. The {new_playlist} was not created.")

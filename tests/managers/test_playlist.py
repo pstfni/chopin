@@ -2,12 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from chopin.managers.playlist import (
-    create,
-    create_playlist,
-    dump,
-    tracks_from_playlist_name,
-)
+from chopin.managers.playlist import create, create_playlist, doppelganger_playlist, dump, tracks_from_playlist_name
 from chopin.schemas.playlist import PlaylistData, PlaylistSummary
 
 
@@ -61,3 +56,50 @@ def test_create_playlist(spotify_playlist, spotify_user):
     # from the fixture and not the `create_playlist` method arg
     assert playlist.name == "string"
     assert playlist.uri == "string"
+
+
+@patch("chopin.managers.playlist.get_named_playlist")
+@patch("chopin.managers.playlist.get_playlist_tracks")
+@patch("chopin.managers.playlist.get_album_tracks")
+@patch("chopin.managers.playlist.create")
+@patch("chopin.managers.playlist.fill")
+def test_doppelganger_playlist(
+    mock_fill,
+    mock_create,
+    mock_get_album_tracks,
+    mock_get_playlist_tracks,
+    mock_get_named_playlist,
+    playlist_1,
+    playlist_1_tracks,
+    album_tracks,
+):
+    mock_get_named_playlist.return_value = playlist_1
+    mock_get_playlist_tracks.return_value = playlist_1_tracks
+    mock_get_album_tracks.return_value = album_tracks
+
+    created_playlist = doppelganger_playlist(source_playlist="Playlist 1", new_playlist="Playlist 2")
+
+    mock_get_named_playlist.assert_called_once_with("Playlist 1")
+    mock_get_playlist_tracks.assert_called_once_with(playlist_1.id)
+    mock_create.assert_called_once_with("Playlist 2", overwrite=True)
+    mock_fill.assert_called_once()
+
+    filled_tracks = mock_fill.call_args[1]["tracks"]
+    assert len(filled_tracks) == len(playlist_1_tracks)
+
+
+@patch("chopin.managers.playlist.get_named_playlist")
+@patch("chopin.managers.playlist.get_playlist_tracks")
+@patch("chopin.managers.playlist.create")
+def test_doppelganger_playlist_empty(mock_create, mock_get_playlist_tracks, mock_get_named_playlist, playlist_1):
+    # Arrange
+    mock_get_named_playlist.return_value = playlist_1
+    mock_get_playlist_tracks.return_value = []
+
+    # Act
+    doppelganger_playlist(source_playlist="Playlist 1", new_playlist="Playlist 2")
+
+    # Assert
+    mock_get_named_playlist.assert_called_once_with("Playlist 1")
+    mock_get_playlist_tracks.assert_called_once_with(playlist_1.id)
+    mock_create.assert_not_called()

@@ -26,4 +26,4 @@ def app():
         exit(-1)
     from streamlit.web import cli
 
-    cli.main_run(["app/home.py"])
+    cli.main_run(["app/main.py"])

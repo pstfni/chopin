@@ -14,7 +14,7 @@ from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData
 from chopin.schemas.user import UserData
 from chopin.tools.logger import get_logger
-from chopin.tools.strings import match_strings, owner_is_spotify, simplify_string
+from chopin.tools.strings import match_strings, simplify_string
 
 logger = get_logger(__name__)
 

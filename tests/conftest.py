@@ -66,6 +66,11 @@ def playlist_2_tracks():
 
 
 @pytest.fixture
+def album_tracks():
+    return [track_data(id_=f"a_{i}") for i in range(8)]
+
+
+@pytest.fixture
 def empty_playlist():
     return []
 
