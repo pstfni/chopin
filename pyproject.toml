@@ -8,24 +8,19 @@ requires-python = ">= 3.10"
 classifiers = ["Private :: Do Not Upload"]
 
 dependencies = [
-    "numpy",
-    "pandas",
-    "tqdm",
     "emoji",
     "ruamel.yaml",
     "spotipy",
     "pydantic",
     "pydantic_settings",
-    "pandas",
-    "python-dotenv",
     "coloredlogs",
     "click",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-sugar", "ruff", "uv"]
+dev = ["pytest", "pytest-sugar", "ruff",]
 docs = ["mkdocs", "mkdocstrings", "mkdocstrings-python", "mkdocs-material"]
-app = ["streamlit", "plotly"]
+app = ["streamlit",]
 
 [tool.uv]
 package = true

@@ -77,7 +77,7 @@ def test_doppelganger_playlist(
     mock_get_playlist_tracks.return_value = playlist_1_tracks
     mock_get_album_tracks.return_value = album_tracks
 
-    created_playlist = doppelganger_playlist(source_playlist="Playlist 1", new_playlist="Playlist 2")
+    doppelganger_playlist(source_playlist="Playlist 1", new_playlist="Playlist 2")
 
     mock_get_named_playlist.assert_called_once_with("Playlist 1")
     mock_get_playlist_tracks.assert_called_once_with(playlist_1.id)

@@ -8,9 +8,8 @@ Available rules:
     - `original`: no rule is applied, and the tracks are picked in the order they appear in the source.
 """
 
+import random
 from enum import Enum
-
-import numpy as np
 
 from chopin.schemas.track import TrackData
 
@@ -39,7 +38,7 @@ def _select_random_tracks(tracks: list[TrackData], nb_tracks: int) -> list[Track
     Returns:
         Selected tracks.
     """
-    return np.random.choice(tracks, min(nb_tracks, len(tracks)), replace=False)
+    return random.sample(tracks, min(nb_tracks, len(tracks)))
 
 
 def _select_original_tracks(tracks: list[TrackData], nb_tracks: int) -> list[TrackData]:

@@ -1,19 +1,15 @@
 repos:
-# Black for docstrings
--   repo: https://github.com/asottile/blacken-docs
-    rev: 1.15.0
-    hooks:
-    -   id: blacken-docs
 - repo: https://github.com/astral-sh/ruff-pre-commit
   # Ruff version.
-  rev: v0.11.9
+  rev: v0.14.14
   hooks:
     # Run the linter.
-    - id: ruff
+    - id: ruff-check
       args: 
         - --fix
     # Run the formatter.
     - id: ruff-format
+
 # Autoformat the doc
 - repo: https://github.com/myint/docformatter
   rev: v1.7.7

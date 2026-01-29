@@ -1,7 +1,5 @@
 """Pydantic schemas for playlists."""
 
-import numpy as np
-import pandas as pd
 from pydantic import BaseModel, model_serializer, model_validator
 
 from chopin import VERSION
@@ -46,22 +44,20 @@ class PlaylistSummary(BaseModel):
     _avg_popularity: float | None = None
 
     @model_validator(mode="after")
-    def fill_fields(cls, values):
+    def fill_fields(self):
         """Compute field values on initialzation."""
-        tracks = values.tracks
-        values._nb_tracks = len(tracks)
-        values._nb_artists = len(np.unique([track.artists[0].name for track in tracks]))
-        values._total_duration = sum([track.duration_ms for track in tracks])
-        values._avg_popularity = np.mean([track.popularity for track in tracks])
-
-        return values
+        tracks = self.tracks
+        popularities = [track.popularity for track in tracks]
+        self._nb_tracks = len(tracks)
+        self._nb_artists = len(set(track.artists[0].name for track in tracks))
+        self._total_duration = sum([track.duration_ms for track in tracks])
+        self._avg_popularity = sum(popularities) / len(popularities) if popularities else 0
+        return self
 
     def __str__(self):
         """Represent a playlist summary."""
         return (
-            f"------ Playlist {self.playlist.name} ------\n"
-            f"\t{self._nb_tracks} tracks\n"
-            f"\t{self._nb_artists} artists\n"
+            f"------ Playlist {self.playlist.name} ------\n\t{self._nb_tracks} tracks\n\t{self._nb_artists} artists\n"
         )
 
     @model_serializer
@@ -72,9 +68,3 @@ class PlaylistSummary(BaseModel):
             "tracks": [track.model_dump() for track in self.tracks],
             "version": VERSION,
         }
-
-    def to_dataframe(self) -> pd.DataFrame:
-        """Write the playlist summary as a dataframe."""
-        dataframe = pd.json_normalize(self.model_dump(), "tracks")
-        dataframe["artists"] = dataframe["artists"].apply(lambda x: x[0]["name"])
-        return dataframe

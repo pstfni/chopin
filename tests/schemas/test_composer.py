@@ -1,6 +1,7 @@
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
-from pathlib import Path
 
 from chopin.managers.selection import SelectionMethod
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem

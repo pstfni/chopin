@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import NamedTuple
+from typing import ClassVar, NamedTuple
 
 
 class PlaylistNamedTuple(NamedTuple):
@@ -52,7 +52,7 @@ class ConstantsNamespace:
     Rather, they are the default ones that should be used for
     composition purposes.
     """
-    PROTECTED_PLAYLISTS_ID = [
+    PROTECTED_PLAYLISTS_ID: ClassVar[list[str]] = [
         "54EDlBcsHHhxlnEZeKyCYK",  # rock60s
         "7GwerBM1SrPtUAOQ9yJXWK",  # rock70s
         "4KMxj89DO4Gb8doyxIyCEO",  # rock80s

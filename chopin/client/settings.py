@@ -5,6 +5,7 @@ from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from spotipy.oauth2 import SpotifyOAuth
 
+
 class SpotifyConfig(BaseSettings):
     """Spotify API settings."""
 

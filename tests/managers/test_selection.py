@@ -8,11 +8,39 @@ from chopin.managers.selection import (
     _select_latest_tracks,
     _select_original_tracks,
     _select_popular_tracks,
+    _select_random_tracks,
 )
 
 
-def test__select_random_tracks():
-    pass  # It is a numpy random choice call.
+def test__select_random_tracks(playlist_1_tracks):
+    nb_tracks = 5
+    selection = _select_random_tracks(playlist_1_tracks, nb_tracks)
+    assert len(selection) == nb_tracks
+
+    # Test that the selection is a subset of the original tracks
+    assert all(track in playlist_1_tracks for track in selection)
+
+    # Test that the selection is unique (no duplicates)
+    assert len(set(track.id for track in selection)) == nb_tracks
+
+
+def test__select_random_tracks_larger_than_list(playlist_1_tracks):
+    # Test when nb_tracks is larger than the list
+    nb_tracks = 100
+    selection = _select_random_tracks(playlist_1_tracks, nb_tracks)
+    assert len(selection) == len(playlist_1_tracks)
+
+
+def test__select_random_tracks_empty_list():
+    # Test with an empty list
+    selection = _select_random_tracks([], nb_tracks=10)
+    assert selection == []
+
+
+def test__select_random_tracks_zero_tracks(playlist_1_tracks):
+    # Test when nb_tracks is zero
+    selection = _select_random_tracks(playlist_1_tracks, nb_tracks=0)
+    assert selection == []
 
 
 def test__select_popular_tracks(playlist_1_tracks):

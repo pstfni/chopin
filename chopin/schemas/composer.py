@@ -1,13 +1,11 @@
 """Schemas for playlist composition."""
 
 import math
-from typing import Annotated, Literal, Self
 from pathlib import Path
+from typing import Annotated, Literal, Self
 
-from ruamel.yaml import YAML
-
-import numpy as np
 from pydantic import AfterValidator, BaseModel, Field, computed_field, field_validator, model_validator
+from ruamel.yaml import YAML
 
 from chopin.managers.selection import SelectionMethod
 from chopin.tools.dates import read_date
@@ -96,21 +94,21 @@ class ComposerConfig(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def fill_nb_songs(cls, values: "ComposerConfig") -> "ComposerConfig":
+    def fill_nb_songs(self) -> "ComposerConfig":
         """From the nb_songs and item weights, compute the nb_songs of each item.
 
         Args:
             values: Attributes of the composer configuration model.
         """
-        item_weights: list[float] = [item.weight for category in SOURCES for item in getattr(values, category)]
-        sum_of_weights: float = np.array(list(item_weights)).sum()
+        item_weights: list[float] = [item.weight for category in SOURCES for item in getattr(self, category)]
+        sum_of_weights: float = sum(item_weights)
         total_nb_songs: int = 0
         for category in SOURCES:
-            for item in getattr(values, category):
-                item.nb_songs = math.ceil((item.weight / sum_of_weights) * values.nb_songs)
+            for item in getattr(self, category):
+                item.nb_songs = math.ceil((item.weight / sum_of_weights) * self.nb_songs)
                 total_nb_songs += item.nb_songs
         logger.info(f"With the composer configuration parsed, {total_nb_songs} songs will be added.")
-        return values
+        return self
 
     @computed_field
     def items(self) -> list[list[ComposerConfigItem]]:  # noqa: D102
