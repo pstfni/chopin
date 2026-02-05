@@ -47,7 +47,7 @@ def _submit(composer_configuration: ComposerConfig) -> ComposerConfig:
     ]
     st.write(composer_configuration.model_dump())
     ComposerConfig.model_validate(composer_configuration)
-    # _compose(composer_configuration)
+    _compose(composer_configuration)
     return composer_configuration
 
 
