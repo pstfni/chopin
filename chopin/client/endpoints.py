@@ -3,7 +3,7 @@
 import random
 from datetime import datetime
 from functools import lru_cache
-from typing import Any, Literal
+from typing import Any, Literal, TypeAlias
 
 from pydantic import ValidationError
 
@@ -17,6 +17,7 @@ from chopin.tools.logger import get_logger
 from chopin.tools.strings import match_strings, simplify_string
 
 logger = get_logger(__name__)
+DateRange: TypeAlias = tuple[datetime.date, datetime.date] | None
 
 
 def search_artist(artist_name: str) -> ArtistData | None:
@@ -152,14 +153,16 @@ def _validate_tracks(tracks: list[dict[str, Any]]) -> list[TrackData]:
 
 
 def get_playlist_tracks(
-    playlist_id: str, release_date_range: tuple[datetime.date, datetime.date] | None = None
+    playlist_id: str,
+    release_date_range: DateRange = None,
+    added_at_range: DateRange = None,
 ) -> list[TrackData]:
     """Get tracks of a given playlist.
 
     Args:
         playlist_id: The uri of the playlist.
         release_date_range: A date range; tracks to retrieve must have been released in this range.
-
+        added_at_range: A date range; tracks to retrieve must have been added to the playlist in this range.
 
     Returns:
         A list of track uuids.
@@ -183,6 +186,12 @@ def get_playlist_tracks(
                 track
                 for track in response_tracks
                 if release_date_range[0].date() <= track.album.release_date <= release_date_range[1].date()
+            ]
+        if added_at_range:
+            response_tracks = [
+                track
+                for track in response_tracks
+                if track.added_at and added_at_range[0].date() <= track.added_at <= added_at_range[1].date()
             ]
         tracks.extend(response_tracks)
 

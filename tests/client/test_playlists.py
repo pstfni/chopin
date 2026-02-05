@@ -201,6 +201,23 @@ def test_get_playlist_tracks(spotify_track, added_at):
 
 
 @pytest.mark.parametrize(
+    "added_at, added_at_range, expected_nb_tracks",
+    [
+        (None, None, 1),
+        (datetime(2020, 1, 1), None, 1),
+        (datetime(2020, 1, 1), (datetime(2025, 1, 1), datetime.now()), 0),
+        (datetime(2020, 1, 1), (datetime(2018, 1, 1), datetime(2023, 1, 1)), 1),
+        (None, (datetime(2025, 1, 1), datetime.now()), 0),
+    ],
+)
+def test_get_playlist_tracks_with_added_at_range(spotify_track, added_at, added_at_range, expected_nb_tracks):
+    response = {"items": [dict(added_at=added_at, track=spotify_track)]}
+    with patch("chopin.client.endpoints._client.playlist_items", side_effect=[response, {"items": []}]):
+        playlist_tracks = get_playlist_tracks(playlist_id="test", added_at_range=added_at_range)
+    assert len(playlist_tracks) == expected_nb_tracks
+
+
+@pytest.mark.parametrize(
     "release_date_range, expected_nb_tracks",
     [
         (None, 1),
