@@ -75,12 +75,17 @@ class ComposerConfig(BaseModel):
         playlists: A list of playlist names and their weight.
         uris: A list of spotify playlist URIs to pick from directly.
         history: Include past listening habits and most listened songs.
+
+        release_range: An optional range in which the tracks were released.
+        added_at_range: An optional range in which tracks were added to the playlist.
+            Only available for playlists and uris source.
     """
 
     name: str = "🤖 Robot Mix"
     description: str = "Randomly generated mix"
     nb_songs: Annotated[int, Field(gt=0)]
     release_range: Annotated[tuple[str | None, str | None] | None, AfterValidator(read_date)] | None = None
+    added_at_range: Annotated[tuple[str | None, str | None] | None, AfterValidator(read_date)] | None = None
     playlists: list[ComposerConfigItem] | None = []
     history: Annotated[list[ComposerConfigListeningHistory], Field(max_length=3)] | None = []
     uris: list[ComposerConfigItem] | None = []

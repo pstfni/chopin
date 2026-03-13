@@ -21,7 +21,10 @@ logger = get_logger(__name__)
 
 # todo: logging decorator
 def _add_from_playlists(
-    playlists: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
+    playlists: list[ComposerConfigItem],
+    release_range: tuple[date] | None = None,
+    added_at_range: tuple[date] | None = None,
+    **kwargs,
 ) -> list[TrackData]:
     """Add tracks from each playlist."""
     tracks = [
@@ -29,6 +32,7 @@ def _add_from_playlists(
             playlist_name=playlist.name,
             nb_tracks=playlist.nb_songs,
             release_range=release_range,
+            added_at_range=added_at_range,
             user_playlists=get_user_playlists(),
             selection_method=playlist.selection_method,
         )
@@ -43,13 +47,17 @@ def _add_from_history(history_ranges: list[ComposerConfigItem], **kwargs) -> lis
 
 
 def _add_from_uris(
-    uris: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
+    uris: list[ComposerConfigItem],
+    release_range: tuple[date] | None = None,
+    added_at_range: tuple[date] | None = None,
+    **kwargs,
 ) -> list[TrackData]:
     tracks = [
         tracks_from_playlist_uri(
             playlist_uri=uri.name,
             nb_tracks=uri.nb_songs,
             release_range=release_range,
+            added_at_range=added_at_range,
             selection_method=uri.selection_method,
         )
         for uri in uris
@@ -82,7 +90,12 @@ def compose_playlist(composition_config: ComposerConfig) -> list[TrackData]:
     for source, source_config in composition_config.items:
         if not source_config:
             continue
-        source_tracks = DISPATCHER[source](source_config, release_range=composition_config.release_range, tracks=tracks)
+        source_tracks = DISPATCHER[source](
+            source_config,
+            release_range=composition_config.release_range,
+            added_at_range=composition_config.added_at_range,
+            tracks=tracks,
+        )
         tracks.extend(source_tracks)
 
     return random.sample(tracks, len(tracks))

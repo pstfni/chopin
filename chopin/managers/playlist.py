@@ -18,7 +18,7 @@ from chopin.managers.selection import SelectionMethod, select_tracks
 from chopin.managers.track import shuffle_tracks
 from chopin.schemas.playlist import PlaylistData, PlaylistSummary
 from chopin.schemas.track import TrackData
-from chopin.tools.dates import ReleaseRange
+from chopin.tools.dates import DateRange
 from chopin.tools.logger import get_logger
 from chopin.tools.strings import simplify_string
 
@@ -126,7 +126,8 @@ def create_playlist_from_queue(name: str, description: str = "Mix generated from
 def tracks_from_playlist_uri(
     playlist_uri: str,
     nb_tracks: int,
-    release_range: ReleaseRange | None = None,
+    release_range: DateRange | None = None,
+    added_at_range: DateRange | None = None,
     selection_method: SelectionMethod | None = None,
 ) -> list[TrackData]:
     """Get tracks from a playlist URI.
@@ -138,6 +139,7 @@ def tracks_from_playlist_uri(
         playlist_uri: Name of the artist or band to fetch related tracks from
         nb_tracks: Number of tracks to retrieve.
         release_range: An optional datetime range for the release date of the tracks.
+        added_at_range: An optional datetime range for the added date of the tracks.
         selection_method: How tracks are chosen from the retrieved tracks.
             See `SelectionMethod` for available methods. If no method is given, the choice will be random.
 
@@ -145,7 +147,9 @@ def tracks_from_playlist_uri(
         A list of track data from the artist radio.
     """
     try:
-        tracks = get_playlist_tracks(playlist_id=playlist_uri, release_date_range=release_range)
+        tracks = get_playlist_tracks(
+            playlist_id=playlist_uri, release_date_range=release_range, added_at_range=added_at_range
+        )
     except Exception:
         logger.warning(f"Couldn't retrieve playlist URI {playlist_uri}")
         return []
@@ -156,7 +160,8 @@ def tracks_from_playlist_name(
     playlist_name: str,
     nb_tracks: int,
     user_playlists: list[PlaylistData],
-    release_range: ReleaseRange | None = None,
+    release_range: DateRange | None = None,
+    added_at_range: DateRange | None = None,
     selection_method: SelectionMethod | None = None,
 ) -> list[TrackData]:
     """Get a number of tracks from a playlist.
@@ -166,6 +171,7 @@ def tracks_from_playlist_name(
         nb_tracks: Number of tracks to retrieve
         user_playlists: List of existing user playlists. Used to map the name with the URI.
         release_range: An optional datetime range for the release date of the tracks.
+        added_at_range: An optional datetime range for the added date of the tracks.
         selection_method: How tracks are chosen from the retrieved tracks.
             See `SelectionMethod` for available methods. If no method is given, the choice will be random.
 
@@ -178,7 +184,9 @@ def tracks_from_playlist_name(
     if not playlist:
         logger.warning(f"Couldn't retrieve tracks for playlist {playlist_name}")
         return []
-    tracks = get_playlist_tracks(playlist_id=playlist[0].id, release_date_range=release_range)
+    tracks = get_playlist_tracks(
+        playlist_id=playlist[0].id, release_date_range=release_range, added_at_range=added_at_range
+    )
     return select_tracks(tracks, nb_tracks, selection_method)
 
 

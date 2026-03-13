@@ -3,10 +3,10 @@
 from datetime import date, datetime
 from typing import TypeAlias
 
-ReleaseRange: TypeAlias = tuple[datetime, datetime]
+DateRange: TypeAlias = tuple[datetime, datetime]
 
 
-def read_date(date: tuple[str | None, str | None] | None) -> ReleaseRange | None:
+def read_date(date: tuple[str | None, str | None] | None) -> DateRange | None:
     """Read a date from  a string tuple.
 
     Args:
