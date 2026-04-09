@@ -11,3 +11,15 @@
 ::: chopin.cli.shuffle
     options:
         show_signature: false
+
+::: chopin.cli.backup
+    options:
+        show_signature: false
+
+::: chopin.cli.restore
+    options:
+        show_signature: false
+
+::: chopin.cli.doppelganger
+    options:
+        show_signature: false

@@ -26,5 +26,6 @@ Several entrypoints come with the chopin repository:
 | [shuffle](./guide/shuffle.md)   | 🔀 Shuffle tracks in an existing playlist     |
 | [backup](./guide/backup_and_restore.md#backup)   | 💾 Save a summary of a playlist     |
 | [restore](./guide/backup_and_restore.md#restore)  | 🆙 Restore a previously saved playlist     |
+| [doppelganger](./guide/doppelganger.md)  | 👬 Create a similar playlist from an existing one     |
 
 

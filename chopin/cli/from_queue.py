@@ -16,13 +16,13 @@ def from_queue(name: str):
 
     !!! warning
 
-        Due to Spotify API limits, you must be _playing_ a song on an
-    active device for this to work.
+    Due to Spotify API limits, you must be _playing_ a song on an active
+    device for this to work.
 
     !!! warning
 
-        Due to Spotify API limits, the maximum number of songs you can
-    use is 20.
+    Due to Spotify API limits, the maximum number of songs you can use
+    is 20.
     """
     click.echo("🔮 Queuing . . .")
     create_playlist_from_queue(name)

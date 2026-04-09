@@ -7,10 +7,22 @@ The `from-queue` command create a playlist from the songs in your queue.
 <div class="termy">
 
 ```console
-$ chopin from-queue 
+$ chopin from-queue
 
 🔮 Queuing . . .
 Playlist '🔮 Queued Mix' successfully created.
+```
+</div>
+
+You can optionally provide a custom name for the playlist:
+
+<div class="termy">
+
+```console
+$ chopin from-queue "My Custom Queue"
+
+🔮 Queuing . . .
+Playlist 'My Custom Queue' successfully created.
 ```
 </div>
 
