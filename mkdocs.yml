@@ -13,6 +13,7 @@ nav:
     - "guide/queue.md"
     - "guide/shuffle.md"
     - "guide/backup_and_restore.md"
+    - "guide/doppelganger.md"
   - Reference:
     - "reference/index.md"
     - "reference/entrypoints.md"
@@ -20,6 +21,7 @@ nav:
     - "reference/client.md"
     - "reference/schemas.md"
     - "reference/tools.md"
+    - "reference/sources.md"
 
 theme:
   name: "material"
