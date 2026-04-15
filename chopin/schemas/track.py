@@ -43,11 +43,10 @@ class TrackData(BaseModel):
     id: str
     uri: str
     duration_ms: int
-    popularity: int
+    popularity: int | None = 0
     added_at: FormattedDate | None = None
     album: AlbumData | None = None
     artists: list[ArtistData] | None = None
-    popularity: int | None = 0
 
     def to_flatten_dict(self, **kwargs):
         """Export the track data as a non-nested dictionary."""
