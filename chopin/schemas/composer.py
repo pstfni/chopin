@@ -8,16 +8,12 @@ from pydantic import AfterValidator, BaseModel, Field, computed_field, field_val
 from ruamel.yaml import YAML
 
 from chopin.managers.selection import SelectionMethod
+from chopin.sources import get_sources
 from chopin.tools.dates import read_date
 from chopin.tools.logger import get_logger
 from chopin.tools.strings import extract_uri_from_playlist_link
 
 logger = get_logger(__name__)
-SOURCES = [
-    "playlists",
-    "history",
-    "uris",
-]
 
 
 class ComposerConfigItem(BaseModel):
@@ -100,11 +96,12 @@ class ComposerConfig(BaseModel):
         Args:
             values: Attributes of the composer configuration model.
         """
-        item_weights: list[float] = [item.weight for category in SOURCES for item in getattr(self, category)]
+        keys = get_sources()
+        item_weights: list[float] = [item.weight for key in keys for item in getattr(self, key)]
         sum_of_weights: float = sum(item_weights)
         total_nb_songs: int = 0
-        for category in SOURCES:
-            for item in getattr(self, category):
+        for key in keys:
+            for item in getattr(self, key):
                 item.nb_songs = math.ceil((item.weight / sum_of_weights) * self.nb_songs)
                 total_nb_songs += item.nb_songs
         logger.info(f"With the composer configuration parsed, {total_nb_songs} songs will be added.")
@@ -112,7 +109,7 @@ class ComposerConfig(BaseModel):
 
     @computed_field
     def items(self) -> list[list[ComposerConfigItem]]:  # noqa: D102
-        return {source: getattr(self, source) for source in SOURCES}.items()
+        return {source: getattr(self, source) for source in get_sources()}.items()
 
     @classmethod
     def parse_yaml(cls, file_path: Path) -> Self:

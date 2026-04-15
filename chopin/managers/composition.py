@@ -12,14 +12,16 @@ from chopin.managers.playlist import (
     tracks_from_playlist_name,
     tracks_from_playlist_uri,
 )
-from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
+from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
 from chopin.schemas.track import TrackData
+from chopin.sources import get_registry, register
 from chopin.tools.logger import get_logger
 
 logger = get_logger(__name__)
 
 
 # todo: logging decorator
+@register("playlists", ComposerConfigItem)
 def _add_from_playlists(
     playlists: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
 ) -> list[TrackData]:
@@ -37,11 +39,13 @@ def _add_from_playlists(
     return list(itertools.chain(*tracks))
 
 
-def _add_from_history(history_ranges: list[ComposerConfigItem], **kwargs) -> list[TrackData]:
+@register("history", ComposerConfigListeningHistory)
+def _add_from_history(history_ranges: list[ComposerConfigListeningHistory], **kwargs) -> list[TrackData]:
     tracks = [get_top_tracks(time_range=history.time_range, limit=history.nb_songs) for history in history_ranges]
     return list(itertools.chain(*tracks))
 
 
+@register("uris", ComposerConfigItem)
 def _add_from_uris(
     uris: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
 ) -> list[TrackData]:
@@ -55,13 +59,6 @@ def _add_from_uris(
         for uri in uris
     ]
     return list(itertools.chain(*tracks))
-
-
-DISPATCHER: dict[str, callable] = {
-    "playlists": _add_from_playlists,
-    "history": _add_from_history,
-    "uris": _add_from_uris,
-}
 
 
 def compose_playlist(composition_config: ComposerConfig) -> list[TrackData]:
@@ -79,10 +76,11 @@ def compose_playlist(composition_config: ComposerConfig) -> list[TrackData]:
     """
     tracks: list[TrackData] = []
 
-    for source, source_config in composition_config.items:
+    for key, source in get_registry().items():
+        source_config = getattr(composition_config, key, None)
         if not source_config:
             continue
-        source_tracks = DISPATCHER[source](source_config, release_range=composition_config.release_range, tracks=tracks)
+        source_tracks = source.handler(source_config, release_range=composition_config.release_range, tracks=tracks)
         tracks.extend(source_tracks)
 
     return random.sample(tracks, len(tracks))
