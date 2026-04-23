@@ -16,7 +16,6 @@ def simplify_string(text: str) -> str:
     text = text.lstrip(" ")
     text = text.replace("'", "")
     text = text.replace(" ", "")
-    text = text.replace("&", "_")
     return text
 
 

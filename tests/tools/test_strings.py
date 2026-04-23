@@ -16,12 +16,12 @@ from chopin.tools.strings import extract_uri_from_playlist_link, match_strings, 
         ("String", "string"),
         # Trailing characters
         ("     string    ", "string"),
-        # & characters are replaced by _. ' characters are ignored.
-        ("string & ol'string", "string_olstring"),
+        # Make sure regex patterns characters are not simplified
+        ("st*[?+]ring", "st*[?+]ring"),
+        # & characters are not replaced by _. ' characters are ignored.
+        ("string & ol'string", "string&olstring"),
         # Real Life scenario
         ("🎤Rock 60's", "rock60s"),
-        # Real Life scenario #2
-        ("🧢Hip-Hop & Rap", "hip-hop_rap"),
     ],
 )
 def test_simplify_string(input_string, expected_string):

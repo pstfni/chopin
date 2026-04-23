@@ -1,6 +1,8 @@
 """Manage composition."""
 
+import fnmatch
 import itertools
+import math
 import random
 from datetime import date
 
@@ -13,10 +15,57 @@ from chopin.managers.playlist import (
     tracks_from_playlist_uri,
 )
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem
+from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData
 from chopin.tools.logger import get_logger
+from chopin.tools.strings import simplify_string
 
 logger = get_logger(__name__)
+
+
+def _expand_pattern_playlists(
+    playlists: list[ComposerConfigItem],
+    user_playlists: list[PlaylistData],
+) -> list[ComposerConfigItem]:
+    """Expand glob patterns in playlist names into individual ComposerConfigItems.
+
+    A pattern is any name containing ``*`` or ``?`` (fnmatch syntax). Each
+    matching user playlist becomes its own item, inheriting the original
+    weight and selection method. The nb_songs budget is split evenly across
+    all matches.
+
+    Args:
+        playlists: Items from the composer configuration (may contain patterns).
+        user_playlists: All playlists available in the user's Spotify library.
+
+    Returns:
+        A flat list of items where every pattern has been replaced by its matches.
+    """
+    expanded = []
+    for item in playlists:
+        simplified = simplify_string(item.name)
+        if not any(c in simplified for c in ("*", "?")):
+            expanded.append(item)
+            continue
+        matches = [p for p in user_playlists if fnmatch.fnmatch(simplify_string(p.name), simplified)]
+        if not matches:
+            logger.warning(f"Pattern '{item.name}' matched no playlists — skipping")
+            continue
+        per_songs = math.ceil(item.nb_songs / len(matches))
+        logger.info(f"Pattern '{item.name}' expanded to {len(matches)} playlists: {[p.name for p in matches]}")
+
+        expanded.extend(
+            [
+                ComposerConfigItem(
+                    name=match.name,
+                    weight=item.weight,
+                    nb_songs=per_songs,
+                    selection_method=item.selection_method,
+                )
+                for match in matches
+            ]
+        )
+    return expanded
 
 
 # todo: logging decorator
@@ -24,15 +73,16 @@ def _add_from_playlists(
     playlists: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
 ) -> list[TrackData]:
     """Add tracks from each playlist."""
+    user_playlists = get_user_playlists()
     tracks = [
         tracks_from_playlist_name(
             playlist_name=playlist.name,
             nb_tracks=playlist.nb_songs,
             release_range=release_range,
-            user_playlists=get_user_playlists(),
+            user_playlists=user_playlists,
             selection_method=playlist.selection_method,
         )
-        for playlist in playlists
+        for playlist in _expand_pattern_playlists(playlists, user_playlists)
     ]
     return list(itertools.chain(*tracks))
 
