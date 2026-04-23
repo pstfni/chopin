@@ -7,7 +7,6 @@ from pydantic import AfterValidator, BaseModel
 
 from chopin.schemas.album import AlbumData
 from chopin.schemas.artist import ArtistData
-from chopin.tools.dictionaries import flatten_dict
 
 
 def datetime_to_date(dt: datetime | date | None) -> date | None:
@@ -47,9 +46,3 @@ class TrackData(BaseModel):
     added_at: FormattedDate | None = None
     album: AlbumData | None = None
     artists: list[ArtistData] | None = None
-
-    def to_flatten_dict(self, **kwargs):
-        """Export the track data as a non-nested dictionary."""
-        if isinstance(self.artists, list):
-            self.artists = self.artists[0]
-        return flatten_dict(self.model_dump(**kwargs))

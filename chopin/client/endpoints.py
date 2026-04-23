@@ -5,7 +5,7 @@ from datetime import datetime
 from functools import lru_cache
 from typing import Any, Literal
 
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 
 from chopin.client.settings import _client
 from chopin.constants import constants
@@ -17,6 +17,8 @@ from chopin.tools.logger import get_logger
 from chopin.tools.strings import match_strings, simplify_string
 
 logger = get_logger(__name__)
+
+_track_list_adapter = TypeAdapter(list[TrackData])
 
 
 def search_artist(artist_name: str) -> ArtistData | None:
@@ -125,30 +127,19 @@ def get_named_playlist(name: str) -> PlaylistData:
     return playlists[index_]
 
 
-def _validate_single_track(track: dict[str, Any]) -> TrackData | None:
-    """Validate a single track, otherwise log an error.
-
-    Useful against non synced Spotify tracks, which can cause downstream errors.
-
-    Args:
-        track: A track, as received after the Spotify API call.
-
-    Returns:
-        The validated track if the track was well formatted.
-    """
-    if not track.get("track"):
-        return None
-    try:
-        validated_track = TrackData.model_validate(dict(added_at=track.get("added_at"), **track["track"]))
-        return validated_track
-    except ValidationError as exc:
-        logger.warning(f"Error in track validation, the track is ignored: {track} \n Exception raised: {exc}")
-
-
 def _validate_tracks(tracks: list[dict[str, Any]]) -> list[TrackData]:
     """Read and validate track objects from the Spotify response."""
-    response_tracks = [_validate_single_track(track) for track in tracks]
-    return [track for track in response_tracks if track]
+    batched_results = [dict(added_at=track.get("added_at"), **track["track"]) for track in tracks if track.get("track")]
+    try:
+        return _track_list_adapter.validate_python(batched_results)
+    except ValidationError:
+        result = []
+        for item in batched_results:
+            try:
+                result.append(TrackData.model_validate(item))
+            except ValidationError as exc:  # noqa: PERF203
+                logger.warning(f"Error in track validation, the track is ignored: {item} \n Exception raised: {exc}")
+        return result
 
 
 def get_playlist_tracks(

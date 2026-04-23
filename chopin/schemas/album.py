@@ -17,7 +17,7 @@ class AlbumData(BaseModel):
         release_date: The year the album was released.
     """
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    model_config = ConfigDict()
 
     name: str
     id: str

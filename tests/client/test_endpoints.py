@@ -6,7 +6,6 @@ from unittest.mock import patch
 import pytest
 
 from chopin.client.endpoints import (
-    _validate_single_track,
     _validate_tracks,
     add_to_queue,
     add_tracks_to_playlist,
@@ -236,20 +235,6 @@ def test_get_artist_top_tracks(spotify_artist, spotify_track):
 # ---------------------------------------------------------------------------
 
 
-def test_validate_single_track_no_key():
-    assert _validate_single_track({}) is None
-
-
-def test_validate_single_track_valid(valid_track):
-    assert isinstance(_validate_single_track(valid_track), TrackData)
-
-
-def test_validate_single_track_invalid_logs_warning(caplog, invalid_track):
-    result = _validate_single_track(invalid_track)
-    assert result is None
-    assert "Error in track validation" in caplog.text
-
-
 @pytest.mark.parametrize(
     "tracks, expected_count",
     [
@@ -265,6 +250,12 @@ def test_validate_tracks_keeps_valid(valid_track):
     result = _validate_tracks([{}, valid_track])
     assert len(result) == 1
     assert isinstance(result[0], TrackData)
+
+
+def test_validate_tracks_skips_invalid_logs_warning(caplog, valid_track, invalid_track):
+    result = _validate_tracks([valid_track, invalid_track])
+    assert len(result) == 1
+    assert "Error in track validation" in caplog.text
 
 
 # ---------------------------------------------------------------------------
