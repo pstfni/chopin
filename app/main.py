@@ -1,7 +1,7 @@
 """Homepage for the chopin app."""
 
 from pathlib import Path
-from typing import Any
+from typing import Any, TypedDict
 
 import streamlit as st
 
@@ -64,6 +64,18 @@ def _submit(composer_configuration: ComposerConfig) -> ComposerConfig:
 
 st.set_page_config(layout="wide")
 st.header("🎶 Chopin")
+
+
+class _State(TypedDict):
+    playlists: dict[str, Any]
+    uris: dict[str, Any]
+    containers: list
+    history: list[str]
+
+
+_DEFAULTS: _State = {"playlists": {}, "uris": {}, "containers": [], "history": []}
+for _key, _val in _DEFAULTS.items():
+    st.session_state.setdefault(_key, _val)
 
 user_playlists = _user_playlists()
 protected_playlists = [playlist for playlist in user_playlists if playlist.id in constants.PROTECTED_PLAYLISTS_ID]
@@ -219,9 +231,6 @@ add_from_playlists = st.checkbox(
     "Select songs from your playlists", value=True, help="Toggle to add songs from the user's playlists."
 )
 
-if "playlists" not in st.session_state:
-    st.session_state.playlists = {}
-
 
 def _add_playlist(name: str, config: dict[str, Any]) -> None:
     """Add the playlist configuration selected bu the user to the session state, for later use."""
@@ -282,11 +291,6 @@ add_from_uris = st.checkbox(
     value=False,
     help="Toggle to add songs from public playlists. Note that Spotify owned playlists might be unavailable.",
 )
-
-if "containers" not in st.session_state:
-    st.session_state.containers = []
-if "uris" not in st.session_state:
-    st.session_state.uris = {}
 
 
 def _add_container_uri():
@@ -356,8 +360,6 @@ if add_from_uris:
             uri_container.success("Playlist added to composition")
 
 st.write("### Add songs from your listening history ?")
-if "history" not in st.session_state:
-    st.session_state.history = []
 enable_history = st.checkbox(
     "Enable listening history",
     value=False,
