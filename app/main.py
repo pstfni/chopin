@@ -1,5 +1,6 @@
 """Homepage for the chopin app."""
 
+from pathlib import Path
 from typing import Any
 
 import streamlit as st
@@ -13,14 +14,24 @@ from chopin.managers.selection import SelectionMethod
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
 
 
-@st.cache_data()
-def queue_length() -> int:
+@st.cache_data(ttl=60)
+def _queue_length() -> int:
     """Get the length of the queue."""
     try:
         queue = get_queue()
     except ValueError:
         return 0
     return len(queue)
+
+
+@st.cache_data(ttl=120)
+def _user_playlists() -> list:
+    return get_user_playlists()
+
+
+@st.cache_data()
+def _preset_configuration(path: Path) -> ComposerConfig:
+    return ComposerConfig.parse_yaml(path)
 
 
 def spacing(nb_lines: int = 5):
@@ -54,7 +65,7 @@ def _submit(composer_configuration: ComposerConfig) -> ComposerConfig:
 st.set_page_config(layout="wide")
 st.header("🎶 Chopin")
 
-user_playlists = get_user_playlists()
+user_playlists = _user_playlists()
 protected_playlists = [playlist for playlist in user_playlists if playlist.id in constants.PROTECTED_PLAYLISTS_ID]
 protected_playlists_name = [playlist.name for playlist in protected_playlists]
 unprotected_playlists = [playlist for playlist in user_playlists if playlist.id not in constants.PROTECTED_PLAYLISTS_ID]
@@ -62,7 +73,7 @@ unprotected_playlists = [playlist for playlist in user_playlists if playlist.id 
 queue_col, doppel_col, shuffle_col = st.columns(3)
 
 with queue_col:
-    songs_in_queue = queue_length()
+    songs_in_queue = _queue_length()
     st.subheader("🔮 Queue", divider="green", help=f"{songs_in_queue} songs in queue")
 
     st.badge(f"{songs_in_queue} songs in queue", icon="📜")
@@ -157,7 +168,7 @@ container.button(
     type="primary",
     width="stretch",
     on_click=_compose,
-    args=(ComposerConfig.parse_yaml("confs/musique_automatique.yaml"),),
+    args=(_preset_configuration(Path("confs/musique_automatique.yaml")),),
 )
 # new releases
 container.button(
@@ -167,7 +178,7 @@ container.button(
     type="primary",
     width="stretch",
     on_click=_compose,
-    args=(ComposerConfig.parse_yaml("confs/musique_neuve.yaml"),),
+    args=(_preset_configuration(Path("confs/musique_neuve.yaml")),),
 )
 # recently added
 container.button(
@@ -177,7 +188,7 @@ container.button(
     type="primary",
     width="stretch",
     on_click=_compose,
-    args=(ComposerConfig.parse_yaml("confs/musique_recommandee.yaml"),),
+    args=(_preset_configuration(Path("confs/musique_recommandee.yaml")),),
 )
 
 
