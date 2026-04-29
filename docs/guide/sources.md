@@ -24,6 +24,29 @@ playlists:
     python -c "from utils import simplify_string; print(simplify_string($playlist_name))"
     ```
 
+
+#### Using Regexs
+
+Regex are supported to include _several_ playlists in the composition in one-go.
+
+Let's say you have among your playlists, 3 playlists named "Top 2020", "Top 80s" and "Top of the Pops":
+
+```yaml hl_lines="4" title="Use a regex to fetch several playlists"
+name: "New playlist"
+nb_songs: 100
+playlists:
+  - name: *Top*
+```
+
+In this case, all 3 playlists will be fetched and the configuration will be automatically expanded to :
+
+```yaml
+playlists:
+  - name: "Top 2020"
+  - name: "Top 80s"
+  - name: "Top of the Pops"
+```
+
 ### History
 
 `history` lets you add your favourite songs from the past! Three time ranges are available:
@@ -45,7 +68,7 @@ With uris, you can use any kind of playlist in your composition. Simply add the 
 in your YAML.
 
 !!! warning 
-  Spotify-owned playlists are not supported, their content is not accessible through the API. 
+    Spotify-owned playlists are not supported, their content is not accessible through the API. 
 
 ```yaml title="Add songs from any Spotify public playlist"
 uris:
@@ -89,6 +112,15 @@ You can add as many items from as many sections as you'd like ! And create all k
     uris:
         - name: https://open.spotify.com/playlist/6LSRWYpEoo8KiXenl2xHOP?si=e83a89df1dca4728  # Les inrocks, trésors cachés
         - name: https://open.spotify.com/playlist/4nutUe1JAzhJSna4mwSIw1?si=71f802c91a04416e  # FIP, best-of du mois
+    ```
+
+???+ tip "A playlist for the songs you've added this year"
+    ```yaml
+      name: "🆕 New Songs"
+      nb_songs: 200
+      playlists:
+        - name: "*"
+      added_at: [2026/01/01, ]
     ```
 
 ----------

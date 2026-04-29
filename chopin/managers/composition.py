@@ -1,9 +1,9 @@
 """Manage composition."""
 
-import fnmatch
 import itertools
 import math
 import random
+import re
 from datetime import date
 
 from chopin.client.endpoints import (
@@ -27,12 +27,16 @@ def _expand_pattern_playlists(
     playlists: list[ComposerConfigItem],
     user_playlists: list[PlaylistData],
 ) -> list[ComposerConfigItem]:
-    """Expand glob patterns in playlist names into individual ComposerConfigItems.
+    """Expand regex patterns in playlist names into individual ComposerConfigItems.
 
-    A pattern is any name containing ``*`` or ``?`` (fnmatch syntax). Each
-    matching user playlist becomes its own item, inheriting the original
-    weight and selection method. The nb_songs budget is split evenly across
-    all matches.
+    A pattern is any name containing a regex metacharacter. Each matching user
+    playlist becomes its own item, inheriting the original weight and selection
+    method. The nb_songs budget is split evenly across all matches.
+
+    Patterns are matched against simplified playlist names (lowercase, no emojis,
+    no spaces — see ``simplify_string``). Use ``.*`` to match all playlists, or a
+    negative lookahead to exclude specific ones:
+    ``^(?!best-of|tmp).*``
 
     Args:
         playlists: Items from the composer configuration (may contain patterns).
@@ -43,11 +47,10 @@ def _expand_pattern_playlists(
     """
     expanded = []
     for item in playlists:
-        simplified = simplify_string(item.name)
-        if not any(c in simplified for c in ("*", "?")):
+        if not re.search(r"[.*+?()\[\]^$|\\]", item.name):
             expanded.append(item)
             continue
-        matches = [p for p in user_playlists if fnmatch.fnmatch(simplify_string(p.name), simplified)]
+        matches = [p for p in user_playlists if re.fullmatch(item.name, simplify_string(p.name))]
         if not matches:
             logger.warning(f"Pattern '{item.name}' matched no playlists — skipping")
             continue
@@ -70,7 +73,10 @@ def _expand_pattern_playlists(
 
 # todo: logging decorator
 def _add_from_playlists(
-    playlists: list[ComposerConfigItem], release_range: tuple[date] | None = None, **kwargs
+    playlists: list[ComposerConfigItem],
+    release_range: tuple[date] | None = None,
+    added_at_range: tuple[date] | None = None,
+    **kwargs,
 ) -> list[TrackData]:
     """Add tracks from each playlist."""
     user_playlists = get_user_playlists()
@@ -79,6 +85,7 @@ def _add_from_playlists(
             playlist_name=playlist.name,
             nb_tracks=playlist.nb_songs,
             release_range=release_range,
+            added_at_range=added_at_range,
             user_playlists=user_playlists,
             selection_method=playlist.selection_method,
         )
@@ -128,11 +135,15 @@ def compose_playlist(composition_config: ComposerConfig) -> list[TrackData]:
         AttributeError: if 'playlists' are in the configuration but user_playlists is not passed.
     """
     tracks: list[TrackData] = []
-
     for source, source_config in composition_config.items:
         if not source_config:
             continue
-        source_tracks = DISPATCHER[source](source_config, release_range=composition_config.release_range, tracks=tracks)
+        source_tracks = DISPATCHER[source](
+            source_config,
+            release_range=composition_config.release_range,
+            added_at_range=composition_config.added_at_range,
+            tracks=tracks,
+        )
         tracks.extend(source_tracks)
 
     return random.sample(tracks, len(tracks))

@@ -24,7 +24,9 @@ class ComposerConfigItem(BaseModel):
     """Base schema for input in the composer configuration.
 
     Attributes:
-        name: Name of the item. It should respect the simplify_string nomenclature
+        name: Name of the item. It should respect the simplify_string nomenclature.
+            Regex patterns are allowed, like "Music*"
+        selection_method: The method to use to select the songs from the playlist.
         weight: Weight of the input in the final composition
     """
 
@@ -75,12 +77,16 @@ class ComposerConfig(BaseModel):
         playlists: A list of playlist names and their weight.
         uris: A list of spotify playlist URIs to pick from directly.
         history: Include past listening habits and most listened songs.
+
+        release_date_range: Optional date range for when songs have been released
+        added_at_range: Optional date range for when songs have been added to the playlist(s).
     """
 
     name: str = "🤖 Robot Mix"
     description: str = "Randomly generated mix"
     nb_songs: Annotated[int, Field(gt=0)]
     release_range: Annotated[tuple[str | None, str | None] | None, AfterValidator(read_date)] | None = None
+    added_at_range: Annotated[tuple[str | None, str | None] | None, AfterValidator(read_date)] | None = None
     playlists: list[ComposerConfigItem] | None = []
     history: Annotated[list[ComposerConfigListeningHistory], Field(max_length=3)] | None = []
     uris: list[ComposerConfigItem] | None = []

@@ -84,14 +84,14 @@ def user_playlists():
 
 
 def test_expand_wildcard_matches_all(user_playlists):
-    item = ComposerConfigItem(name="*", weight=1, nb_songs=30, selection_method="random")
+    item = ComposerConfigItem(name=".*", weight=1, nb_songs=30, selection_method="random")
     result = _expand_pattern_playlists([item], user_playlists)
     assert len(result) == 3
     assert {r.name for r in result} == {"rock80s", "rock90s", "chill"}
 
 
 def test_expand_prefix_pattern_matches_subset(user_playlists):
-    item = ComposerConfigItem(name="rock*", weight=2, nb_songs=20, selection_method="latest")
+    item = ComposerConfigItem(name="rock.*", weight=2, nb_songs=20, selection_method="latest")
     result = _expand_pattern_playlists([item], user_playlists)
     assert len(result) == 2
     assert all(r.name.startswith("rock") for r in result)
@@ -100,13 +100,13 @@ def test_expand_prefix_pattern_matches_subset(user_playlists):
 
 
 def test_expand_pattern_splits_nb_songs_evenly(user_playlists):
-    item = ComposerConfigItem(name="rock*", weight=1, nb_songs=20, selection_method="random")
+    item = ComposerConfigItem(name="rock.*", weight=1, nb_songs=20, selection_method="random")
     result = _expand_pattern_playlists([item], user_playlists)
     assert all(r.nb_songs == 10 for r in result)
 
 
 def test_expand_unmatched_pattern_is_skipped(user_playlists):
-    item = ComposerConfigItem(name="jazz*", weight=1, nb_songs=10, selection_method="random")
+    item = ComposerConfigItem(name="jazz.*", weight=1, nb_songs=10, selection_method="random")
     result = _expand_pattern_playlists([item], user_playlists)
     assert result == []
 
@@ -115,6 +115,13 @@ def test_expand_non_pattern_item_is_unchanged(user_playlists):
     item = ComposerConfigItem(name="chill", weight=1, nb_songs=10, selection_method="random")
     result = _expand_pattern_playlists([item], user_playlists)
     assert result == [item]
+
+
+def test_expand_negative_lookahead_excludes_playlists(user_playlists):
+    item = ComposerConfigItem(name="^(?!rock).*", weight=1, nb_songs=10, selection_method="random")
+    result = _expand_pattern_playlists([item], user_playlists)
+    assert len(result) == 1
+    assert result[0].name == "chill"
 
 
 @patch("chopin.managers.playlist.get_playlist_tracks")
@@ -127,8 +134,8 @@ def test_compose_with_wildcard_pattern(
     playlist_1_tracks,
     playlist_2_tracks,
 ):
-    """A single '*' entry in the config should pull from all available playlists."""
-    configuration = ComposerConfig(nb_songs=20, playlists=[ComposerConfigItem(name="*", weight=1)])
+    """A '.*' pattern in the config should pull from all available playlists."""
+    configuration = ComposerConfig(nb_songs=20, playlists=[ComposerConfigItem(name=".*", weight=1)])
     mock_get_playlists.return_value = [playlist_1, playlist_2]
     mock_get_tracks.side_effect = [playlist_1_tracks, playlist_2_tracks]
 
