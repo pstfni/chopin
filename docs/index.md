@@ -8,9 +8,11 @@ chopin is a user-friendly CLI to compose Spotify playlists from various sources.
 
 It also comes with commands to manage your playlists.
 
-[:fontawesome-solid-rocket: Get started](./getting_started.md){ .md-button .md-button--primary }    [:fontawesome-solid-book: Follow the guide](guide/compose.md){ .md-button .md-button}   [:fontawesome-solid-code: Dive in the reference](reference/index.md){ .md-button .md-button}
+[:rocket:  Get started](./getting_started.md){ .md-button .md-button--primary }    [:books:  Follow the guide](guide/compose.md){ .md-button .md-button}   [:computer:  Dive in the reference](reference/index.md){ .md-button .md-button}
 
-!!! failure ""
+
+!!! danger ""
+
     On November 2024, Spotify removed - without notice, seven API routes. 
     
     Unfortunately, most of chopin's features have since been downsized to the minimum feature set allowed by Spotify. 

@@ -1,6 +1,7 @@
 """Homepage for the chopin app."""
 
-from typing import Any
+from pathlib import Path
+from typing import TypedDict
 
 import streamlit as st
 
@@ -13,14 +14,24 @@ from chopin.managers.selection import SelectionMethod
 from chopin.schemas.composer import ComposerConfig, ComposerConfigItem, ComposerConfigListeningHistory
 
 
-@st.cache_data()
-def queue_length() -> int:
+@st.cache_data(ttl=60)
+def _queue_length() -> int:
     """Get the length of the queue."""
     try:
         queue = get_queue()
     except ValueError:
         return 0
     return len(queue)
+
+
+@st.cache_data(ttl=120)
+def _user_playlists() -> list:
+    return get_user_playlists()
+
+
+@st.cache_data()
+def _preset_configuration(path: Path) -> ComposerConfig:
+    return ComposerConfig.parse_yaml(path)
 
 
 def spacing(nb_lines: int = 5):
@@ -36,16 +47,28 @@ def _compose(composer_config: ComposerConfig):
     st.success(f"Playlist {composer_config.name} succesfully created! {len(tracks)} tracks added")
 
 
-# submit
 def _submit(composer_configuration: ComposerConfig) -> ComposerConfig:
     composer_configuration.playlists = [
-        ComposerConfigItem(**playlist) for key, playlist in st.session_state.playlists.items()
+        ComposerConfigItem(
+            name=name,
+            weight=st.session_state.get(f"weight-{name}", 1.0),
+            selection_method=st.session_state.get(f"select-method-{name}", SelectionMethod.RANDOM.value),
+        )
+        for name in st.session_state.get("playlists-multiselect", [])
     ]
-    composer_configuration.uris = [ComposerConfigItem(**uri) for key, uri in st.session_state.uris.items()]
+    composer_configuration.uris = [
+        ComposerConfigItem(
+            name=st.session_state.get(f"uri-input-{i}", ""),
+            weight=st.session_state.get(f"weight-input-{i}", 1.0),
+            selection_method=st.session_state.get(f"select-method-uri-{i}", SelectionMethod.RANDOM.value),
+        )
+        for i in range(len(st.session_state.containers))
+        if st.session_state.get(f"uri-input-{i}", "")
+    ]
     composer_configuration.history = [
-        ComposerConfigListeningHistory(**{"time_range": time_range}) for time_range in st.session_state.history
+        ComposerConfigListeningHistory(time_range=time_range)
+        for time_range in st.session_state.get("time_range_options", [])
     ]
-    st.write(composer_configuration.model_dump())
     ComposerConfig.model_validate(composer_configuration)
     _compose(composer_configuration)
     return composer_configuration
@@ -54,7 +77,16 @@ def _submit(composer_configuration: ComposerConfig) -> ComposerConfig:
 st.set_page_config(layout="wide")
 st.header("🎶 Chopin")
 
-user_playlists = get_user_playlists()
+
+class _State(TypedDict):
+    containers: list
+
+
+_DEFAULTS: _State = {"containers": []}
+for _key, _val in _DEFAULTS.items():
+    st.session_state.setdefault(_key, _val)
+
+user_playlists = _user_playlists()
 protected_playlists = [playlist for playlist in user_playlists if playlist.id in constants.PROTECTED_PLAYLISTS_ID]
 protected_playlists_name = [playlist.name for playlist in protected_playlists]
 unprotected_playlists = [playlist for playlist in user_playlists if playlist.id not in constants.PROTECTED_PLAYLISTS_ID]
@@ -62,7 +94,7 @@ unprotected_playlists = [playlist for playlist in user_playlists if playlist.id 
 queue_col, doppel_col, shuffle_col = st.columns(3)
 
 with queue_col:
-    songs_in_queue = queue_length()
+    songs_in_queue = _queue_length()
     st.subheader("🔮 Queue", divider="green", help=f"{songs_in_queue} songs in queue")
 
     st.badge(f"{songs_in_queue} songs in queue", icon="📜")
@@ -157,7 +189,7 @@ container.button(
     type="primary",
     width="stretch",
     on_click=_compose,
-    args=(ComposerConfig.parse_yaml("confs/musique_automatique.yaml"),),
+    args=(_preset_configuration(Path("confs/musique_automatique.yaml")),),
 )
 # new releases
 container.button(
@@ -167,7 +199,7 @@ container.button(
     type="primary",
     width="stretch",
     on_click=_compose,
-    args=(ComposerConfig.parse_yaml("confs/musique_neuve.yaml"),),
+    args=(_preset_configuration(Path("confs/musique_neuve.yaml")),),
 )
 # recently added
 container.button(
@@ -177,7 +209,7 @@ container.button(
     type="primary",
     width="stretch",
     on_click=_compose,
-    args=(ComposerConfig.parse_yaml("confs/musique_recommandee.yaml"),),
+    args=(_preset_configuration(Path("confs/musique_recommandee.yaml")),),
 )
 
 
@@ -208,14 +240,6 @@ add_from_playlists = st.checkbox(
     "Select songs from your playlists", value=True, help="Toggle to add songs from the user's playlists."
 )
 
-if "playlists" not in st.session_state:
-    st.session_state.playlists = {}
-
-
-def _add_playlist(name: str, config: dict[str, Any]) -> None:
-    """Add the playlist configuration selected bu the user to the session state, for later use."""
-    st.session_state.playlists[name] = config
-
 
 if add_from_playlists:
     selected_playlists = st.multiselect(
@@ -242,8 +266,9 @@ if add_from_playlists:
                 key=f"select-method-{playlist_name}",
                 label_visibility="collapsed",
             )
-            weight = container.slider(
+            container.slider(
                 f"Weight for {playlist_name}",
+                key=f"weight-{playlist_name}",
                 min_value=0.0,
                 max_value=2.0,
                 value=1.0,
@@ -252,18 +277,6 @@ if add_from_playlists:
                 help="Adjust the importance of this playlist in the composition",
                 label_visibility="collapsed",
             )
-            add_button = container.button(
-                key=f"button-{playlist_name}",
-                label="Add to composition",
-                help=f"Add {playlist_name} configuration to composition",
-                type="primary",
-                width="stretch",
-                on_click=_add_playlist,
-                args=(playlist_name, {"name": playlist_name, "weight": weight, "selection_method": selection_method}),
-            )
-            if add_button:
-                print(st.session_state.playlists)
-                container.success(f"Playlist {playlist_name} added to composition")
 
 st.write("### Add songs from Spotify URIs ? ")
 add_from_uris = st.checkbox(
@@ -271,11 +284,6 @@ add_from_uris = st.checkbox(
     value=False,
     help="Toggle to add songs from public playlists. Note that Spotify owned playlists might be unavailable.",
 )
-
-if "containers" not in st.session_state:
-    st.session_state.containers = []
-if "uris" not in st.session_state:
-    st.session_state.uris = {}
 
 
 def _add_container_uri():
@@ -288,12 +296,6 @@ def _remove_container_uri(index: int):
     st.session_state.containers.pop(index)
 
 
-def _add_uri(uri, config):
-    """Add the uri configuration selected bu the user to the session state, for later use."""
-    st.session_state.uris[uri] = config
-
-
-uri_playlists_config = {}
 if add_from_uris:
     new_uri_button = st.button(label="Add new uri", key="new-uri-button", on_click=_add_container_uri)
     for i, _ in enumerate(st.session_state.containers):
@@ -332,32 +334,13 @@ if add_from_uris:
             help="Adjust the importance of this playlist in the composition",
             label_visibility="collapsed",
         )
-        add_button = uri_container.button(
-            key=f"button-{uri}-{i}",
-            label="Add to composition",
-            help="Add uri configuration to composition",
-            type="primary",
-            width="stretch",
-            on_click=_add_uri,
-            args=(uri, {"name": uri, "weight": weight, "selection_method": selection_method}),
-        )
-        if add_button:
-            uri_container.success("Playlist added to composition")
 
 st.write("### Add songs from your listening history ?")
-if "history" not in st.session_state:
-    st.session_state.history = []
 enable_history = st.checkbox(
     "Enable listening history",
     value=False,
     help="Toggle to add songs from your listening history",
 )
-
-
-def _add_history():
-    """Add the history configuration selected bu the user to the session state, for later use."""
-    if st.session_state.get("time_range_options"):
-        st.session_state.history = st.session_state.time_range_options
 
 
 if enable_history:
@@ -368,7 +351,7 @@ if enable_history:
         "long_term": "Long Term",
     }
 
-    selected_pills = container.pills(
+    container.pills(
         "Select time ranges",
         options=option_map.keys(),
         format_func=lambda option: option_map[option],
@@ -376,7 +359,6 @@ if enable_history:
         key="time_range_options",
         selection_mode="multi",
         label_visibility="collapsed",
-        on_change=_add_history,
         width="stretch",
     )
 
