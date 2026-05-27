@@ -83,6 +83,7 @@ toggle.name = "Switch to light mode"
 [project.markdown_extensions.footnotes]
 [project.markdown_extensions.md_in_html]
 [project.markdown_extensions.attr_list]
+[project.markdown_extensions.pymdownx.emoji]
 
 [project.markdown_extensions."pymdownx.highlight"]
 anchor_linenums = true
