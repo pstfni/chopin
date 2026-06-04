@@ -19,7 +19,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest", "pytest-sugar", "ruff",]
-docs = ["mkdocs", "mkdocstrings", "mkdocstrings-python", "mkdocs-material"]
+docs = ["zensical", "mkdocstrings", "mkdocstrings-python"]
 app = ["streamlit",]
 
 [tool.uv]
