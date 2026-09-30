@@ -67,3 +67,6 @@ __pypackages__/
 data/
 extra/
 confs/
+
+# Harness
+.pi/
