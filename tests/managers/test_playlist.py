@@ -58,6 +58,8 @@ def test_create_playlist(spotify_playlist, spotify_user):
     assert playlist.uri == "string"
 
 
+@patch("chopin.managers.playlist.random.sample")
+@patch("chopin.managers.playlist.random.randint")
 @patch("chopin.managers.playlist.get_named_playlist")
 @patch("chopin.managers.playlist.get_playlist_tracks")
 @patch("chopin.managers.playlist.get_album_tracks")
@@ -69,6 +71,8 @@ def test_doppelganger_playlist(
     mock_get_album_tracks,
     mock_get_playlist_tracks,
     mock_get_named_playlist,
+    mock_random_randint,
+    mock_random_sample,
     playlist_1,
     playlist_1_tracks,
     album_tracks,
@@ -77,6 +81,10 @@ def test_doppelganger_playlist(
     mock_get_playlist_tracks.return_value = playlist_1_tracks
     mock_get_album_tracks.return_value = album_tracks
 
+    # Make random deterministic: always sample 2 tracks from each album
+    mock_random_randint.return_value = 2
+    mock_random_sample.side_effect = lambda population, k: population[:k]
+
     doppelganger_playlist(source_playlist="Playlist 1", new_playlist="Playlist 2")
 
     mock_get_named_playlist.assert_called_once_with("Playlist 1")
@@ -84,8 +92,10 @@ def test_doppelganger_playlist(
     mock_create.assert_called_once_with("Playlist 2", overwrite=True)
     mock_fill.assert_called_once()
 
+    # With 50 source tracks, each from a unique album, and sampling 2 tracks per album
+    # We expect 50 * 2 = 100 tracks
     filled_tracks = mock_fill.call_args[1]["tracks"]
-    assert len(filled_tracks) == len(playlist_1_tracks)
+    assert len(filled_tracks) == 100
 
 
 @patch("chopin.managers.playlist.get_named_playlist")

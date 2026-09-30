@@ -218,6 +218,23 @@ def dump(playlist: PlaylistSummary, filepath: Path):
         f.write(json_str)
 
 
+def expand_with_album_tracks(tracks: list[TrackData]) -> list[TrackData]:
+    """From a given list of tracks, expand with tracks from the same albums.
+
+    Args:
+        tracks: An original set of tracks, as the source.
+    """
+    new_tracks: list[TrackData] = []
+    albums_tracks: dict[str, list[TrackData]] = {}
+    for track in tracks:
+        album_id = track.album.id
+        if album_id not in albums_tracks:
+            albums_tracks[album_id] = get_album_tracks(album_id)
+        nb_sampled_tracks = min(random.randint(1, 3), len(albums_tracks[album_id]))
+        new_tracks.extend(random.sample(albums_tracks[album_id], k=nb_sampled_tracks))
+    return new_tracks
+
+
 def doppelganger_playlist(source_playlist: str, new_playlist: str) -> PlaylistData:
     """Create a "doppelganger", a similar playlist from an existing one.
 
@@ -230,14 +247,7 @@ def doppelganger_playlist(source_playlist: str, new_playlist: str) -> PlaylistDa
     """
     playlist = get_named_playlist(source_playlist)
     tracks = get_playlist_tracks(playlist.id)
-
-    albums_tracks: dict[str, list[TrackData]] = {}
-    new_tracks: list[TrackData] = []
-    for track in tracks:
-        album_id = track.album.id
-        if album_id not in albums_tracks:
-            albums_tracks[album_id] = get_album_tracks(album_id)
-        new_tracks.append(random.choice(albums_tracks[album_id]))
+    new_tracks = expand_with_album_tracks(tracks=tracks)
 
     if new_tracks:
         doppelganger_playlist = create(new_playlist, overwrite=True)
