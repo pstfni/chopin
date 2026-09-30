@@ -105,7 +105,8 @@ def test_composer_config_item_default_selection_method():
 
 
 def test_composer_config_parse_yaml():
-    path = Path("confs/musique_automatique.yaml")
+    path = Path("tests/confs/musique_automatique.yaml")
     config = ComposerConfig.parse_yaml(path)
     assert config.name == "🤖 Musique Automatique"
     assert config.nb_songs == 160
+    assert len(config.playlists) == 2
