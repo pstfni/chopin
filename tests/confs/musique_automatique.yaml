@@ -1,0 +1,5 @@
+name: "🤖 Musique Automatique"
+nb_songs: 160
+playlists:
+  - name: chill
+  - name: classic
