@@ -1,9 +1,16 @@
+import os
+
 import pytest
 
 from chopin.schemas.album import AlbumData
 from chopin.schemas.artist import ArtistData
 from chopin.schemas.playlist import PlaylistData
 from chopin.schemas.track import TrackData
+
+# Provide dummy Spotify credentials
+# so that `chopin.client.settings.Settings()` does not read the .env file during tests
+os.environ.setdefault("client_id", "test-client-id")
+os.environ.setdefault("client_secret", "test-client-secret")
 
 
 def track_data(id_: str = "id") -> TrackData:
