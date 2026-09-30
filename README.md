@@ -18,7 +18,7 @@ It is advised to create a virtual environment for Chopin.
 ```shell
 git clone git@github.com:pstfni/chopin.git
 cd chopin/
-make setup
+mise setup
 ```
 
 #### Spotify developer credentials
@@ -53,6 +53,6 @@ Once you have:
 
 You can make sure everything is installed properly by running:
 
-`make check`
+`mise check`
 
 It should display your user names and your recent listening habits 🎧

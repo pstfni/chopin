@@ -1,5 +1,10 @@
 # Getting started
 
+## Prerequisites
+
+chopin uses `mise` to ease setup and local development, it is recommended to [install mise](https://mise.jdx.dev/installing-mise.html#mise-run)
+
+
 ## Installation
 
 Clone the repository and setup.
@@ -9,7 +14,7 @@ It is advised to create a virtual environment dedicated to Chopin.
 ```shell
 git clone git@github.com:pstfni/chopin.git
 cd chopin/
-make setup
+mise setup
 ```
 
 
@@ -45,6 +50,6 @@ Once you have:
 
 You can make sure everything is installed properly by running:
 
-`make check`
+`mise check`
 
 It should display your user names and your recent listening habits 🎧

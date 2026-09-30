@@ -38,7 +38,7 @@ chopin/
 ├── docs/             # MkDocs documentation source
 ├── ruff.toml         # Ruff linter/formatter configuration
 ├── pyproject.toml    # Project metadata and dependencies
-└── Makefile          # Developer convenience targets
+└── mise.toml          # Developer convenience targets
 ```
 
 ## Development Setup
@@ -48,7 +48,7 @@ git clone git@github.com:pstfni/chopin.git
 cd chopin/
 
 # Full setup (downloads uv, installs deps, creates .env stub)
-make setup
+mise setup
 
 # Or, if uv is already installed
 uv sync

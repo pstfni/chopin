@@ -1,0 +1,33 @@
+[tools]
+python = "3.10"
+uv = "latest"
+
+[tasks.install]
+description = "Install project dependencies"
+run = "uv sync"
+
+[tasks.touch-env]
+description = "Create .env file if it doesn't exist"
+run = "touch .env"
+
+[tasks.setup]
+description = "Full project setup (install deps + create .env)"
+depends = ["install", "touch-env"]
+
+[tasks.check]
+description = "Verify the installation works (prints your Spotify user info)"
+run = "uv run python scripts/check_install.py"
+
+[tasks.docs]
+description = "Install docs dependencies (if needed) and build the documentation"
+run = [
+    "uv sync --extra docs",
+    "uv run zensical build --clean",
+]
+
+[tasks.test]
+description = "Install dev dependencies (if needed) and run the test suite"
+run = [
+    "uv sync --extra dev",
+    "uv run pytest",
+]
