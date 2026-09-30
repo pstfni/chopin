@@ -150,8 +150,26 @@ files. Install them with `pre-commit install` after cloning.
   files to allow deliberate re-exports. Use this only for intentional public API surface, not as
   a workaround for unneeded imports elsewhere.
 
+## Releases
+
+Versioning, `CHANGELOG.md`, git tags and GitHub Releases are automated by
+[release-please](https://github.com/googleapis/release-please), configured in
+`release-please-config.json` and `.release-please-manifest.json`, and run by the
+`.github/workflows/release-please.yml` workflow on every push to `master`.
+
+- Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+  (`feat:`, `fix:`, `chore:`, `docs:`, ...) — release-please derives the next version and the
+  changelog entries from them. A breaking change needs a `!` after the type (`feat!:`) or a
+  `BREAKING CHANGE:` footer.
+- The following files are owned by release-please and must never be hand-edited: `CHANGELOG.md`,
+  `.release-please-manifest.json`, the `version` field in `pyproject.toml`, and the
+  `# x-release-please-version` line in `chopin/__init__.py`. Edit `release-please-config.json`
+  only to change release configuration (e.g. changelog sections), not to set a version.
+
 ## Out of Scope / Do Not Touch
 
 - `.venv/` — managed entirely by `uv`. Never edit files inside this directory.
 - `.env` — contains secrets. Never read, log, or commit its contents.
 - `.git/` — never modify git internals directly.
+- `CHANGELOG.md`, `.release-please-manifest.json` — generated/managed by release-please. Never
+  hand-edit; see the Releases section above.

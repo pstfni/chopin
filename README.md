@@ -56,3 +56,9 @@ You can make sure everything is installed properly by running:
 `mise check`
 
 It should display your user names and your recent listening habits 🎧
+
+### Releases
+
+Versions are managed automatically by [release-please](https://github.com/googleapis/release-please):
+every merge to `master` may update an open release pull request, and merging that PR cuts a new
+version, tag and GitHub Release. See [CHANGELOG.md](CHANGELOG.md) for the release history.

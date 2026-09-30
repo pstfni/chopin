@@ -1,0 +1,76 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    ".": {
+      "release-type": "python",
+      "extra-files": [
+        {
+          "type": "generic",
+          "path": "chopin/__init__.py"
+        }
+      ],
+      "changelog-sections": [
+        {
+          "hidden": false,
+          "section": "🚀 Features",
+          "type": "feat"
+        },
+        {
+          "hidden": false,
+          "section": "🐞 Bug Fixes",
+          "type": "fix"
+        },
+        {
+          "hidden": false,
+          "section": "🐞 Bug Fixes",
+          "type": "revert"
+        },
+        {
+          "hidden": false,
+          "section": "✨ Improvements",
+          "type": "perf"
+        },
+        {
+          "hidden": false,
+          "section": "✨ Improvements",
+          "type": "refactor"
+        },
+        {
+          "hidden": false,
+          "section": "📚 Documentation",
+          "type": "docs"
+        },
+        {
+          "hidden": false,
+          "section": "🧪 Tests",
+          "type": "test"
+        },
+        {
+          "hidden": true,
+          "section": "🧰 Other",
+          "type": "style"
+        },
+        {
+          "hidden": true,
+          "section": "🧰 Other",
+          "type": "build"
+        },
+        {
+          "hidden": true,
+          "section": "🧰 Other",
+          "type": "chore"
+        },
+        {
+          "hidden": true,
+          "section": "🧰 Other",
+          "type": "deps"
+        },
+        {
+          "hidden": true,
+          "section": "🧰 Other",
+          "type": "ci"
+        }
+      ]
+    }
+  }
+}
