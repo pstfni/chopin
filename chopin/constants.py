@@ -35,6 +35,9 @@ class ConstantsNamespace:
         nb_songs=60,
     )
     SPOTIFY_USER_URI = "spotify:user:spotify"
+    SPOTIFY_SCOPE = (
+        "user-top-read user-library-modify playlist-modify-public user-library-read user-read-playback-state"
+    )
     SPOTIFY_API_HISTORY_LIMIT = 50
     SPOTIFY_RECOMMENDATION_SEED_LIMIT = 5
     MARKET = "fr"

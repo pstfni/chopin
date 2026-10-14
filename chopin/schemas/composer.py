@@ -101,11 +101,7 @@ class ComposerConfig(BaseModel):
 
     @model_validator(mode="after")
     def fill_nb_songs(self) -> "ComposerConfig":
-        """From the nb_songs and item weights, compute the nb_songs of each item.
-
-        Args:
-            values: Attributes of the composer configuration model.
-        """
+        """From the nb_songs and item weights, compute the nb_songs of each item."""
         item_weights: list[float] = [item.weight for category in SOURCES for item in getattr(self, category)]
         sum_of_weights: float = sum(item_weights)
         total_nb_songs: int = 0
