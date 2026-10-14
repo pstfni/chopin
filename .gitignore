@@ -59,6 +59,7 @@ __pypackages__/
 .idea/
 
 # Secrets
+.spotipy_cache
 
 # mkdocs documentation
 /site
@@ -66,7 +67,6 @@ __pypackages__/
 # Personal stuff
 data/
 extra/
-confs/
 
 # Harness
 .pi/

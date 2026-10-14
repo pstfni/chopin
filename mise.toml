@@ -1,5 +1,5 @@
 [tools]
-python = "3.10"
+python = "3.13"
 uv = "latest"
 
 [tasks.install]
@@ -31,3 +31,22 @@ run = [
     "uv sync --extra dev",
     "uv run pytest",
 ]
+
+[tasks.bootstrap-token]
+description = "Authorize with Spotify once and print a refresh token for headless deployments"
+run = "uv run python scripts/bootstrap_token.py"
+
+[tasks.app]
+description = "Run the Streamlit app locally"
+run = [
+    "uv sync --extra app",
+    "uv run streamlit run app/main.py",
+]
+
+[tasks.docker-build]
+description = "Build the app's container image"
+run = "docker build -t chopin ."
+
+[tasks.docker-run]
+description = "Run the app's container image locally, on http://localhost:8501"
+run = "docker run --rm -p 8501:8501 --env-file .env chopin"
