@@ -1,6 +1,6 @@
 [project]
 name = "chopin"
-version = "1.0.0"
+version = "1.1.0"
 description = "chopin: compose, download, and describe Spotify playlists"
 authors = [{name="pstfni", email="x@y.com"}]
 readme = "README.md"
