@@ -43,8 +43,13 @@ run = [
     "uv run streamlit run app/main.py",
 ]
 
+[tasks.lock]
+description = "Generate uv.lock (required before docker build; the file is untracked)"
+run = "uv lock"
+
 [tasks.docker-build]
 description = "Build the app's container image"
+depends = ["lock"]
 run = "docker build -t chopin ."
 
 [tasks.docker-run]

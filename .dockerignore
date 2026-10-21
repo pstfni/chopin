@@ -1,0 +1,14 @@
+*
+!pyproject.toml
+!uv.lock
+!README.md
+!chopin/
+!app/
+!confs/
+!.streamlit/
+
+# Belt and braces: never let a secret or a local token into the build context.
+**/.env
+**/.cache
+**/__pycache__
+**/*.pyc

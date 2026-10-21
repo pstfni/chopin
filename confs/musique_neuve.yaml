@@ -1,0 +1,16 @@
+name: "🆕 Musique Neuve"
+nb_songs: 80
+uris:
+  - name: https://open.spotify.com/playlist/79a4Fl65Pr5Bc9uolVwELP?si=ed57e50b8ca84b71 # Les Inrocks
+    selection_method: latest
+  - name: https://open.spotify.com/playlist/1IhrDzE8Z4fegSvS8uHmJM?si=57db537359294bae # FranceInter
+    selection_method: latest
+  - name: https://open.spotify.com/playlist/5X8lN5fZSrLnXzFtDEUwb9?si=79c022254ed74a01 # NPR
+    selection_method: latest
+  - name: https://open.spotify.com/playlist/37i9dQZEVXbmUOxHlcyjQ7?si=f300b9e3698e4e36 # Release Radar
+    selection_method: latest
+  - name: https://open.spotify.com/playlist/2cMf23X3n9ieadLyRaZsk4?si=bf1124fc03d64b11 # Paste
+    selection_method: latest
+  # could be: far_out, mojo, dork, sputnik, nothern_transmissions
+  - name: https://open.spotify.com/playlist/3ryDBBvXOxZ1d0dIF2kyc2?si=350f71fda6bf44c9 # BBC Radio 6 (TODO: find a better source)
+    selection_method: latest

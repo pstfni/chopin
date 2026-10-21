@@ -1,0 +1,6 @@
+name: "💡 Musique Recommandée"
+nb_songs: 300
+playlists:
+  - name: "^(?!best-of|musique|pauline|garçons|louange|berry|mesconcerts).*"
+    selection_method: latest
+added_at_range: [06/06/2026, 01/01/2027]

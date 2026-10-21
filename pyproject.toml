@@ -25,6 +25,12 @@ app = ["streamlit",]
 [tool.uv]
 package = true
 
+# Pin public PyPI as the default index. Prevents a user-level uv config (corporate mirror)
+# from leaking into uv.lock during local builds.
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true
+
 [tool.setuptools.packages.find]
 include = ["chopin*"]
 namespaces = false

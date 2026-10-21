@@ -1,0 +1,26 @@
+name: "🤖 Musique Automatique"
+nb_songs: 160
+playlists:
+  - name: berry
+  - name: rock20s
+    selection_method: latest
+  - name: rock20s
+  - name: rock00s
+  - name: pop
+    selection_method: latest
+  - name: chill
+    selection_method: latest
+  - name: francepop
+    selection_method: latest
+    weight: .5
+  - name: hiphop
+    selection_method: latest
+    weight: .5
+  - name: chill
+    weight: .5
+  - name: pop
+    weight: .5
+  - name: francechill
+    weight: .5
+  - name: rock80s
+  - name: rock70s
